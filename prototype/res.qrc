@@ -2,4 +2,8 @@
     <qresource prefix="/image">
         <file>image/orz.png</file>
     </qresource>
+    <qresource prefix="/sound_effect">
+        <file>sound_effect/welcome.wav</file>
+        <file>sound_effect/ending.wav</file>
+    </qresource>
 </RCC>

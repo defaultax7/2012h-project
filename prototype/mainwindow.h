@@ -18,6 +18,8 @@ public:
 private slots:
     void on_exit_btn_clicked();
 
+    void on_music_btn_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
