@@ -1,6 +1,8 @@
 #include "mpwindow.h"
 #include "ui_mpwindow.h"
 
+#include <QFileDialog>
+
 mpwindow::mpwindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::mpwindow)
@@ -37,4 +39,28 @@ void mpwindow::on_btn_mute_clicked()
     }else{
         ui->btn_mute->setIcon(style()->standardIcon(QStyle::SP_MediaVolume));
     }
+}
+
+void mpwindow::on_btn_open_music_clicked()
+{
+
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open Map File"), ".", tr("Text Files (*.txt)"));
+
+//    QFileDialog fileDialog(this);
+//    fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
+//    fileDialog.setWindowTitle(tr("Open Files"));
+//    QStringList supportedMimeTypes = m_player->supportedMimeTypes();
+//    if (!supportedMimeTypes.isEmpty()) {
+//        supportedMimeTypes.append("audio/x-m3u");
+//        fileDialog.setMimeTypeFilters(supportedMimeTypes);
+//    }
+//    fileDialog.setDirectory(QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).value(0, QDir::homePath()));
+//    if (fileDialog.exec() == QDialog::Accepted)
+//        addToPlaylist(fileDialog.selectedUrls());
+}
+
+
+void mpwindow::on_search_song_textChanged(const QString &arg1)
+{
+    qDebug() << ui->search_song->text();
 }
