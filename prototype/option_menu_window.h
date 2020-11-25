@@ -32,6 +32,8 @@ private:
     void closeEvent(QCloseEvent *);
     bool validate_config_file();
     void map_setting_to_ui();
+
+    void showEvent(QShowEvent* event);
 };
 
 #endif // OPTION_MENU_WINDOW_H

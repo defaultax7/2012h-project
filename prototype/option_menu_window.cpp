@@ -13,18 +13,6 @@ option_menu_window::option_menu_window(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QSettings setting("HKUST" , "ORZ");
-
-    // Set to 100 if setting is not found
-    if(!setting.value("music_vol").isValid()){
-        setting.setValue("music_vol",100);
-    }
-    if(!setting.value("effect_vol").isValid()){
-        setting.setValue("effect_vol",100);
-    }
-
-    map_setting_to_ui();
-
     //    QString config_file_path = "config.txt";
 
     //    QFileInfo check_file(config_file_path);
@@ -75,10 +63,23 @@ bool option_menu_window::validate_config_file(){
 void option_menu_window::map_setting_to_ui()
 {
     QSettings setting("HKUST" , "ORZ");
-//    ui->txt_music_vol->setText(setting.value("music_vol").toString());
-//    ui->txt_effect_vol->setText(setting.value("effect_vol").toString());
     ui->effect_vol_slider->setValue(setting.value("effect_vol").toInt());
     ui->music_vol_slider->setValue(setting.value("music_vol").toInt());
+}
+
+void option_menu_window::showEvent(QShowEvent *event)
+{
+    QSettings setting("HKUST" , "ORZ");
+
+    // Set to 100 if setting is not found
+    if(!setting.value("music_vol").isValid()){
+        setting.setValue("music_vol",100);
+    }
+    if(!setting.value("effect_vol").isValid()){
+        setting.setValue("effect_vol",100);
+    }
+
+    map_setting_to_ui();
 }
 
 void option_menu_window::on_pushButton_clicked()
