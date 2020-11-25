@@ -341,9 +341,9 @@
    <widget class="QPushButton" name="btn_random_song_list">
     <property name="geometry">
      <rect>
-      <x>300</x>
+      <x>410</x>
       <y>370</y>
-      <width>181</width>
+      <width>131</width>
       <height>41</height>
      </rect>
     </property>

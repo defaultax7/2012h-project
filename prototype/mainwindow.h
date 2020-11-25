@@ -20,7 +20,11 @@ private slots:
 
     void on_music_btn_clicked();
 
+    void on_option_btn_clicked();
+
+
 private:
     Ui::MainWindow *ui;
+
 };
 #endif // MAINWINDOW_H

@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "music_player_window.h"
+#include "option_menu_window.h"
 #include "ui_mainwindow.h"
 
 #include <QSound>
@@ -26,7 +27,14 @@ void MainWindow::on_exit_btn_clicked()
 
 void MainWindow::on_music_btn_clicked()
 {
-    music_player_window* mp = new music_player_window(this);
-    mp->show();
+    music_player_window* w = new music_player_window(this);
+    w->show();
+    hide();
+}
+
+void MainWindow::on_option_btn_clicked()
+{
+    option_menu_window* w = new option_menu_window(this);
+    w->show();
     hide();
 }
