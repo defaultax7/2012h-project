@@ -1,9 +1,13 @@
 #ifndef TAIKO_WINDOW_H
 #define TAIKO_WINDOW_H
 
+#include "score.h"
+#include "taiko_performance_view.h"
+
 #include <QMainWindow>
 #include <QKeyEvent>
 #include <QGraphicsScene>
+#include <QMediaPlayer>
 
 namespace Ui {
 class taiko_window;
@@ -24,6 +28,9 @@ private:
     void showEvent(QShowEvent* event);
 
     QGraphicsScene scene;
+    Score score;
+    taiko_performance_view p_view;
+    QMediaPlayer music_player;
 };
 
 #endif // TAIKO_WINDOW_H

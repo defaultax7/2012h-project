@@ -14,12 +14,16 @@ SOURCES += \
     mainwindow.cpp \
     music_player_window.cpp \
     option_menu_window.cpp \
+    score.cpp \
+    taiko_performance_view.cpp \
     taiko_window.cpp
 
 HEADERS += \
     mainwindow.h \
     music_player_window.h \
     option_menu_window.h \
+    score.h \
+    taiko_performance_view.h \
     taiko_window.h
 
 FORMS += \
