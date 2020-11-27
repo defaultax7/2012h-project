@@ -13,17 +13,20 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     music_player_window.cpp \
-    option_menu_window.cpp
+    option_menu_window.cpp \
+    taiko_window.cpp
 
 HEADERS += \
     mainwindow.h \
     music_player_window.h \
-    option_menu_window.h
+    option_menu_window.h \
+    taiko_window.h
 
 FORMS += \
     mainwindow.ui \
     music_player_window.ui \
-    option_menu_window.ui
+    option_menu_window.ui \
+    taiko_window.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -1,9 +1,12 @@
 <RCC>
     <qresource prefix="/image">
         <file>image/orz.png</file>
+        <file>image/taiko_bg.png</file>
     </qresource>
     <qresource prefix="/sound_effect">
         <file>sound_effect/welcome.wav</file>
         <file>sound_effect/ending.wav</file>
+        <file>sound_effect/drum_sound.wav</file>
+        <file>sound_effect/rim_sound.wav</file>
     </qresource>
 </RCC>
