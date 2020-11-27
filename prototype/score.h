@@ -8,11 +8,10 @@
 class Score
 {
 public:
-    Score();
     void reset_score();
     void add_score(int);
-    void refresh_score();
     void set_label(QLabel*);
+    void refresh_score() const;
 
 private:
     int point = 0;

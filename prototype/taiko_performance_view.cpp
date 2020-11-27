@@ -25,9 +25,14 @@ void taiko_performance_view::set_note_left_label(QLabel * lb)
     note_left_lb = lb;
 }
 
-void taiko_performance_view::set_roll_label(QLabel * lb)
+void taiko_performance_view::set_combo_label(QLabel * lb)
 {
-    roll_lb = lb;
+    combo_lb = lb;
+}
+
+void taiko_performance_view::set_score(Score & score)
+{
+    this->score = score;
 }
 
 void taiko_performance_view::refresh_UI() const
@@ -37,7 +42,8 @@ void taiko_performance_view::refresh_UI() const
     good_lb->setText(QString::number(good));
     miss_lb->setText(QString::number(miss));
     bad_lb->setText(QString::number(bad));
-    miss_lb->setText(QString::number(miss));
+    combo_lb->setText(QString::number(combo));
+    score.refresh_score();
 }
 
 void taiko_performance_view::set_note_left(int note_left)
@@ -47,16 +53,23 @@ void taiko_performance_view::set_note_left(int note_left)
 
 void taiko_performance_view::update(taiko_performance_view::Update_type type)
 {
-    if(type == Update_type::Perfect){
-        ++perfect;
-    }else if(type == Update_type::Good){
-        ++good;
+    if(type == Update_type::Perfect || type == Update_type::Good){
+        if(type == Update_type::Perfect){
+            ++perfect;
+        }else if(type == Update_type::Good){
+            ++good;
+        }
+        ++combo;
+        score.add_score(100);
+        if(combo > highest_combo){
+            highest_combo = combo;
+        }
     }else if(type == Update_type::Bad){
         ++bad;
+        combo = 0;
     }else if(type == Update_type::Miss){
         ++miss;
-    }else if(type == Update_type::Roll){
-        ++roll;
+        combo = 0;
     }
     --note_left;
     refresh_UI();

@@ -1,13 +1,10 @@
 #include "score.h"
 
-Score::Score()
-{
-
-}
 
 void Score::reset_score()
 {
-
+    point = 0;
+    refresh_score();
 }
 
 void Score::add_score(int delta)
@@ -16,7 +13,7 @@ void Score::add_score(int delta)
     refresh_score();
 }
 
-void Score::refresh_score()
+void Score::refresh_score() const
 {
     score_lb->setText(QString::number(point));
 }

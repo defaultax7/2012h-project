@@ -274,7 +274,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Roll count</string>
+     <string>Combo</string>
     </property>
    </widget>
    <widget class="QLabel" name="lb_roll_count">

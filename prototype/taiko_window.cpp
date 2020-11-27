@@ -13,13 +13,16 @@ taiko_window::taiko_window(QWidget *parent) :
 
     p_view.set_note_left(100);
 
-    score.set_label(ui->lb_score);
+
     p_view.set_perfect_label(ui->lb_perfect_count);
     p_view.set_good_label(ui->lb_good_count);
     p_view.set_bad_label(ui->lb_bad_count);
     p_view.set_miss_label(ui->lb_miss_count);
-    p_view.set_roll_label(ui->lb_roll_count);
+    p_view.set_combo_label(ui->lb_roll_count);
     p_view.set_note_left_label(ui->lb_note_left);
+    Score score;
+    score.set_label(ui->lb_score);
+    p_view.set_score(score);
 
 }
 
@@ -33,10 +36,10 @@ void taiko_window::keyPressEvent(QKeyEvent *event)
     // should be a set of key, but use j and f for now
     if(event->key() == Qt::Key_J){
         QSound::play(":/sound_effect/sound_effect/drum_sound.wav");  // play intro sound effect
-        score.add_score(50);
         p_view.update(taiko_performance_view::Update_type::Good);
     }else if(event->key() == Qt::Key_F){
         QSound::play(":/sound_effect/sound_effect/rim_sound.wav");  // play intro sound effect
+        p_view.update(taiko_performance_view::Update_type::Bad);
     }
 }
 

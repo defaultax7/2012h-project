@@ -28,7 +28,6 @@ private:
     void showEvent(QShowEvent* event);
 
     QGraphicsScene scene;
-    Score score;
     taiko_performance_view p_view;
     QMediaPlayer music_player;
 };
