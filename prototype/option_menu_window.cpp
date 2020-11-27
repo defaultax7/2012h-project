@@ -65,6 +65,10 @@ void option_menu_window::map_setting_to_ui()
     QSettings setting("HKUST" , "ORZ");
     ui->effect_vol_slider->setValue(setting.value("effect_vol").toInt());
     ui->music_vol_slider->setValue(setting.value("music_vol").toInt());
+
+    // when setting vol = 100, on change event will not be trigger ( solve it in dirty way)
+    ui->txt_music_vol->setText(setting.value("music_vol").toString());
+    ui->txt_effect_vol->setText(setting.value("effect_vol").toString());
 }
 
 void option_menu_window::showEvent(QShowEvent *event)
