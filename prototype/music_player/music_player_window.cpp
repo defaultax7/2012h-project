@@ -3,6 +3,7 @@
 #include "QDebug"
 
 #include <QFileDialog>
+#include <QMessageBox>
 
 music_player_window::music_player_window(QWidget *parent) :
     QMainWindow(parent),
@@ -20,12 +21,15 @@ music_player_window::music_player_window(QWidget *parent) :
     ui->btn_stop->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
     ui->btn_mute->setIcon(style()->standardIcon(QStyle::SP_MediaVolume));
     ui->btn_delete->setIcon(style()->standardIcon(QStyle::SP_DialogDiscardButton));
+    ui->btn_delete_all->setIcon(style()->standardIcon(QStyle::SP_MessageBoxCritical));
 
     // more space for path
     ui->treeWidget->setColumnWidth(0,250);
 
-    connect(&player , SIGNAL(song_list_changed(QLinkedList<QString>)) , this , SLOT(update_song_list(QLinkedList<QString>)));
     // connect my player to tree list
+    connect(&player , SIGNAL(song_list_changed(QLinkedList<QString>)) , this , SLOT(update_song_list(QLinkedList<QString>)));
+
+    this->setFixedSize(this->size());
 }
 
 
@@ -106,17 +110,27 @@ void music_player_window::update_song_list(QLinkedList<QString> song_list)
 
 void music_player_window::on_btn_delete_clicked()
 {
-
+    QModelIndexList list = ui->treeWidget->selectionModel()->selectedIndexes();
+    player.remove_song(list.at(0).data().toString());
 }
 
 void music_player_window::on_btn_open_folder_clicked()
 {
     // ask a folder
-    QString dir_path = QFileDialog::getExistingDirectory(this, tr("Select a folder"), nullptr, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    //    QString dir_path = QFileDialog::getExistingDirectory(this, tr("Select a folder"), nullptr, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
+    // use for testing
+    QString dir_path = "F:/music";
 
     // get mp3/wav inside the folder
     QDir dir(dir_path);
     QFileInfoList songs = dir.entryInfoList(QStringList() << "*.mp3" << "*.wav" ,QDir::Files);
+    if(songs.isEmpty()){
+        QMessageBox msgBox;
+        msgBox.setText("No song found in the folder!");
+        msgBox.exec();
+        return;
+    }
     QStringList songs_path;
     for (int i = 0 ; i < songs.count() ; ++i) {
         songs_path.append(songs.at(i).absoluteFilePath());
@@ -128,4 +142,17 @@ void music_player_window::on_btn_open_folder_clicked()
 void music_player_window::on_btn_random_song_list_clicked()
 {
     player.shuffle_song_list();
+}
+
+void music_player_window::on_btn_delete_all_clicked()
+{
+    QMessageBox mesBox;
+    mesBox.setText("Ask for confirmation.");
+    mesBox.setInformativeText("Do you really want to remove all songs?");
+    mesBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    mesBox.setDefaultButton(QMessageBox::No);
+    int answer = mesBox.exec();
+    if(answer == QMessageBox::Yes){
+        player.remove_all();
+    }
 }

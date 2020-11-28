@@ -25,14 +25,26 @@ void my_player::add_songs(QStringList add_list)
     }
 }
 
-void my_player::remove_song(QString)
+void my_player::remove_song(QString song)
 {
-
+    for(QLinkedList<QString>::iterator it = song_list.begin() ; it != song_list.end() ; ++it){
+        if(*it == song){
+            song_list.erase(it);
+            break;
+        }
+    }
+    emit song_list_changed(song_list);
 }
 
 void my_player::shuffle_song_list()
 {
 
+}
+
+void my_player::remove_all()
+{
+    song_list.clear();
+    emit song_list_changed(song_list);
 }
 
 

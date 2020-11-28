@@ -33,6 +33,8 @@ private slots:
 
     void on_btn_random_song_list_clicked();
 
+    void on_btn_delete_all_clicked();
+
 private:
     Ui::music_player_window *ui;
     my_player player;

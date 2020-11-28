@@ -14,6 +14,7 @@ public:
     void add_songs(QStringList);
     void remove_song(QString);
     void shuffle_song_list();
+    void remove_all();
 
 signals:
     void song_list_changed(QLinkedList<QString>);
