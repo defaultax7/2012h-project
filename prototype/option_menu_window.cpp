@@ -6,12 +6,16 @@
 #include <QFileInfo>
 #include <QSettings>
 #include <QDebug>
+#include <QIntValidator>
 
 option_menu_window::option_menu_window(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::option_menu_window)
 {
     ui->setupUi(this);
+
+    // set the input range for offset ( more than 2 second is not accepatable)
+    ui->txt_offset->setValidator( new QIntValidator(0, 2000, this) );
 
     //    QString config_file_path = "config.txt";
 
@@ -69,6 +73,7 @@ void option_menu_window::map_setting_to_ui()
     // when setting vol = 100, on change event will not be trigger ( solve it in dirty way)
     ui->txt_music_vol->setText(setting.value("music_vol").toString());
     ui->txt_effect_vol->setText(setting.value("effect_vol").toString());
+    ui->txt_offset->setText(setting.value("offset").toString());
 }
 
 void option_menu_window::showEvent(QShowEvent *event)
@@ -81,6 +86,8 @@ void option_menu_window::showEvent(QShowEvent *event)
     }
     if(!setting.value("effect_vol").isValid()){
         setting.setValue("effect_vol",100);
+    }if(!setting.value("offset").isValid()){
+        setting.setValue("offset",0);
     }
 
     map_setting_to_ui();
@@ -116,4 +123,10 @@ void option_menu_window::on_effect_vol_slider_valueChanged(int value)
     QSettings setting("HKUST" , "ORZ");
     ui->txt_effect_vol->setText(QString::number(value));
     setting.setValue("effect_vol", value);
+}
+
+void option_menu_window::on_lineEdit_textChanged(const QString &arg1)
+{
+    QSettings setting("HKUST" , "ORZ");
+    setting.setValue("offset", arg1.toInt());
 }

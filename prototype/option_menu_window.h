@@ -26,6 +26,8 @@ private slots:
 
     void on_effect_vol_slider_valueChanged(int value);
 
+    void on_lineEdit_textChanged(const QString &arg1);
+
 private:
     Ui::option_menu_window *ui;
 
