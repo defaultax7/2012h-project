@@ -80,6 +80,8 @@ void option_menu_window::showEvent(QShowEvent *event)
 {
     QSettings setting("HKUST" , "ORZ");
 
+    qDebug() << setting.value("offset");;
+
     // Set to 100 if setting is not found
     if(!setting.value("music_vol").isValid()){
         setting.setValue("music_vol",100);
@@ -104,7 +106,7 @@ void option_menu_window::closeEvent(QCloseEvent *){
 
 void option_menu_window::on_horizontalSlider_valueChanged(int value)
 {
-    // seem like if the name is changed, this will not work anymore
+
 }
 
 void option_menu_window::on_pushButton_2_clicked()
@@ -126,6 +128,11 @@ void option_menu_window::on_effect_vol_slider_valueChanged(int value)
 }
 
 void option_menu_window::on_lineEdit_textChanged(const QString &arg1)
+{
+
+}
+
+void option_menu_window::on_txt_offset_textChanged(const QString &arg1)
 {
     QSettings setting("HKUST" , "ORZ");
     setting.setValue("offset", arg1.toInt());

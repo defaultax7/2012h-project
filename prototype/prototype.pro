@@ -12,7 +12,8 @@ CONFIG += c++11
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    music_player_window.cpp \
+    music_player/music_player_window.cpp \
+    music_player/my_player.cpp \
     taiko/normal_note.cpp \
     taiko/note.cpp \
     option_menu_window.cpp \
@@ -22,7 +23,8 @@ SOURCES += \
 
 HEADERS += \
     mainwindow.h \
-    music_player_window.h \
+    music_player/music_player_window.h \
+    music_player/my_player.h \
     taiko/normal_note.h \
     taiko/note.h \
     option_menu_window.h \

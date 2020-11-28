@@ -19,6 +19,8 @@ music_player_window::music_player_window(QWidget *parent) :
     ui->btn_previous->setIcon(style()->standardIcon(QStyle::SP_MediaSeekBackward));
     ui->btn_stop->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
     ui->btn_mute->setIcon(style()->standardIcon(QStyle::SP_MediaVolume));
+
+    // connect my player to tree list
 }
 
 music_player_window::~music_player_window()
@@ -27,7 +29,7 @@ music_player_window::~music_player_window()
 }
 
 void music_player_window::closeEvent(QCloseEvent *){
-    parentWidget()->show();
+    //    parentWidget()->show();
 }
 
 void music_player_window::on_search_song_textChanged(const QString &arg1)
@@ -39,15 +41,30 @@ void music_player_window::on_btn_mute_clicked()
 {
     is_mute = !is_mute;
     if(is_mute){
+        player.setMuted(true);
         ui->btn_mute->setIcon(style()->standardIcon(QStyle::SP_MediaVolumeMuted));
     }else{
+        player.setMuted(false);
         ui->btn_mute->setIcon(style()->standardIcon(QStyle::SP_MediaVolume));
     }
 }
 
 void music_player_window::on_btn_open_music_clicked()
 {
-    QString filename = QFileDialog::getOpenFileName(this, tr("Open Map File"), ".", tr("Text Files (*.txt)"));
+    // Ask for a music file ( accept mp3 or wav only)
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Select a song"),nullptr,tr("Music (*.mp3 *.wav)"));
+
+    if(!fileName.isEmpty()){
+        player.add_song(fileName);
+    }
+
+    //    if (!supportedMimeTypes.isEmpty()) {
+    //        supportedMimeTypes.append("audio/x-m3u"); // MP3 playlists
+    //        fileDialog.setMimeTypeFilters(supportedMimeTypes);
+    //    }
+    //    fileDialog.setDirectory(QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).value(0, QDir::homePath()));
+    //    if (fileDialog.exec() == QDialog::Accepted)
+    //        addToPlaylist(fileDialog.selectedUrls());
 
     //    QFileDialog fileDialog(this);
     //    fileDialog.setAcceptMode(QFileDialog::AcceptOpen);

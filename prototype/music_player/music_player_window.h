@@ -1,6 +1,8 @@
 #ifndef MUSIC_PLAYER_WINDOW_H
 #define MUSIC_PLAYER_WINDOW_H
 
+#include "my_player.h"
+
 #include <QMainWindow>
 #include <QMediaPlayer>
 
@@ -25,7 +27,7 @@ private slots:
 
 private:
     Ui::music_player_window *ui;
-    QMediaPlayer *m_player = nullptr;
+    my_player player;
     bool is_mute = false;
 
     void closeEvent(QCloseEvent *);

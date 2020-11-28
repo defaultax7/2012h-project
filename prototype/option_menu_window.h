@@ -28,6 +28,8 @@ private slots:
 
     void on_lineEdit_textChanged(const QString &arg1);
 
+    void on_txt_offset_textChanged(const QString &arg1);
+
 private:
     Ui::option_menu_window *ui;
 
