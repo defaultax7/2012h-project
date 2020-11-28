@@ -1,3 +1,4 @@
+#include "normal_note.h"
 #include "note.h"
 #include "taiko_window.h"
 #include "ui_taiko_window.h"
@@ -27,6 +28,8 @@ taiko_window::taiko_window(QWidget *parent) :
     p_view.set_score(score);
 
     timer = new QTimer();
+
+    this->setFixedSize(this->size());  // prevent resizing
 }
 
 taiko_window::~taiko_window()
@@ -44,26 +47,26 @@ void taiko_window::keyPressEvent(QKeyEvent *event)
         QSound::play(":/sound_effect/sound_effect/rim_sound.wav");  // play intro sound effect
         p_view.update(taiko_performance_view::Update_type::Bad);
     }else if(event->key() == Qt::Key_1){
-
-        QGraphicsPixmapItem *pix_item;
-        pix_item = scene.addPixmap(QPixmap(":/image/image/red_note.png"));
-        Note* note = new Note(this);
-        note->init(pix_item , 600.0 , 150.0);
-
+        Note* note = new Normal_note(600 , 150 , 100 , 0.5 , Normal_note::note_type::red_note , this);
+        note->init(scene);
         note->start_move();
-
+    }
+    else if(event->key() == Qt::Key_2){
+        Note* note = new Normal_note(600 , 150 , 100 , 0.5 , Normal_note::note_type::blue_note , this);
+        note->init(scene);
+        note->start_move();
     }
 }
 
 void taiko_window::testing(){
-//    qDebug() << "testing";
+    //    qDebug() << "testing";
 }
 
 void taiko_window::showEvent(QShowEvent *event)
 {
     QImage bg;
     bg.load(":/image/image/taiko_bg.png");
-//    scene.setBackgroundBrush(bg);
+    //    scene.setBackgroundBrush(bg);
     scene.addPixmap(QPixmap(":/image/image/taiko_bg.png"));
     ui->graphicsView->setScene(&scene);
     ui->graphicsView->fitInView(scene.sceneRect(),Qt::KeepAspectRatio);

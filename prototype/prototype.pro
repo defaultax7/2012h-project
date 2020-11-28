@@ -13,26 +13,28 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     music_player_window.cpp \
-    note.cpp \
+    taiko/normal_note.cpp \
+    taiko/note.cpp \
     option_menu_window.cpp \
     score.cpp \
-    taiko_performance_view.cpp \
-    taiko_window.cpp
+    taiko/taiko_performance_view.cpp \
+    taiko/taiko_window.cpp
 
 HEADERS += \
     mainwindow.h \
     music_player_window.h \
-    note.h \
+    taiko/normal_note.h \
+    taiko/note.h \
     option_menu_window.h \
     score.h \
-    taiko_performance_view.h \
-    taiko_window.h
+    taiko/taiko_performance_view.h \
+    taiko/taiko_window.h
 
 FORMS += \
     mainwindow.ui \
     music_player_window.ui \
     option_menu_window.ui \
-    taiko_window.ui
+    taiko/taiko_window.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -1,7 +1,8 @@
 #include "mainwindow.h"
-#include "taiko_window.h"
 
 #include <QApplication>
+
+#include <taiko/taiko_window.h>
 
 int main(int argc, char *argv[])
 {

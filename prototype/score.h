@@ -14,7 +14,7 @@ public:
     void refresh_score() const;
 
 private:
-    int point = 0;
+    unsigned int point = 0;
     QLabel* score_lb;
 };
 
