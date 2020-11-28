@@ -5,6 +5,8 @@
         <file>image/red_note.png</file>
         <file>image/blue_note.png</file>
         <file>image/character.png</file>
+        <file>image/judging_ring.png</file>
+        <file>image/perfect.png</file>
     </qresource>
     <qresource prefix="/sound_effect">
         <file>sound_effect/welcome.wav</file>

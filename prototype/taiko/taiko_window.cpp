@@ -47,14 +47,16 @@ void taiko_window::keyPressEvent(QKeyEvent *event)
         QSound::play(":/sound_effect/sound_effect/rim_sound.wav");  // play intro sound effect
         p_view.update(taiko_performance_view::Update_type::Bad);
     }else if(event->key() == Qt::Key_1){
-        Note* note = new Normal_note(600 , 150 , 100 , 0.5 , Normal_note::note_type::red_note , this);
+        note = new Normal_note(600 , 150 , 100 , 0.5 , Normal_note::note_type::red_note , this);
         note->init(scene);
         note->start_move();
     }
     else if(event->key() == Qt::Key_2){
-        Note* note = new Normal_note(600 , 150 , 100 , 0.5 , Normal_note::note_type::blue_note , this);
+        note = new Normal_note(600 , 150 , 100 , 0.5 , Normal_note::note_type::blue_note , this);
         note->init(scene);
         note->start_move();
+    }else if(event->key() == Qt::Key_X){
+        note->get_hit();  // should create a judger class to emit signal
     }
 }
 

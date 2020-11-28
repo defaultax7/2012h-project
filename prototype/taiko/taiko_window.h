@@ -1,6 +1,7 @@
 #ifndef TAIKO_WINDOW_H
 #define TAIKO_WINDOW_H
 
+#include "note.h"
 #include "score.h"
 #include "taiko_performance_view.h"
 
@@ -34,6 +35,8 @@ private:
     taiko_performance_view p_view;
     QMediaPlayer music_player;
     QTimer* timer;
+
+    Note* note;  // use for testing
 };
 
 #endif // TAIKO_WINDOW_H
