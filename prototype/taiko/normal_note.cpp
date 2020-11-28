@@ -25,10 +25,10 @@ void Normal_note::get_hit(){
     image_item->setPixmap(QPixmap(":/image/image/perfect.png"));
     speed = 0;
 
+    // kill itselft after given amount of time (afterlife_time)
     connect(timer, SIGNAL(timeout()), this, SLOT(self_destruct()));
     timer->start(afterlife_time);
 
-//    delete this;
 }
 
 

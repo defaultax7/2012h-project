@@ -61,16 +61,18 @@ void taiko_window::keyPressEvent(QKeyEvent *event)
 }
 
 void taiko_window::testing(){
-    //    qDebug() << "testing";
+    qDebug() << "testing";
 }
 
 void taiko_window::showEvent(QShowEvent *event)
 {
+    // load the background image
     QImage bg;
     bg.load(":/image/image/taiko_bg.png");
-    //    scene.setBackgroundBrush(bg);
     scene.addPixmap(QPixmap(":/image/image/taiko_bg.png"));
     ui->graphicsView->setScene(&scene);
+
+    // let the image fit the whole graphic view
     ui->graphicsView->fitInView(scene.sceneRect(),Qt::KeepAspectRatio);
 
 }

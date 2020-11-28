@@ -94,6 +94,9 @@
       <pointsize>30</pointsize>
      </font>
     </property>
+    <property name="styleSheet">
+     <string notr="true">QLineEdit { background-color: #e6e6e6 }</string>
+    </property>
     <property name="readOnly">
      <bool>true</bool>
     </property>
@@ -294,6 +297,9 @@
       <family>Arial</family>
       <pointsize>30</pointsize>
      </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLineEdit { background-color: #e6e6e6 }</string>
     </property>
     <property name="readOnly">
      <bool>true</bool>
