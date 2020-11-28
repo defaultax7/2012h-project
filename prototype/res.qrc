@@ -2,6 +2,8 @@
     <qresource prefix="/image">
         <file>image/orz.png</file>
         <file>image/taiko_bg.png</file>
+        <file>image/red_note.png</file>
+        <file>image/blue_note.png</file>
     </qresource>
     <qresource prefix="/sound_effect">
         <file>sound_effect/welcome.wav</file>

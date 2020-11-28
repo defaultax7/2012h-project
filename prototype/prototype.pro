@@ -13,6 +13,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     music_player_window.cpp \
+    note.cpp \
     option_menu_window.cpp \
     score.cpp \
     taiko_performance_view.cpp \
@@ -21,6 +22,7 @@ SOURCES += \
 HEADERS += \
     mainwindow.h \
     music_player_window.h \
+    note.h \
     option_menu_window.h \
     score.h \
     taiko_performance_view.h \

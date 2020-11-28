@@ -8,6 +8,7 @@
 #include <QKeyEvent>
 #include <QGraphicsScene>
 #include <QMediaPlayer>
+#include <QTimer>
 
 namespace Ui {
 class taiko_window;
@@ -23,6 +24,8 @@ public:
 
     void keyPressEvent(QKeyEvent *event);
 
+private slots:
+    void testing();
 private:
     Ui::taiko_window *ui;
     void showEvent(QShowEvent* event);
@@ -30,6 +33,7 @@ private:
     QGraphicsScene scene;
     taiko_performance_view p_view;
     QMediaPlayer music_player;
+    QTimer* timer;
 };
 
 #endif // TAIKO_WINDOW_H
