@@ -25,6 +25,14 @@ private slots:
 
     void on_btn_open_music_clicked();
 
+    void update_song_list(QLinkedList<QString>);
+
+    void on_btn_delete_clicked();
+
+    void on_btn_open_folder_clicked();
+
+    void on_btn_random_song_list_clicked();
+
 private:
     Ui::music_player_window *ui;
     my_player player;

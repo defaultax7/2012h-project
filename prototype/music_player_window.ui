@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>555</width>
-    <height>519</height>
+    <height>525</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,9 +23,17 @@
       <height>321</height>
      </rect>
     </property>
+    <property name="columnCount">
+     <number>2</number>
+    </property>
     <column>
      <property name="text">
-      <string notr="true">1</string>
+      <string notr="true">Path</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Song name</string>
      </property>
     </column>
    </widget>
@@ -341,7 +349,7 @@
    <widget class="QPushButton" name="btn_random_song_list">
     <property name="geometry">
      <rect>
-      <x>410</x>
+      <x>300</x>
       <y>370</y>
       <width>131</width>
       <height>41</height>
@@ -381,7 +389,7 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>90</x>
       <y>340</y>
       <width>61</width>
       <height>16</height>
@@ -400,11 +408,70 @@
    <widget class="QLineEdit" name="search_song">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>160</x>
       <y>340</y>
-      <width>411</width>
+      <width>381</width>
       <height>20</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>380</y>
+      <width>101</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Auto play</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_delete">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>340</y>
+      <width>41</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton { 
+            font-size: 12px;
+            font: bold large &quot;Aerial&quot;;
+            color:rgb(17,17,17);
+            border-width: 1px;
+            border-radius: 6px;
+            border-bottom-color: rgb(150,150,150);
+            border-right-color: rgb(165,165,165);
+            border-left-color: rgb(165,165,165);
+            border-top-color: rgb(180,180,180);
+            border-style: solid;
+            padding: 4px;
+            background-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(220, 220, 220, 255), stop:1 rgba(255, 255, 255, 255));
+        }
+        
+        QPushButton:hover {
+            border-top-color: rgb(76,195,255);
+            border-right-color: qlineargradient(spread:pad, x1:0, y1:1, x2:1, y2:0, stop:0 rgb(76,195,255), stop:1 rgb(76,195,255));
+            border-left-color:  qlineargradient(spread:pad, x1:1, y1:0, x2:0, y2:0, stop:0 rgb(76,195,255), stop:1 rgb(76,195,255));
+            border-bottom-color: rgb(76,195,255);
+            background-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(220, 220, 220, 255), stop:1 rgba(255, 255, 255, 255));
+        }
+        QPushButton:pressed{
+            background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(220, 220, 220, 255), stop:1 rgba(255, 255, 255, 255));
+        }</string>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>

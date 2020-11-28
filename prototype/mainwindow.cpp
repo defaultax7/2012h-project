@@ -1,9 +1,10 @@
 #include "mainwindow.h"
-#include "music_player_window.h"
 #include "option_menu_window.h"
 #include "ui_mainwindow.h"
 
 #include <QSound>
+
+#include <music_player/music_player_window.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
