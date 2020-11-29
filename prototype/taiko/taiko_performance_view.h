@@ -26,13 +26,13 @@ public:
     void update(Update_type);
 
 private:
-    unsigned short note_left = 0;
-    unsigned short perfect = 0;
-    unsigned short miss = 0;
-    unsigned short good = 0;
-    unsigned short combo = 0;
-    unsigned short bad = 0;
-    unsigned short highest_combo = 0;
+    unsigned int note_left = 0;
+    unsigned int perfect = 0;
+    unsigned int miss = 0;
+    unsigned int good = 0;
+    unsigned int combo = 0;
+    unsigned int bad = 0;
+    unsigned int highest_combo = 0;
     QLabel* note_left_lb;
     QLabel* perfect_lb;
     QLabel* good_lb;

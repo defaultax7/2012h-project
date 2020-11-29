@@ -17,7 +17,6 @@ taiko_window::taiko_window(QWidget *parent) :
 
     p_view.set_note_left(100);
 
-
     p_view.set_perfect_label(ui->lb_perfect_count);
     p_view.set_good_label(ui->lb_good_count);
     p_view.set_bad_label(ui->lb_bad_count);
@@ -31,6 +30,9 @@ taiko_window::taiko_window(QWidget *parent) :
     timer = new QTimer();
 
     this->setFixedSize(this->size());  // prevent resizing
+
+    note_generator.init("");
+
 }
 
 taiko_window::~taiko_window()
@@ -67,6 +69,15 @@ void taiko_window::keyPressEvent(QKeyEvent *event)
         note->start_move();
     }else if(event->key() == Qt::Key_X){
         note->get_hit();  // should create a judger class to emit signal
+    }else if(event->key() == Qt::Key_N){
+
+        QList<QGraphicsItem *> temp;
+        temp = perfect_judge->collidingItems();
+        qDebug() << temp.count();
+
+        QList<QGraphicsItem *> temp2;
+        temp2 = bad_judge->collidingItems();
+        qDebug() << temp2.count();
     }
 }
 
@@ -85,6 +96,13 @@ void taiko_window::showEvent(QShowEvent *event)
     // let the image fit the whole graphic view
     ui->graphicsView->fitInView(scene.sceneRect(),Qt::KeepAspectRatio);
 
+    judge = scene.addPixmap(QPixmap(":/image/image/judging_ring.png"));
+    judge->setPos(130,120);
+
+    // should it be fix or changable?
+    perfect_judge = scene.addRect(160,135,70,100 , QPen(QColor(0 , 255 , 0)));
+    good_judge = scene.addRect(145,135,100,100 , QPen(QColor(0 , 0 , 255)));
+    bad_judge = scene.addRect(130,135,130,100 , QPen(QColor(255 , 0 , 0)));
 }
 
 void taiko_window::play_drum_flash(QString image_path, double x, double y)
