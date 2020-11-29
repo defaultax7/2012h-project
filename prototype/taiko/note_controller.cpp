@@ -1,5 +1,5 @@
 #include "normal_note.h"
-#include "note_generator.h"
+#include "note_controller.h"
 
 #include <QFile>
 #include <QTextStream>
@@ -9,17 +9,17 @@
 using std::ws;
 
 
-Note_generator::Note_generator(QObject *parent) : QObject(parent)
+Note_controller::Note_controller(QObject *parent) : QObject(parent)
 {
 
 }
 
-void Note_generator::setScene(QGraphicsScene* scene)
+void Note_controller::setScene(QGraphicsScene* scene)
 {
     this->scene = scene;
 }
 
-void Note_generator::init(QString beatmap_path)
+void Note_controller::init(QString beatmap_path)
 {
     beatmap_path = "F:/testing/1.orz";
 
@@ -54,7 +54,7 @@ void Note_generator::init(QString beatmap_path)
     //    }
 }
 
-void Note_generator::start()
+void Note_controller::start()
 {
     Note* note = new Normal_note(600 , 150 , 130 , 0.5 , Normal_note::note_type::blue_note , this);
     note->init(scene);
@@ -63,7 +63,7 @@ void Note_generator::start()
     connect(note, SIGNAL(die()) , this , SLOT(dequeue()));
 }
 
-void Note_generator::judge(int performance)
+void Note_controller::judge(int performance)
 {
     if(!note_queue.isEmpty()){
         Note* note = note_queue.dequeue();
@@ -71,7 +71,7 @@ void Note_generator::judge(int performance)
     }
 }
 
-void Note_generator::dequeue()
+void Note_controller::dequeue()
 {
     if(!note_queue.isEmpty()){
         Note* note = note_queue.dequeue();

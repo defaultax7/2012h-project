@@ -31,9 +31,9 @@ taiko_window::taiko_window(QWidget *parent) :
 
     this->setFixedSize(this->size());  // prevent resizing
 
-    note_generator.init("");
+    note_controller.init("");
 
-    note_generator.setScene(&scene);
+    note_controller.setScene(&scene);
 
 }
 
@@ -64,7 +64,7 @@ void taiko_window::keyPressEvent(QKeyEvent *event)
         //        note = new Normal_note(600 , 150 , 100 , 0.5 , Normal_note::note_type::red_note , this);
         //        note->init(scene);
         //        note->start_move();
-        note_generator.start();
+        note_controller.start();
     }
     else if(event->key() == Qt::Key_2){
         //        note = new Normal_note(600 , 150 , 100 , 0.5 , Normal_note::note_type::blue_note , this);
@@ -79,18 +79,18 @@ void taiko_window::keyPressEvent(QKeyEvent *event)
         if(temp.count() > 4){
             // bad design :(
             if(temp.at(0)->sceneBoundingRect().width() < 60){
-                note_generator.judge(0);
+                note_controller.judge(0);
                 return;
             }
         }
         qDebug() << temp.count();
 
         QList<QGraphicsItem *> temp2;
-        temp2 = bad_judge->collidingItems();
+        temp2 = good_judge->collidingItems();
         if(temp2.count() > 4){
             // bad design :(
             if(temp2.at(0)->sceneBoundingRect().width() < 60){
-                note_generator.judge(0);
+                note_controller.judge(0);
                 return;
             }
         }

@@ -2,7 +2,7 @@
 #define TAIKO_WINDOW_H
 
 #include "note.h"
-#include "note_generator.h"
+#include "note_controller.h"
 #include "score.h"
 #include "taiko_performance_view.h"
 
@@ -41,7 +41,7 @@ private:
     void play_drum_flash(QString image_path, double x , double y);
 
     Note* note;  // use for testing
-    Note_generator note_generator;
+    Note_controller note_controller;
 
     QGraphicsPixmapItem* judge;
     QGraphicsRectItem* perfect_judge;

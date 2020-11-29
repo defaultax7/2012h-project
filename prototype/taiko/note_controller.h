@@ -1,5 +1,5 @@
-#ifndef NOTE_GENERATOR_H
-#define NOTE_GENERATOR_H
+#ifndef NOTE_CONTROLLER_H
+#define NOTE_CONTROLLER_H
 
 #include "note.h"
 
@@ -8,11 +8,11 @@
 #include <QQueue>
 
 
-class Note_generator : public QObject
+class Note_controller : public QObject
 {
     Q_OBJECT
 public:
-    Note_generator(QObject *parent = nullptr);
+    Note_controller(QObject *parent = nullptr);
     void setScene(QGraphicsScene*);
     void init(QString beatmap_path);
     void start();
