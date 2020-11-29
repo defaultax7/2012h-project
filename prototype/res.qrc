@@ -8,6 +8,10 @@
         <file>image/judging_ring.png</file>
         <file>image/perfect.png</file>
         <file>image/good.png</file>
+        <file>image/drum_l.png</file>
+        <file>image/drum_r.png</file>
+        <file>image/rim_l.png</file>
+        <file>image/rim_r.png</file>
     </qresource>
     <qresource prefix="/sound_effect">
         <file>sound_effect/welcome.wav</file>

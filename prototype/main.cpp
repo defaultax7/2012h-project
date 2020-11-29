@@ -11,8 +11,8 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 //    MainWindow w;
-//    taiko_window w;
-    music_player_window w;
+    taiko_window w;
+//    music_player_window w;
     w.show();
     return a.exec();
 }

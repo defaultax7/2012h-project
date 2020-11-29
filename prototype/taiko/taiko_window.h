@@ -35,6 +35,9 @@ private:
     taiko_performance_view p_view;
     QMediaPlayer music_player;
     QTimer* timer;
+    unsigned const int drum_flash_time = 80;  // unit ms
+
+    void play_drum_flash(QString image_path, double x , double y);
 
     Note* note;  // use for testing
 };

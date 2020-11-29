@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QPixmap>
 #include <QGraphicsPixmapItem>
+#include <QTime>
 
 taiko_window::taiko_window(QWidget *parent) :
     QMainWindow(parent),
@@ -43,10 +44,19 @@ void taiko_window::keyPressEvent(QKeyEvent *event)
     if(event->key() == Qt::Key_J){
         QSound::play(":/sound_effect/sound_effect/drum_sound.wav");  // play intro sound effect
         p_view.update(taiko_performance_view::Update_type::Good);
+
+        play_drum_flash(":/image/image/drum_r.png" , 30 , 145);
     }else if(event->key() == Qt::Key_F){
         QSound::play(":/sound_effect/sound_effect/rim_sound.wav");  // play intro sound effect
         p_view.update(taiko_performance_view::Update_type::Bad);
-    }else if(event->key() == Qt::Key_1){
+
+        play_drum_flash(":/image/image/drum_f.png" , 70 , 145);
+    }else if(event->key() == Qt::Key_D){
+        play_drum_flash(":/image/image/rim_l.png" , 17 , 131);
+    }else if(event->key() == Qt::Key_K){
+        play_drum_flash(":/image/image/rim_r.png" , 70 , 131);
+    }
+    else if(event->key() == Qt::Key_1){
         note = new Normal_note(600 , 150 , 100 , 0.5 , Normal_note::note_type::red_note , this);
         note->init(scene);
         note->start_move();
@@ -75,4 +85,16 @@ void taiko_window::showEvent(QShowEvent *event)
     // let the image fit the whole graphic view
     ui->graphicsView->fitInView(scene.sceneRect(),Qt::KeepAspectRatio);
 
+}
+
+void taiko_window::play_drum_flash(QString image_path, double x, double y)
+{
+    QGraphicsPixmapItem* drum_flash = scene.addPixmap(image_path);
+    drum_flash->setPos(x,y);
+    QTime t;
+    t.start();
+    while (t.elapsed() < drum_flash_time) {
+        QCoreApplication::processEvents();
+    }
+    scene.removeItem(drum_flash);
 }
