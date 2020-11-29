@@ -6,11 +6,11 @@ Normal_note::Normal_note(double x, double y, double endpoint, double speed, note
 {
 }
 
-void Normal_note::init(QGraphicsScene& scene){
+void Normal_note::init(QGraphicsScene* scene){
     if(type == note_type::red_note){
-        image_item = scene.addPixmap(QPixmap(":/image/image/red_note.png"));
+        image_item = scene->addPixmap(QPixmap(":/image/image/red_note.png"));
     }else{
-        image_item = scene.addPixmap(QPixmap(":/image/image/blue_note.png"));
+        image_item = scene->addPixmap(QPixmap(":/image/image/blue_note.png"));
     }
     image_item->setPos(x,y);
 }

@@ -12,7 +12,7 @@ public:
     ~Note();
     virtual void get_hit() = 0;
     void start_move();
-    virtual void init(QGraphicsScene&) = 0;
+    virtual void init(QGraphicsScene*) = 0;
 
 protected:
     QGraphicsPixmapItem* image_item;
@@ -21,6 +21,9 @@ protected:
     double speed = 1;  // should scroll to left only
     QTimer* timer;
     const unsigned int afterlife_time = 200;  // unit ms
+
+signals:
+    void die();
 
 private:
     const unsigned int refresh_rate = 1;  // the unit is ms & is not unexpected to be changed

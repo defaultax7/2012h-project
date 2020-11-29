@@ -1,3 +1,4 @@
+#include "normal_note.h"
 #include "note_generator.h"
 
 #include <QFile>
@@ -39,21 +40,42 @@ void Note_generator::init(QString beatmap_path)
         qDebug() << temp.c_str(); // speed
     }
 
-//    QFile inputFile(beatmap_path);
+    //    QFile inputFile(beatmap_path);
 
-//    if (inputFile.open(QIODevice::ReadOnly))
-//    {
-//        QTextStream in(&inputFile);
-//        while (!in.atEnd())
-//        {
-//            QString line = in.readLine();
-//            qDebug() << line;
-//        }
-//        inputFile.close();
-//    }
+    //    if (inputFile.open(QIODevice::ReadOnly))
+    //    {
+    //        QTextStream in(&inputFile);
+    //        while (!in.atEnd())
+    //        {
+    //            QString line = in.readLine();
+    //            qDebug() << line;
+    //        }
+    //        inputFile.close();
+    //    }
 }
 
 void Note_generator::start()
 {
-
+    Note* note = new Normal_note(600 , 150 , 130 , 0.5 , Normal_note::note_type::blue_note , this);
+    note->init(scene);
+    note->start_move();
+    note_queue.enqueue(note);
+    connect(note, SIGNAL(die()) , this , SLOT(dequeue()));
 }
+
+void Note_generator::judge(int performance)
+{
+    if(!note_queue.isEmpty()){
+        Note* note = note_queue.dequeue();
+        note->get_hit();
+    }
+}
+
+void Note_generator::dequeue()
+{
+    if(!note_queue.isEmpty()){
+        Note* note = note_queue.dequeue();
+    }
+}
+
+

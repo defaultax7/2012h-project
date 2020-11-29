@@ -23,6 +23,7 @@ void Note::move()
 {
     image_item->setPos(image_item->pos().x() - speed , image_item->pos().y());
     if(image_item->pos().x() < endpoint ){
+        emit die();
         delete this;
     }
 }

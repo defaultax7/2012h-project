@@ -10,7 +10,7 @@ public:
     enum note_type { red_note , blue_note };
     Normal_note(double x, double y, double endpoint, double speed, note_type type, QObject* parent);
     void get_hit();
-    void init(QGraphicsScene&);
+    void init(QGraphicsScene*);
 private:
     note_type type;
 private slots:
