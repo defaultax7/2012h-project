@@ -33,6 +33,9 @@ private:
     unsigned int combo = 0;
     unsigned int bad = 0;
     unsigned int highest_combo = 0;
+    unsigned int base_score_per_note = 100;
+    unsigned int max_score_per_note = 200;
+    unsigned int combo_extra_score = 10; // extra score for note for every 10 combo
     QLabel* note_left_lb;
     QLabel* perfect_lb;
     QLabel* good_lb;

@@ -35,6 +35,10 @@ taiko_window::taiko_window(QWidget *parent) :
 
     note_controller.setScene(&scene);
 
+    connect(timer , SIGNAL(timeout()) , &note_controller , SLOT(start()));
+
+    drum_sound_player.setSource(QUrl::fromLocalFile(":/sound_effect/sound_effect/drum_sound.wav"));
+    rim_sound_player.setSource(QUrl::fromLocalFile(":/sound_effect/sound_effect/rim_sound.wav"));
 }
 
 taiko_window::~taiko_window()
@@ -45,56 +49,38 @@ taiko_window::~taiko_window()
 void taiko_window::keyPressEvent(QKeyEvent *event)
 {
     // should be a set of key, but use j and f for now
+    // bad design :(
     if(event->key() == Qt::Key_J){
-        QSound::play(":/sound_effect/sound_effect/drum_sound.wav");  // play intro sound effect
+
+        judge_note(hit_type::drum);
+        drum_sound_player.play();
+        play_drum_flash(":/image/image/drum_r.png" , 70 , 145);
+
         p_view.update(taiko_performance_view::Update_type::Good);
 
-        play_drum_flash(":/image/image/drum_r.png" , 70 , 145);
     }else if(event->key() == Qt::Key_F){
-        QSound::play(":/sound_effect/sound_effect/rim_sound.wav");  // play intro sound effect
+
+        judge_note(hit_type::drum);
+        drum_sound_player.play();
+        play_drum_flash(":/image/image/drum_l.png" , 30 , 145);
+
         p_view.update(taiko_performance_view::Update_type::Bad);
 
-        play_drum_flash(":/image/image/drum_l.png" , 30 , 145);
     }else if(event->key() == Qt::Key_D){
+
+        judge_note(hit_type::rim);
+        rim_sound_player.play();
         play_drum_flash(":/image/image/rim_l.png" , 17 , 131);
+
     }else if(event->key() == Qt::Key_K){
+
+        judge_note(hit_type::rim);
+        rim_sound_player.play();
         play_drum_flash(":/image/image/rim_r.png" , 70 , 131);
+
     }
     else if(event->key() == Qt::Key_1){
-        //        note = new Normal_note(600 , 150 , 100 , 0.5 , Normal_note::note_type::red_note , this);
-        //        note->init(scene);
-        //        note->start_move();
         note_controller.start();
-    }
-    else if(event->key() == Qt::Key_2){
-        //        note = new Normal_note(600 , 150 , 100 , 0.5 , Normal_note::note_type::blue_note , this);
-        //        note->init(scene);
-        //        note->start_move();
-    }else if(event->key() == Qt::Key_X){
-        note->get_hit();  // should create a judger class to emit signal
-    }else if(event->key() == Qt::Key_N){
-
-        QList<QGraphicsItem *> temp;
-        temp = perfect_judge->collidingItems();
-        if(temp.count() > 4){
-            // bad design :(
-            if(temp.at(0)->sceneBoundingRect().width() < 60){
-                note_controller.judge(0);
-                return;
-            }
-        }
-        qDebug() << temp.count();
-
-        QList<QGraphicsItem *> temp2;
-        temp2 = good_judge->collidingItems();
-        if(temp2.count() > 4){
-            // bad design :(
-            if(temp2.at(0)->sceneBoundingRect().width() < 60){
-                note_controller.judge(0);
-                return;
-            }
-        }
-        qDebug() << temp2.count();
     }
 }
 
@@ -119,10 +105,10 @@ void taiko_window::showEvent(QShowEvent *event)
     int y = 135;
     int x = 190;
     int height = 100;  // does not matter how high it is
-    int width_base = 10;
+    int width_base = 1;
     perfect_judge = scene.addRect(x,y,width_base,height , QPen(QColor(0 , 255 , 0)));
-    good_judge = scene.addRect(x - width_base*2/2,y,width_base*3,height , QPen(QColor(0 , 0 , 255)));
-    bad_judge = scene.addRect(x - width_base*2/2,y,width_base*4,height , QPen(QColor(255 , 0 , 0)));
+    good_judge = scene.addRect(x - width_base*25/2,y,width_base*50,height , QPen(QColor(0 , 0 , 255)));
+    //    bad_judge = scene.addRect(x - width_base*5/2,y,width_base*10,height , QPen(QColor(255 , 0 , 0)));
 }
 
 void taiko_window::play_drum_flash(QString image_path, double x, double y)
@@ -136,3 +122,25 @@ void taiko_window::play_drum_flash(QString image_path, double x, double y)
     }
     scene.removeItem(drum_flash);
 }
+
+void taiko_window::judge_note(taiko_window::hit_type type)
+{
+    QList<QGraphicsItem *> temp;
+    temp = perfect_judge->collidingItems();
+    if(temp.count() > 3){
+        if(temp.at(0)->sceneBoundingRect().width() < 60){
+            note_controller.judge(type,0);
+            return;
+        }
+    }
+
+    QList<QGraphicsItem *> temp2;
+    temp2 = good_judge->collidingItems();
+    if(temp2.count() > 3){
+        if(temp2.at(0)->sceneBoundingRect().width() < 60){
+            note_controller.judge(type,1);
+        }
+    }
+}
+
+

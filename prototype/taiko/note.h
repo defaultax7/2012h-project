@@ -10,7 +10,7 @@ class Note : public QObject
 public:
     Note(double x, double y, double endpoint, double speed , QObject* parent= nullptr);
     ~Note();
-    virtual void get_hit() = 0;
+    virtual void get_hit(int performance) = 0;
     void start_move();
     virtual void init(QGraphicsScene*) = 0;
 

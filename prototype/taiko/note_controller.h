@@ -16,7 +16,7 @@ public:
     void setScene(QGraphicsScene*);
     void init(QString beatmap_path);
     void start();
-    void judge(int performance);
+    void judge(int drum_or_rim, int performance);
 
 private slots:
     void dequeue();

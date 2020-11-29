@@ -15,14 +15,23 @@ void Normal_note::init(QGraphicsScene* scene){
     image_item->setPos(x,y);
 }
 
+Normal_note::note_type Normal_note::get_note_type() const
+{
+    return type;
+}
+
 void Normal_note::self_destruct()
 {
     delete this;
 }
 
 
-void Normal_note::get_hit(){
-    image_item->setPixmap(QPixmap(":/image/image/perfect.png"));
+void Normal_note::get_hit(int performance){
+    if(performance == 0){
+        image_item->setPixmap(QPixmap(":/image/image/perfect.png"));
+    }else if(performance == 1){
+        image_item->setPixmap(QPixmap(":/image/image/good.png"));
+    }
     speed = 0;
 
     // kill itselft after given amount of time (afterlife_time)

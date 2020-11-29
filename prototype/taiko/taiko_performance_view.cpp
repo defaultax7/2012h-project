@@ -59,8 +59,11 @@ void taiko_performance_view::update(taiko_performance_view::Update_type type)
         }else if(type == Update_type::Good){
             ++good;
         }
+        // calculate the score to be add
+        int add_score = base_score_per_note + combo / 10;
+        // select the smaller one between add_score and max_score
+        score.add_score((add_score > max_score_per_note) ? max_score_per_note : add_score);
         ++combo;
-        score.add_score(100);
         if(combo > highest_combo){
             highest_combo = combo;
         }

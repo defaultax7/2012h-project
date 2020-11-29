@@ -11,6 +11,7 @@
 #include <QGraphicsScene>
 #include <QMediaPlayer>
 #include <QTimer>
+#include <QSoundEffect>
 
 namespace Ui {
 class taiko_window;
@@ -29,6 +30,8 @@ public:
 private slots:
     void testing();
 private:
+    enum hit_type { drum , rim };
+
     Ui::taiko_window *ui;
     void showEvent(QShowEvent* event);
 
@@ -39,14 +42,16 @@ private:
     unsigned const int drum_flash_time = 80;  // unit ms
 
     void play_drum_flash(QString image_path, double x , double y);
+    void judge_note(hit_type);
 
-    Note* note;  // use for testing
     Note_controller note_controller;
 
     QGraphicsPixmapItem* judge;
     QGraphicsRectItem* perfect_judge;
     QGraphicsRectItem* good_judge;
     QGraphicsRectItem* bad_judge;
+    QSoundEffect drum_sound_player;
+    QSoundEffect rim_sound_player;
 };
 
 #endif // TAIKO_WINDOW_H

@@ -1,6 +1,7 @@
 #include "normal_note.h"
 #include "note_controller.h"
 
+#include <QRandomGenerator>
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
@@ -56,25 +57,42 @@ void Note_controller::init(QString beatmap_path)
 
 void Note_controller::start()
 {
-    Note* note = new Normal_note(600 , 150 , 130 , 0.5 , Normal_note::note_type::blue_note , this);
-    note->init(scene);
-    note->start_move();
-    note_queue.enqueue(note);
-    connect(note, SIGNAL(die()) , this , SLOT(dequeue()));
+    for(int i = 0 ; i < 10 ; ++i){
+        int value = QRandomGenerator::global()->generate()%2;
+        //        Note* note = new Normal_note(650 + i * 100, 150 , 130 , 0.5 , Normal_note::note_type::blue_note , this);
+        Note* note;
+        if(value == 0){
+            note = new Normal_note(650 + i * 50, 150 , 130 , 0.5 , Normal_note::note_type::red_note , this);
+        }else{
+            note = new Normal_note(650 + i * 50, 150 , 130 , 0.5 , Normal_note::note_type::blue_note , this);
+        }
+        note->init(scene);
+        note->start_move();
+        note_queue.enqueue(note);
+        connect(note, SIGNAL(die()) , this , SLOT(dequeue()));
+    }
 }
 
-void Note_controller::judge(int performance)
+void Note_controller::judge(int drum_or_rim, int performance)
 {
     if(!note_queue.isEmpty()){
-        Note* note = note_queue.dequeue();
-        note->get_hit();
+        Note* note = note_queue.head();
+        Normal_note* normal_note = (Normal_note*) note;
+
+        // if it is a normal note
+        if(normal_note != nullptr){
+            if(normal_note->get_note_type() == drum_or_rim){
+                Note* note = note_queue.dequeue();
+                note->get_hit(performance);
+            }
+        }
     }
 }
 
 void Note_controller::dequeue()
 {
     if(!note_queue.isEmpty()){
-        Note* note = note_queue.dequeue();
+        note_queue.dequeue();
     }
 }
 
