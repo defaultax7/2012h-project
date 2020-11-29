@@ -18,6 +18,7 @@ SOURCES += \
     taiko/note.cpp \
     option_menu_window.cpp \
     score.cpp \
+    taiko/note_generator.cpp \
     taiko/taiko_performance_view.cpp \
     taiko/taiko_window.cpp
 
@@ -29,6 +30,7 @@ HEADERS += \
     taiko/note.h \
     option_menu_window.h \
     score.h \
+    taiko/note_generator.h \
     taiko/taiko_performance_view.h \
     taiko/taiko_window.h
 

@@ -47,6 +47,48 @@ void my_player::remove_all()
     emit song_list_changed(song_list);
 }
 
+void my_player::play_song(QString song_path)
+{
+    // set current song
+    for(current_song = song_list.begin() ; current_song != song_list.end() ; ++current_song ){
+        if(*current_song == song_path){
+            player->setMedia(QUrl(*current_song));
+            player->play();
+            break;
+        }
+    }
+}
+
+void my_player::stop()
+{
+    player->stop();
+}
+
+void my_player::change_volume(int volume)
+{
+    player->setVolume(volume);
+}
+
+void my_player::next()
+{
+    if(current_song != song_list.end()){
+        ++current_song;
+    }
+    if(current_song != song_list.end()){
+        player->setMedia(QUrl(*current_song));
+        player->play();
+    }
+}
+
+void my_player::prev()
+{
+    if(current_song != song_list.begin()){
+        --current_song;
+        player->setMedia(QUrl(*current_song));
+        player->play();
+    }
+}
+
 
 
 

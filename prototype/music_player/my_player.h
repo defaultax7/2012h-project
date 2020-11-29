@@ -15,6 +15,11 @@ public:
     void remove_song(QString);
     void shuffle_song_list();
     void remove_all();
+    void play_song(QString song_name);
+    void stop();
+    void change_volume(int volume);
+    void next();
+    void prev();
 
 signals:
     void song_list_changed(QLinkedList<QString>);
