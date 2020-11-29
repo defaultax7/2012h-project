@@ -5,6 +5,7 @@
 
 #include <QMainWindow>
 #include <QMediaPlayer>
+#include <QTreeWidget>
 
 namespace Ui {
 class music_player_window;
@@ -34,6 +35,18 @@ private slots:
     void on_btn_random_song_list_clicked();
 
     void on_btn_delete_all_clicked();
+
+    void on_btn_start_clicked();
+
+    void on_btn_stop_clicked();
+
+    void on_horizontalSlider_valueChanged(int value);
+
+    void on_btn_next_clicked();
+
+    void on_btn_previous_clicked();
+
+    void on_treeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column);
 
 private:
     Ui::music_player_window *ui;

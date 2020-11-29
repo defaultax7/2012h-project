@@ -111,7 +111,9 @@ void music_player_window::update_song_list(QLinkedList<QString> song_list)
 void music_player_window::on_btn_delete_clicked()
 {
     QModelIndexList list = ui->treeWidget->selectionModel()->selectedIndexes();
-    player.remove_song(list.at(0).data().toString());
+    if(!list.isEmpty()){
+        player.remove_song(list.at(0).data().toString());
+    }
 }
 
 void music_player_window::on_btn_open_folder_clicked()
@@ -147,12 +149,48 @@ void music_player_window::on_btn_random_song_list_clicked()
 void music_player_window::on_btn_delete_all_clicked()
 {
     QMessageBox mesBox;
-    mesBox.setText("Ask for confirmation.");
-    mesBox.setInformativeText("Do you really want to remove all songs?");
+    mesBox.setWindowTitle("Ask for confirmation.");
+    mesBox.setText("Do you really want to remove all songs?");
     mesBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     mesBox.setDefaultButton(QMessageBox::No);
     int answer = mesBox.exec();
     if(answer == QMessageBox::Yes){
         player.remove_all();
+    }
+}
+
+void music_player_window::on_btn_start_clicked()
+{
+//    QModelIndexList list = ui->treeWidget->selectionModel()->selectedIndexes();
+//    if(!list.isEmpty()){
+//        player.play_song(list.at(0).data().toString());
+//    }
+}
+
+void music_player_window::on_btn_stop_clicked()
+{
+    player.stop();
+}
+
+void music_player_window::on_horizontalSlider_valueChanged(int value)
+{
+    player.change_volume(value);
+}
+
+void music_player_window::on_btn_next_clicked()
+{
+    player.next();
+}
+
+void music_player_window::on_btn_previous_clicked()
+{
+    player.prev();
+}
+
+void music_player_window::on_treeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column)
+{
+    QModelIndexList list = ui->treeWidget->selectionModel()->selectedIndexes();
+    if(!list.isEmpty()){
+        player.play_song(list.at(0).data().toString());
     }
 }
