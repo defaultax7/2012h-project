@@ -33,6 +33,12 @@ void my_player::remove_song(QString song)
 {
     for(QLinkedList<QString>::iterator it = song_list.begin() ; it != song_list.end() ; ++it){
         if(*it == song){
+            // if the song to be removed is being played
+            if(*current_song == song){
+                pointing_to_song = false;
+                player->stop();
+                emit song_update("");
+            }
             song_list.erase(it);
             break;
         }
@@ -48,6 +54,9 @@ void my_player::shuffle_song_list()
 void my_player::remove_all()
 {
     song_list.clear();
+    pointing_to_song = false;
+    player->stop();
+    emit song_update("");
     emit song_list_changed(song_list);
 }
 
@@ -59,6 +68,7 @@ void my_player::play_song(QString song_path)
             player->setMedia(QUrl(*current_song));
             player->play();
             emit song_update(song_path);
+            pointing_to_song = true;
             break;
         }
     }
@@ -76,25 +86,29 @@ void my_player::change_volume(int volume)
 
 void my_player::next()
 {
-    // it is not circular, no next for the last one
-    if(current_song != song_list.end()){
-        ++current_song;
-    }
-    if(current_song != song_list.end()){
-        player->setMedia(QUrl(*current_song));
-        player->play();
-        emit song_update(*current_song);
+    if(pointing_to_song){
+        // it is not circular, no next for the last one
+        if(current_song != song_list.end()){
+            ++current_song;
+        }
+        if(current_song != song_list.end()){
+            player->setMedia(QUrl(*current_song));
+            player->play();
+            emit song_update(*current_song);
+        }
     }
 }
 
 void my_player::prev()
 {
-    // it is not circular, no go back from first one
-    if(current_song != song_list.begin()){
-        --current_song;
-        player->setMedia(QUrl(*current_song));
-        player->play();
-        emit song_update(*current_song);
+    if(pointing_to_song){
+        // it is not circular, no go back from first one
+        if(current_song != song_list.begin()){
+            --current_song;
+            player->setMedia(QUrl(*current_song));
+            player->play();
+            emit song_update(*current_song);
+        }
     }
 }
 

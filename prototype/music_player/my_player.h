@@ -34,6 +34,7 @@ private slots:
     void current_time_change(qint64);
 
 private:
+    bool pointing_to_song = false;
     QLinkedList<QString>::iterator current_song;
     QMediaPlayer* player;
     QLinkedList<QString> song_list;
