@@ -23,6 +23,13 @@ public:
 
 signals:
     void song_list_changed(QLinkedList<QString>);
+    void duration_update(qint64);
+    void current_time_update(qint64);
+    void song_update(QString);
+
+private slots:
+    void duration_change(qint64);
+    void current_time_change(qint64);
 
 private:
     QLinkedList<QString>::iterator current_song;

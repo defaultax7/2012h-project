@@ -536,7 +536,7 @@
      <string>Current song</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="txt_current_song">
     <property name="geometry">
      <rect>
       <x>120</x>

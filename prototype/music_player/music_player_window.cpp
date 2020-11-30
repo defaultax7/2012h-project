@@ -28,6 +28,10 @@ music_player_window::music_player_window(QWidget *parent) :
 
     // connect my player to tree list
     connect(&player , SIGNAL(song_list_changed(QLinkedList<QString>)) , this , SLOT(update_song_list(QLinkedList<QString>)));
+    connect(&player , SIGNAL(current_time_update(qint64)) , this , SLOT(update_current_time(qint64)));
+    connect(&player , SIGNAL(duration_update(qint64)) , this , SLOT(update_duration(qint64)));
+    connect(&player , SIGNAL(song_update(QString)) , this , SLOT(update_current_song(QString)));
+
 
     this->setFixedSize(this->size());
 }
@@ -161,10 +165,10 @@ void music_player_window::on_btn_delete_all_clicked()
 
 void music_player_window::on_btn_start_clicked()
 {
-//    QModelIndexList list = ui->treeWidget->selectionModel()->selectedIndexes();
-//    if(!list.isEmpty()){
-//        player.play_song(list.at(0).data().toString());
-//    }
+    //    QModelIndexList list = ui->treeWidget->selectionModel()->selectedIndexes();
+    //    if(!list.isEmpty()){
+    //        player.play_song(list.at(0).data().toString());
+    //    }
 }
 
 void music_player_window::on_btn_stop_clicked()
@@ -193,4 +197,24 @@ void music_player_window::on_treeWidget_itemDoubleClicked(QTreeWidgetItem *item,
     if(!list.isEmpty()){
         player.play_song(list.at(0).data().toString());
     }
+}
+
+void music_player_window::update_duration(qint64 new_duration)
+{
+    ui->prograss_bar->setMaximum(new_duration);
+}
+
+void music_player_window::update_current_time(qint64 current_time)
+{
+    // if user is holding on the progress bar, dont update the current time
+    if(!(ui->prograss_bar->isSliderDown())){
+        ui->prograss_bar->setValue(current_time);
+    }
+}
+
+void music_player_window::update_current_song(QString current_song)
+{
+    QFileInfo fileInfo(current_song);
+    QString song_name(fileInfo.fileName());
+    ui->txt_current_song->setText(song_name);
 }

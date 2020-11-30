@@ -48,6 +48,12 @@ private slots:
 
     void on_treeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column);
 
+    void update_duration(qint64);
+
+    void update_current_time(qint64);
+
+    void update_current_song(QString);
+
 private:
     Ui::music_player_window *ui;
     my_player player;
