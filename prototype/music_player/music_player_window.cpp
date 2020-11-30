@@ -31,6 +31,7 @@ music_player_window::music_player_window(QWidget *parent) :
     connect(&player , SIGNAL(current_time_update(qint64)) , this , SLOT(update_current_time(qint64)));
     connect(&player , SIGNAL(duration_update(qint64)) , this , SLOT(update_duration(qint64)));
     connect(&player , SIGNAL(song_update(QString)) , this , SLOT(update_current_song(QString)));
+    connect(&player , SIGNAL(update_start_button(QMediaPlayer::State)) , this , SLOT(start_button_update(QMediaPlayer::State)));
 
 
     this->setFixedSize(this->size());
@@ -183,10 +184,11 @@ void music_player_window::on_btn_delete_all_clicked()
 
 void music_player_window::on_btn_start_clicked()
 {
-    //    QModelIndexList list = ui->treeWidget->selectionModel()->selectedIndexes();
-    //    if(!list.isEmpty()){
-    //        player.play_song(list.at(0).data().toString());
-    //    }
+    if(player.get_state() == QMediaPlayer::State::PausedState || player.get_state() == QMediaPlayer::State::StoppedState){
+        player.play();
+    }else if(player.get_state() == QMediaPlayer::State::PlayingState){
+        player.pause();
+    }
 }
 
 void music_player_window::on_btn_stop_clicked()
@@ -240,4 +242,13 @@ void music_player_window::update_current_song(QString current_song)
 void music_player_window::on_prograss_bar_sliderReleased()
 {
     player.jump_to(ui->prograss_bar->value());
+}
+
+void music_player_window::start_button_update(QMediaPlayer::State state)
+{
+    if(state == QMediaPlayer::State::StoppedState || state == QMediaPlayer::State::PausedState){
+        ui->btn_start->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    }else if(state == QMediaPlayer::State::PlayingState){
+        ui->btn_start->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+    }
 }

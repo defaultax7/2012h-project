@@ -22,16 +22,21 @@ public:
     void prev();
     QLinkedList<QString> get_filtered_song_list(const QString&);
     void jump_to(qint64);
+    QMediaPlayer::State get_state() const;
+    void pause();
+    void play();
 
 signals:
     void song_list_changed(QLinkedList<QString>);
     void duration_update(qint64);
     void current_time_update(qint64);
     void song_update(QString);
+    void update_start_button(QMediaPlayer::State);
 
 private slots:
     void duration_change(qint64);
     void current_time_change(qint64);
+    void player_state_change(QMediaPlayer::State);
 
 private:
     bool pointing_to_song = false;

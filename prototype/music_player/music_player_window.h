@@ -56,6 +56,8 @@ private slots:
 
     void on_prograss_bar_sliderReleased();
 
+    void start_button_update(QMediaPlayer::State);
+
 private:
     Ui::music_player_window *ui;
     my_player player;

@@ -7,6 +7,7 @@ my_player::my_player()
     player = new QMediaPlayer();
     connect(player, SIGNAL(durationChanged(qint64)), this, SLOT(duration_change(qint64)));
     connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(current_time_change(qint64)));
+    connect(player, SIGNAL(stateChanged(QMediaPlayer::State)), this, SLOT(player_state_change(QMediaPlayer::State)));
 }
 
 void my_player::setMuted(bool is_mute)
@@ -144,6 +145,21 @@ void my_player::jump_to(qint64 new_pos)
     player->setPosition(new_pos);
 }
 
+QMediaPlayer::State my_player::get_state() const
+{
+    return player->state();
+}
+
+void my_player::pause()
+{
+    player->pause();
+}
+
+void my_player::play()
+{
+    player->play();
+}
+
 void my_player::duration_change(qint64 new_duration)
 {
     emit duration_update(new_duration);
@@ -152,6 +168,11 @@ void my_player::duration_change(qint64 new_duration)
 void my_player::current_time_change(qint64 current_time)
 {
     emit current_time_update(current_time);
+}
+
+void my_player::player_state_change(QMediaPlayer::State state)
+{
+    emit update_start_button(state);
 }
 
 void my_player::reset_current_song()
