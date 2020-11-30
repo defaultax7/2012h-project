@@ -38,6 +38,8 @@ private:
     QLinkedList<QString>::iterator current_song;
     QMediaPlayer* player;
     QLinkedList<QString> song_list;
+
+    void reset_current_song();
 };
 
 #endif // MY_PLAYER_H

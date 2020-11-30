@@ -35,9 +35,7 @@ void my_player::remove_song(QString song)
         if(*it == song){
             // if the song to be removed is being played
             if(*current_song == song){
-                pointing_to_song = false;
-                player->stop();
-                emit song_update("");
+                reset_current_song();
             }
             song_list.erase(it);
             break;
@@ -48,15 +46,26 @@ void my_player::remove_song(QString song)
 
 void my_player::shuffle_song_list()
 {
+    // create new seed base on current time
+    srand (time(NULL));
 
+    QList<QString> temp;
+    for(QLinkedList<QString>::iterator it = song_list.begin() ; it != song_list.end() ; ++it){
+        temp.append(*it);
+    }
+    song_list.clear();
+    int size = temp.count();
+    for(int i = 0; i < size ; ++i){
+        song_list.append(temp.takeAt(rand() % temp.count()));
+    }
+    reset_current_song();
+    emit song_list_changed(song_list);
 }
 
 void my_player::remove_all()
 {
     song_list.clear();
-    pointing_to_song = false;
-    player->stop();
-    emit song_update("");
+    reset_current_song();
     emit song_list_changed(song_list);
 }
 
@@ -144,6 +153,15 @@ void my_player::current_time_change(qint64 current_time)
 {
     emit current_time_update(current_time);
 }
+
+void my_player::reset_current_song()
+{
+    pointing_to_song = false;
+    player->stop();
+    emit song_update("");
+}
+
+
 
 
 
