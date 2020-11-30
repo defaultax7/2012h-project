@@ -1,5 +1,7 @@
 #include "my_player.h"
 
+#include <QFileInfo>
+
 my_player::my_player()
 {
     player = new QMediaPlayer();
@@ -94,6 +96,24 @@ void my_player::prev()
         player->play();
         emit song_update(*current_song);
     }
+}
+
+QLinkedList<QString> my_player::get_filtered_song_list(const QString& filter_string)
+{
+    QLinkedList<QString> filtered_list;
+    // load the latest song list to the view
+    for (QLinkedList<QString>::iterator it = song_list.begin(); it != song_list.end(); ++it) {
+        // extract song name from abs path
+        QFileInfo fileInfo(*it);
+        QString song_name(fileInfo.fileName());
+        QStringList temp;
+
+        if ((*it).toStdString().find(filter_string.toStdString()) != std::string::npos) {
+            filtered_list.append(*it);
+        }
+    }
+
+    return filtered_list;
 }
 
 void my_player::duration_change(qint64 new_duration)

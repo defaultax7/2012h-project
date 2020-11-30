@@ -20,6 +20,7 @@ public:
     void change_volume(int volume);
     void next();
     void prev();
+    QLinkedList<QString> get_filtered_song_list(const QString&);
 
 signals:
     void song_list_changed(QLinkedList<QString>);

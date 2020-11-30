@@ -48,7 +48,25 @@ void music_player_window::closeEvent(QCloseEvent *){
 
 void music_player_window::on_search_song_textChanged(const QString &arg1)
 {
-    qDebug() << ui->search_song->text();
+    // clear the song list view
+    ui->treeWidget->clear();
+
+    QLinkedList<QString> song_list = player.get_filtered_song_list(arg1);
+
+    // load the latest song list to the view
+    for (QLinkedList<QString>::iterator it = song_list.begin(); it != song_list.end(); ++it) {
+        // extract song name from abs path
+        QFileInfo fileInfo(*it);
+        QString song_name(fileInfo.fileName());
+        QStringList temp;
+
+        temp.append(*it);
+        temp.append(song_name);
+        // add the song info to tree view
+        QTreeWidgetItem* song = new QTreeWidgetItem(temp);
+        ui->treeWidget->addTopLevelItem(song);
+    }
+
 }
 
 void music_player_window::on_btn_mute_clicked()
