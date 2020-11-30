@@ -32,7 +32,7 @@ music_player_window::music_player_window(QWidget *parent) :
     connect(&player , SIGNAL(duration_update(qint64)) , this , SLOT(update_duration(qint64)));
     connect(&player , SIGNAL(song_update(QString)) , this , SLOT(update_current_song(QString)));
     connect(&player , SIGNAL(update_start_button(QMediaPlayer::State)) , this , SLOT(start_button_update(QMediaPlayer::State)));
-
+    connect(&player , SIGNAL(auto_next_song()) , this , SLOT(auto_next_song()));
 
     this->setFixedSize(this->size());
 }
@@ -90,26 +90,6 @@ void music_player_window::on_btn_open_music_clicked()
     if(!fileName.isEmpty()){
         player.add_song(fileName);
     }
-
-    //    if (!supportedMimeTypes.isEmpty()) {
-    //        supportedMimeTypes.append("audio/x-m3u"); // MP3 playlists
-    //        fileDialog.setMimeTypeFilters(supportedMimeTypes);
-    //    }
-    //    fileDialog.setDirectory(QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).value(0, QDir::homePath()));
-    //    if (fileDialog.exec() == QDialog::Accepted)
-    //        addToPlaylist(fileDialog.selectedUrls());
-
-    //    QFileDialog fileDialog(this);
-    //    fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
-    //    fileDialog.setWindowTitle(tr("Open Files"));
-    //    QStringList supportedMimeTypes = m_player->supportedMimeTypes();
-    //    if (!supportedMimeTypes.isEmpty()) {
-    //        supportedMimeTypes.append("audio/x-m3u");
-    //        fileDialog.setMimeTypeFilters(supportedMimeTypes);
-    //    }
-    //    fileDialog.setDirectory(QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).value(0, QDir::homePath()));
-    //    if (fileDialog.exec() == QDialog::Accepted)
-    //        addToPlaylist(fileDialog.selectedUrls());
 }
 
 void music_player_window::update_song_list(QLinkedList<QString> song_list)
@@ -234,21 +214,33 @@ void music_player_window::update_current_time(qint64 current_time)
 
 void music_player_window::update_current_song(QString current_song)
 {
+    // trim the whole path to file name only
     QFileInfo fileInfo(current_song);
     QString song_name(fileInfo.fileName());
+    // update the current song view
     ui->txt_current_song->setText(song_name);
 }
 
 void music_player_window::on_prograss_bar_sliderReleased()
 {
+    // jump to the time that the slider placing on
     player.jump_to(ui->prograss_bar->value());
 }
 
 void music_player_window::start_button_update(QMediaPlayer::State state)
 {
+    // handle the state change signal from my player, change the start button base on the state of the player
     if(state == QMediaPlayer::State::StoppedState || state == QMediaPlayer::State::PausedState){
         ui->btn_start->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
     }else if(state == QMediaPlayer::State::PlayingState){
         ui->btn_start->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+    }
+}
+
+void music_player_window::auto_next_song()
+{
+    // handle the next song signal from my player, if auto next checkbox is ticked, play next song
+    if(ui->cb_auto_next->checkState() == Qt::CheckState::Checked){
+        player.next();
     }
 }

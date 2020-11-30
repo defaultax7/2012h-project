@@ -58,6 +58,8 @@ private slots:
 
     void start_button_update(QMediaPlayer::State);
 
+    void auto_next_song();
+
 private:
     Ui::music_player_window *ui;
     my_player player;

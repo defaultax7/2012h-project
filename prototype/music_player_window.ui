@@ -418,7 +418,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QCheckBox" name="checkBox">
+   <widget class="QCheckBox" name="cb_auto_next">
     <property name="geometry">
      <rect>
       <x>450</x>

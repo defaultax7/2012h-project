@@ -32,6 +32,7 @@ signals:
     void current_time_update(qint64);
     void song_update(QString);
     void update_start_button(QMediaPlayer::State);
+    void auto_next_song();
 
 private slots:
     void duration_change(qint64);

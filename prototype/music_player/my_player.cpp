@@ -172,6 +172,9 @@ void my_player::current_time_change(qint64 current_time)
 
 void my_player::player_state_change(QMediaPlayer::State state)
 {
+    if(state == QMediaPlayer::State::StoppedState && player->duration() > 0 && player->position() == player->duration()){
+        emit auto_next_song();
+    }
     emit update_start_button(state);
 }
 
