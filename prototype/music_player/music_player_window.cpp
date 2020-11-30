@@ -236,3 +236,8 @@ void music_player_window::update_current_song(QString current_song)
     QString song_name(fileInfo.fileName());
     ui->txt_current_song->setText(song_name);
 }
+
+void music_player_window::on_prograss_bar_sliderReleased()
+{
+    player.jump_to(ui->prograss_bar->value());
+}

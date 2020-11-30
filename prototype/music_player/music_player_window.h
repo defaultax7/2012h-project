@@ -54,6 +54,8 @@ private slots:
 
     void update_current_song(QString);
 
+    void on_prograss_bar_sliderReleased();
+
 private:
     Ui::music_player_window *ui;
     my_player player;

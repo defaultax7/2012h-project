@@ -116,6 +116,11 @@ QLinkedList<QString> my_player::get_filtered_song_list(const QString& filter_str
     return filtered_list;
 }
 
+void my_player::jump_to(qint64 new_pos)
+{
+    player->setPosition(new_pos);
+}
+
 void my_player::duration_change(qint64 new_duration)
 {
     emit duration_update(new_duration);

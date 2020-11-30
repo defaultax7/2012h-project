@@ -21,6 +21,7 @@ public:
     void next();
     void prev();
     QLinkedList<QString> get_filtered_song_list(const QString&);
+    void jump_to(qint64);
 
 signals:
     void song_list_changed(QLinkedList<QString>);
