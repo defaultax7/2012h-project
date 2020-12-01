@@ -32,6 +32,12 @@ private slots:
     void duration_change(qint64);
     void current_time_change(qint64);
 
+    void on_btn_resume_clicked();
+
+    void on_btn_retry_clicked();
+
+    void on_btn_exit_clicked();
+
 private:
     enum hit_type { drum , rim };
 
@@ -46,6 +52,10 @@ private:
 
     void play_drum_flash(QString image_path, double x , double y);
     void show_result();
+    void pause();
+    void resume();
+    void hide_pause_screen();
+    void show_pause_screen();
 
     Note_controller note_controller;
 

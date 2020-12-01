@@ -52,6 +52,8 @@ taiko_window::taiko_window(QWidget *parent) :
     // start the game after 4 second
     QTimer::singleShot(20000, this, SLOT(start_game()));
 
+    hide_pause_screen();
+
 }
 
 taiko_window::~taiko_window()
@@ -92,7 +94,7 @@ void taiko_window::keyPressEvent(QKeyEvent *event)
     }else if(event->key() == Qt::Key_0){
         show_result();
     }else if(event->key() == Qt::Key_Escape){
-
+        pause();
     }
 
 }
@@ -139,6 +141,34 @@ void taiko_window::show_result()
     this->hide();
 }
 
+void taiko_window::pause()
+{
+    show_pause_screen();
+    music_player.pause();
+}
+
+void taiko_window::resume()
+{
+    hide_pause_screen();
+    music_player.play();
+}
+
+void taiko_window::hide_pause_screen()
+{
+    ui->pause_smoke->setVisible(false);
+    ui->btn_retry->setVisible(false);
+    ui->btn_resume->setVisible(false);
+    ui->btn_exit->setVisible(false);
+}
+
+void taiko_window::show_pause_screen()
+{
+    ui->pause_smoke->setVisible(true);
+    ui->btn_retry->setVisible(true);
+    ui->btn_resume->setVisible(true);
+    ui->btn_exit->setVisible(true);
+}
+
 void taiko_window::duration_change(qint64 new_duration)
 {
     ui->music_progress_bar->setMaximum(new_duration);
@@ -150,5 +180,18 @@ void taiko_window::current_time_change(qint64 current_time)
 }
 
 
+void taiko_window::on_btn_resume_clicked()
+{
+    resume();
+}
 
+void taiko_window::on_btn_retry_clicked()
+{
+    qDebug() << "retry clicked";
+}
 
+void taiko_window::on_btn_exit_clicked()
+{
+    //    parentWidget()->show();
+    qDebug() << "exit clicked";
+}

@@ -321,6 +321,123 @@
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QGraphicsView" name="pause_smoke">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>761</width>
+      <height>551</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGraphicsView{
+background-color: rgba(0, 0, 0, 0.6);
+}</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_resume">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>120</y>
+      <width>171</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+	border-style: solid;
+	border-radius: 10px;
+	padding: 2px;
+	background-color: rgb(255,255,255);
+}
+
+
+QPushButton:pressed{
+	border-style: solid;
+	padding: 2px;
+	background-color: rgb(142,142,142);
+}</string>
+    </property>
+    <property name="text">
+     <string>Resume</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_retry">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>260</y>
+      <width>171</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+	border-style: solid;
+	border-radius: 10px;
+	padding: 2px;
+	background-color: rgb(255,255,255);
+}
+
+
+QPushButton:pressed{
+	border-style: solid;
+	padding: 2px;
+	background-color: rgb(142,142,142);
+}</string>
+    </property>
+    <property name="text">
+     <string>Retry</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_exit">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>400</y>
+      <width>171</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+	border-style: solid;
+	border-radius: 10px;
+	padding: 2px;
+	background-color: rgb(255,255,255);
+}
+
+
+QPushButton:pressed{
+	border-style: solid;
+	padding: 2px;
+	background-color: rgb(142,142,142);
+}</string>
+    </property>
+    <property name="text">
+     <string>Exit</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

@@ -73,10 +73,10 @@ void Note_controller::start()
     for(int i = 0; i < num_of_notes ; ++i){
         Note* note = new Normal_note(750, 150 , 130 , 0.5 , Normal_note::normal_note_type::red_note , this);
         notes.append(note);
-        int aaa;
-        beatmap >> aaa;
+        int start_time;
+        beatmap >> start_time;
         qDebug() << temp.c_str(); // start time
-        QTimer::singleShot(aaa, this, SLOT(spawn_note()));
+        QTimer::singleShot(start_time, this, SLOT(spawn_note()));
         connect(note , SIGNAL(note_was_missed()) , this , SLOT(handle_note_miss_signal()));
         connect(note , SIGNAL(note_was_hit(int)) , this , SLOT(handle_note_hit_signal(int)));
         beatmap >> temp;
