@@ -28,7 +28,10 @@ public:
     void keyPressEvent(QKeyEvent *event);
 
 private slots:
-    void testing();
+    void start_game();
+    void duration_change(qint64);
+    void current_time_change(qint64);
+
 private:
     enum hit_type { drum , rim };
 

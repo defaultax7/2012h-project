@@ -25,6 +25,8 @@ protected:
 
 signals:
     void die();
+    void note_was_missed();
+    void note_was_hit(int);
 
 private:
     const unsigned int refresh_rate = 1;  // the unit is ms & is not unexpected to be changed

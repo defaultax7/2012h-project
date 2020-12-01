@@ -7,23 +7,24 @@
 
 
 
-class taiko_performance_view
+class taiko_performance_view : public QObject
 {
+    Q_OBJECT
 public:
     enum Update_type{Perfect , Good , Bad , Miss};
-    taiko_performance_view() = default;
+    taiko_performance_view(QObject* parent= nullptr);
     void set_perfect_label(QLabel*);
     void set_good_label(QLabel*);
     void set_bad_label(QLabel*);
     void set_miss_label(QLabel*);
     void set_note_left_label(QLabel*);
     void set_combo_label(QLabel*);
-
     void set_score(Score&);
-
     void refresh_UI() const;
     void set_note_left(int);
-    void update(Update_type);
+
+private slots:
+    void update_performance(taiko_performance_view::Update_type);
 
 private:
     unsigned int note_left = 0;

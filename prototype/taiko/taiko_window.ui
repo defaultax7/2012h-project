@@ -71,7 +71,7 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QProgressBar" name="progressBar">
+   <widget class="QProgressBar" name="music_progress_bar">
     <property name="geometry">
      <rect>
       <x>40</x>

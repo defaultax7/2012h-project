@@ -30,6 +30,7 @@ void Note::move()
     image_item->setPos(x , y);
     if(image_item->pos().x() < endpoint ){
         emit die();
+        emit note_was_missed();
         delete this;
     }
 }

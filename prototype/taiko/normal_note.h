@@ -12,6 +12,7 @@ public:
     void get_hit(int performance);
     void init(QGraphicsScene*);
     Normal_note::normal_note_type get_note_type() const;
+
 private:
     normal_note_type type;
 private slots:

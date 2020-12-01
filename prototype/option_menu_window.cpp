@@ -15,7 +15,7 @@ option_menu_window::option_menu_window(QWidget *parent) :
     ui->setupUi(this);
 
     // set the input range for offset ( more than 2 second is not accepatable)
-    ui->txt_offset->setValidator( new QIntValidator(0, 2000, this) );
+    ui->txt_offset->setValidator( new QIntValidator(0, 999, this) );
 
     //    QString config_file_path = "config.txt";
 

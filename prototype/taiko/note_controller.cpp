@@ -71,11 +71,14 @@ void Note_controller::start()
     beatmap >> num_of_notes;
 
     for(int i = 0; i < num_of_notes ; ++i){
-        notes.append(new Normal_note(750, 150 , 130 , 0.5 , Normal_note::normal_note_type::red_note , this));
+        Note* note = new Normal_note(750, 150 , 130 , 0.5 , Normal_note::normal_note_type::red_note , this);
+        notes.append(note);
         int aaa;
         beatmap >> aaa;
         qDebug() << temp.c_str(); // start time
         QTimer::singleShot(aaa, this, SLOT(spawn_note()));
+        connect(note , SIGNAL(note_was_missed()) , this , SLOT(handle_note_miss_signal()));
+        connect(note , SIGNAL(note_was_hit(int)) , this , SLOT(handle_note_hit_signal(int)));
         beatmap >> temp;
         qDebug() << temp.c_str(); // note type
         beatmap >> temp;
@@ -104,7 +107,6 @@ void Note_controller::judge_note(hit_type hit_type)
 {
     // if there is note showing on the screen
     if(!showing_notes.isEmpty()){
-        qDebug() << showing_notes.head()->getX();
 
         double center = 160;
         double perfect_range = 20;
@@ -119,10 +121,11 @@ void Note_controller::judge_note(hit_type hit_type)
         else if(center - good_range < showing_notes.head()->getX() && showing_notes.head()->getX() < center + good_range){
             Note* note = showing_notes.dequeue();
             note->get_hit(good);
-        }else if(center - bad_range< showing_notes.head()->getX() && showing_notes.head()->getX() < center + bad_range){
-            Note* note = showing_notes.dequeue();
-            note->get_hit(bad);
         }
+        //        else if(center - bad_range< showing_notes.head()->getX() && showing_notes.head()->getX() < center + bad_range){
+        //            Note* note = showing_notes.dequeue();
+        //            note->get_hit(bad);
+        //        }
     }
 }
 
@@ -140,6 +143,20 @@ void Note_controller::spawn_note()
     note->start_move();
     showing_notes.enqueue(note);
     connect(note, SIGNAL(die()) , this , SLOT(dequeue()));
+}
+
+void Note_controller::handle_note_hit_signal(int performance)
+{
+    if(performance == 0){
+        emit update_performance(taiko_performance_view::Update_type::Perfect);
+    }else if(performance == 1){
+        emit update_performance(taiko_performance_view::Update_type::Good);
+    }
+}
+
+void Note_controller::handle_note_miss_signal()
+{
+    emit update_performance(taiko_performance_view::Update_type::Miss);
 }
 
 

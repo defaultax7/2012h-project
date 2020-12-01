@@ -2,6 +2,7 @@
 #define NOTE_CONTROLLER_H
 
 #include "note.h"
+#include "taiko_performance_view.h"
 
 #include <QGraphicsScene>
 #include <QObject>
@@ -20,9 +21,14 @@ public:
     void start();
     void judge_note(hit_type hit_type);
 
+signals:
+    void update_performance(taiko_performance_view::Update_type);
+
 private slots:
     void dequeue();
     void spawn_note();
+    void handle_note_hit_signal(int);
+    void handle_note_miss_signal();
 
 private:
     QGraphicsScene* scene;

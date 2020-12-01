@@ -1,4 +1,10 @@
 #include "taiko_performance_view.h"
+#include "QDebug"
+
+taiko_performance_view::taiko_performance_view(QObject *parent) : QObject(parent)
+{
+
+}
 
 void taiko_performance_view::set_perfect_label(QLabel * lb)
 {
@@ -51,12 +57,13 @@ void taiko_performance_view::set_note_left(int note_left)
     this->note_left = note_left;
 }
 
-void taiko_performance_view::update(taiko_performance_view::Update_type type)
+
+void taiko_performance_view::update_performance(taiko_performance_view::Update_type update_type)
 {
-    if(type == Update_type::Perfect || type == Update_type::Good){
-        if(type == Update_type::Perfect){
+    if(update_type == Update_type::Perfect || update_type == Update_type::Good){
+        if(update_type == Update_type::Perfect){
             ++perfect;
-        }else if(type == Update_type::Good){
+        }else if(update_type == Update_type::Good){
             ++good;
         }
         // calculate the score to be add
@@ -67,10 +74,10 @@ void taiko_performance_view::update(taiko_performance_view::Update_type type)
         if(combo > highest_combo){
             highest_combo = combo;
         }
-    }else if(type == Update_type::Bad){
+    }else if(update_type == Update_type::Bad){
         ++bad;
         combo = 0;
-    }else if(type == Update_type::Miss){
+    }else if(update_type == Update_type::Miss){
         ++miss;
         combo = 0;
     }

@@ -35,10 +35,11 @@ void Normal_note::get_hit(int performance){
     }
     speed = 0;
 
+    emit note_was_hit(performance);
+
     // kill itselft after given amount of time (afterlife_time)
     connect(timer, SIGNAL(timeout()), this, SLOT(self_destruct()));
     timer->start(afterlife_time);
-
 }
 
 

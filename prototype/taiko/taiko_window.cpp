@@ -34,10 +34,19 @@ taiko_window::taiko_window(QWidget *parent) :
     note_controller.setScene(&scene);
     note_controller.init("");
 
-    connect(timer , SIGNAL(timeout()) , &note_controller , SLOT(start()));
-
     drum_sound_player.setSource(QUrl::fromLocalFile(":/sound_effect/sound_effect/drum_sound.wav"));
     rim_sound_player.setSource(QUrl::fromLocalFile(":/sound_effect/sound_effect/rim_sound.wav"));
+
+    // set the music source for music player & bind it with progress bar
+    music_player.setMedia(QUrl("F:/testing/1.mp3"));
+    connect(&music_player, SIGNAL(durationChanged(qint64)), this, SLOT(duration_change(qint64)));
+    connect(&music_player, SIGNAL(positionChanged(qint64)), this, SLOT(current_time_change(qint64)));
+
+    // emit note hit/miss signal to update performance view
+    connect(&note_controller, SIGNAL(update_performance(taiko_performance_view::Update_type)), &p_view, SLOT(update_performance(taiko_performance_view::Update_type)));
+
+    // start the game after 4 second
+    QTimer::singleShot(4000, this, SLOT(start_game()));
 }
 
 taiko_window::~taiko_window()
@@ -48,14 +57,13 @@ taiko_window::~taiko_window()
 void taiko_window::keyPressEvent(QKeyEvent *event)
 {
     // should be a set of key, but use j and f for now
-    // bad design :(
     if(event->key() == Qt::Key_J){
 
         note_controller.judge_note(Note_controller::hit_type::drum);
         drum_sound_player.play();
         play_drum_flash(":/image/image/drum_r.png" , 70 , 145);
 
-        p_view.update(taiko_performance_view::Update_type::Good);
+//        p_view.update(taiko_performance_view::Update_type::Good);
 
     }else if(event->key() == Qt::Key_F){
 
@@ -63,7 +71,7 @@ void taiko_window::keyPressEvent(QKeyEvent *event)
         drum_sound_player.play();
         play_drum_flash(":/image/image/drum_l.png" , 30 , 145);
 
-        p_view.update(taiko_performance_view::Update_type::Bad);
+//        p_view.update(taiko_performance_view::Update_type::Bad);
 
     }else if(event->key() == Qt::Key_D){
 
@@ -77,14 +85,21 @@ void taiko_window::keyPressEvent(QKeyEvent *event)
         rim_sound_player.play();
         play_drum_flash(":/image/image/rim_r.png" , 70 , 131);
 
+    }else if(event->key() == Qt::Key_1){
+        // spawn note to test
+        QTimer::singleShot(1, this, SLOT(start_game()));
     }
-    else if(event->key() == Qt::Key_1){
-        note_controller.start();
-    }
+
 }
 
 void taiko_window::testing(){
     qDebug() << "testing";
+}
+
+void taiko_window::start_game()
+{
+    music_player.play();
+    note_controller.start();
 }
 
 void taiko_window::showEvent(QShowEvent *event)
@@ -113,6 +128,16 @@ void taiko_window::play_drum_flash(QString image_path, double x, double y)
         QCoreApplication::processEvents();
     }
     scene.removeItem(drum_flash);
+}
+
+void taiko_window::duration_change(qint64 new_duration)
+{
+    ui->music_progress_bar->setMaximum(new_duration);
+}
+
+void taiko_window::current_time_change(qint64 current_time)
+{
+    ui->music_progress_bar->setValue(current_time);
 }
 
 
