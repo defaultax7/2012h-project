@@ -31,9 +31,8 @@ taiko_window::taiko_window(QWidget *parent) :
 
     this->setFixedSize(this->size());  // prevent resizing
 
-    note_controller.init("");
-
     note_controller.setScene(&scene);
+    note_controller.init("");
 
     connect(timer , SIGNAL(timeout()) , &note_controller , SLOT(start()));
 

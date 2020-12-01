@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <fstream>
 #include <string>
+#include <QTimer>
 using std::ws;
 
 
@@ -22,24 +23,26 @@ void Note_controller::setScene(QGraphicsScene* scene)
 
 void Note_controller::init(QString beatmap_path)
 {
-    beatmap_path = "F:/testing/1.orz";
+    //    beatmap_path = "F:/testing/1.orz";
 
-    std::ifstream beatmap(beatmap_path.toStdString());
+    //    std::ifstream beatmap(beatmap_path.toStdString());
 
-    std::string temp;
-    beatmap >> temp;  // ignore title
-    beatmap >> temp;  // ignore level
+    //    std::string temp;
+    //    beatmap >> temp;  // ignore title
+    //    beatmap >> temp;  // ignore level
 
-    beatmap >> num_of_notes;
+    //    beatmap >> num_of_notes;
 
-    for(int i = 0; i < num_of_notes ; ++i){
-        beatmap >> temp;
-        qDebug() << temp.c_str(); // start time
-        beatmap >> temp;
-        qDebug() << temp.c_str(); // note type
-        beatmap >> temp;
-        qDebug() << temp.c_str(); // speed
-    }
+    //    notes = new Note*[num_of_notes];
+    //    for(int i = 0; i < num_of_notes ; ++i){
+    //        notes[i] = new Normal_note(650 + i * 50, 150 , 130 , 0.5 , Normal_note::note_type::red_note , this);
+    //        beatmap >> temp;
+    //        qDebug() << temp.c_str(); // start time
+    //        beatmap >> temp;
+    //        qDebug() << temp.c_str(); // note type
+    //        beatmap >> temp;
+    //        qDebug() << temp.c_str(); // speed
+    //    }
 
     //    QFile inputFile(beatmap_path);
 
@@ -53,24 +56,47 @@ void Note_controller::init(QString beatmap_path)
     //        }
     //        inputFile.close();
     //    }
+
 }
 
 void Note_controller::start()
 {
-    for(int i = 0 ; i < 10 ; ++i){
-        int value = QRandomGenerator::global()->generate()%2;
-        //        Note* note = new Normal_note(650 + i * 100, 150 , 130 , 0.5 , Normal_note::note_type::blue_note , this);
-        Note* note;
-        if(value == 0){
-            note = new Normal_note(650 + i * 50, 150 , 130 , 0.5 , Normal_note::note_type::red_note , this);
-        }else{
-            note = new Normal_note(650 + i * 50, 150 , 130 , 0.5 , Normal_note::note_type::blue_note , this);
-        }
-        note->init(scene);
-        note->start_move();
-        note_queue.enqueue(note);
-        connect(note, SIGNAL(die()) , this , SLOT(dequeue()));
+
+    std::ifstream beatmap("F:/testing/1.orz");
+
+    std::string temp;
+    beatmap >> temp;  // ignore title
+    beatmap >> temp;  // ignore level
+
+    beatmap >> num_of_notes;
+
+    for(int i = 0; i < num_of_notes ; ++i){
+        ggg.append(new Normal_note(700, 150 , 130 , 0.5 , Normal_note::note_type::red_note , this));
+        int aaa;
+        beatmap >> aaa;
+        qDebug() << temp.c_str(); // start time
+        QTimer::singleShot(aaa, this, SLOT(ttt()));
+        beatmap >> temp;
+        qDebug() << temp.c_str(); // note type
+        beatmap >> temp;
+        qDebug() << temp.c_str(); // speed
     }
+    //    notes[0]->init(scene);
+    //    notes[0]->start_move();
+    //    for(int i = 0 ; i < 10 ; ++i){
+    //        int value = QRandomGenerator::global()->generate()%2;
+    //        //        Note* note = new Normal_note(650 + i * 100, 150 , 130 , 0.5 , Normal_note::note_type::blue_note , this);
+    //        Note* note;
+    //        if(value == 0){
+    //            note = new Normal_note(650 + i * 50, 150 , 130 , 0.5 , Normal_note::note_type::red_note , this);
+    //        }else{
+    //            note = new Normal_note(650 + i * 50, 150 , 130 , 0.5 , Normal_note::note_type::blue_note , this);
+    //        }
+    //        note->init(scene);
+    //        note->start_move();
+    //        note_queue.enqueue(note);
+    //        connect(note, SIGNAL(die()) , this , SLOT(dequeue()));
+    //    }
 }
 
 void Note_controller::judge(int drum_or_rim, int performance)
@@ -94,6 +120,15 @@ void Note_controller::dequeue()
     if(!note_queue.isEmpty()){
         note_queue.dequeue();
     }
+}
+
+void Note_controller::ttt()
+{
+    Note* note = ggg.dequeue();
+    note->init(scene);
+    note->start_move();
+    note_queue.enqueue(note);
+    connect(note, SIGNAL(die()) , this , SLOT(dequeue()));
 }
 
 

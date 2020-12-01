@@ -20,11 +20,13 @@ public:
 
 private slots:
     void dequeue();
+    void ttt();
 
 private:
     QGraphicsScene* scene;
     QQueue<Note*> note_queue;
     unsigned int num_of_notes = 0;
+    QQueue<Note*> ggg;
 };
 
 #endif // NOTE_GENERATOR_H
