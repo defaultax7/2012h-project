@@ -60,7 +60,7 @@ void taiko_performance_view::update(taiko_performance_view::Update_type type)
             ++good;
         }
         // calculate the score to be add
-        int add_score = base_score_per_note + combo / 10;
+        int add_score = base_score_per_note + (combo / 10) * 10;
         // select the smaller one between add_score and max_score
         score.add_score((add_score > max_score_per_note) ? max_score_per_note : add_score);
         ++combo;

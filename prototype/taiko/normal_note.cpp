@@ -2,12 +2,12 @@
 
 #include <QGraphicsScene>
 
-Normal_note::Normal_note(double x, double y, double endpoint, double speed, note_type type, QObject* parent) : Note(x, y, endpoint, speed, parent) , type(type)
+Normal_note::Normal_note(double x, double y, double endpoint, double speed, normal_note_type type, QObject* parent) : Note(x, y, endpoint, speed, parent) , type(type)
 {
 }
 
 void Normal_note::init(QGraphicsScene* scene){
-    if(type == note_type::red_note){
+    if(type == normal_note_type::red_note){
         image_item = scene->addPixmap(QPixmap(":/image/image/red_note.png"));
     }else{
         image_item = scene->addPixmap(QPixmap(":/image/image/blue_note.png"));
@@ -15,7 +15,7 @@ void Normal_note::init(QGraphicsScene* scene){
     image_item->setPos(x,y);
 }
 
-Normal_note::note_type Normal_note::get_note_type() const
+Normal_note::normal_note_type Normal_note::get_note_type() const
 {
     return type;
 }
@@ -27,9 +27,10 @@ void Normal_note::self_destruct()
 
 
 void Normal_note::get_hit(int performance){
+    // perfect
     if(performance == 0){
         image_item->setPixmap(QPixmap(":/image/image/perfect.png"));
-    }else if(performance == 1){
+    }else if(performance == 1){ // good
         image_item->setPixmap(QPixmap(":/image/image/good.png"));
     }
     speed = 0;

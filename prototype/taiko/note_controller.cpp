@@ -71,11 +71,11 @@ void Note_controller::start()
     beatmap >> num_of_notes;
 
     for(int i = 0; i < num_of_notes ; ++i){
-        ggg.append(new Normal_note(700, 150 , 130 , 0.5 , Normal_note::note_type::red_note , this));
+        notes.append(new Normal_note(750, 150 , 130 , 0.5 , Normal_note::normal_note_type::red_note , this));
         int aaa;
         beatmap >> aaa;
         qDebug() << temp.c_str(); // start time
-        QTimer::singleShot(aaa, this, SLOT(ttt()));
+        QTimer::singleShot(aaa, this, SLOT(spawn_note()));
         beatmap >> temp;
         qDebug() << temp.c_str(); // note type
         beatmap >> temp;
@@ -99,35 +99,46 @@ void Note_controller::start()
     //    }
 }
 
-void Note_controller::judge(int drum_or_rim, int performance)
-{
-    if(!note_queue.isEmpty()){
-        Note* note = note_queue.head();
-        Normal_note* normal_note = (Normal_note*) note;
 
-        // if it is a normal note
-        if(normal_note != nullptr){
-            if(normal_note->get_note_type() == drum_or_rim){
-                Note* note = note_queue.dequeue();
-                note->get_hit(performance);
-            }
+void Note_controller::judge_note(hit_type hit_type)
+{
+    // if there is note showing on the screen
+    if(!showing_notes.isEmpty()){
+        qDebug() << showing_notes.head()->getX();
+
+        double center = 160;
+        double perfect_range = 20;
+        double good_range = 40;
+        double bad_range = 60;
+        // if it is within the perfect range, send hit signal to note
+        if(center - perfect_range < showing_notes.head()->getX() && showing_notes.head()->getX() < center + perfect_range){
+            Note* note = showing_notes.dequeue();
+            note->get_hit(perfect);
+        }
+        // if it is within the good range, send hit signal to note
+        else if(center - good_range < showing_notes.head()->getX() && showing_notes.head()->getX() < center + good_range){
+            Note* note = showing_notes.dequeue();
+            note->get_hit(good);
+        }else if(center - bad_range< showing_notes.head()->getX() && showing_notes.head()->getX() < center + bad_range){
+            Note* note = showing_notes.dequeue();
+            note->get_hit(bad);
         }
     }
 }
 
 void Note_controller::dequeue()
 {
-    if(!note_queue.isEmpty()){
-        note_queue.dequeue();
+    if(!showing_notes.isEmpty()){
+        showing_notes.dequeue();
     }
 }
 
-void Note_controller::ttt()
+void Note_controller::spawn_note()
 {
-    Note* note = ggg.dequeue();
+    Note* note = notes.dequeue();
     note->init(scene);
     note->start_move();
-    note_queue.enqueue(note);
+    showing_notes.enqueue(note);
     connect(note, SIGNAL(die()) , this , SLOT(dequeue()));
 }
 

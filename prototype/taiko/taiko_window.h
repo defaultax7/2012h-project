@@ -42,14 +42,10 @@ private:
     unsigned const int drum_flash_time = 80;  // unit ms
 
     void play_drum_flash(QString image_path, double x , double y);
-    void judge_note(hit_type);
 
     Note_controller note_controller;
 
     QGraphicsPixmapItem* judge;
-    QGraphicsRectItem* perfect_judge;
-    QGraphicsRectItem* good_judge;
-    QGraphicsRectItem* bad_judge;
     QSoundEffect drum_sound_player;
     QSoundEffect rim_sound_player;
 };

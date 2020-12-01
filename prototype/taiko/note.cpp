@@ -19,9 +19,15 @@ void Note::start_move()
     timer->start(refresh_rate);
 }
 
+int Note::getX() const
+{
+    return x;
+}
+
 void Note::move()
 {
-    image_item->setPos(image_item->pos().x() - speed , image_item->pos().y());
+    x -= speed;
+    image_item->setPos(x , y);
     if(image_item->pos().x() < endpoint ){
         emit die();
         delete this;

@@ -13,6 +13,7 @@ public:
     virtual void get_hit(int performance) = 0;
     void start_move();
     virtual void init(QGraphicsScene*) = 0;
+    int getX() const;
 
 protected:
     QGraphicsPixmapItem* image_item;
