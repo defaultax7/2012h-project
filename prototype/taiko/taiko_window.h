@@ -45,12 +45,14 @@ private:
     unsigned const int drum_flash_time = 80;  // unit ms
 
     void play_drum_flash(QString image_path, double x , double y);
+    void show_result();
 
     Note_controller note_controller;
 
     QGraphicsPixmapItem* judge;
     QSoundEffect drum_sound_player;
     QSoundEffect rim_sound_player;
+    QWidget* parent;
 };
 
 #endif // TAIKO_WINDOW_H

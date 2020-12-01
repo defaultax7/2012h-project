@@ -19,6 +19,7 @@ SOURCES += \
     option_menu_window.cpp \
     score.cpp \
     taiko/note_controller.cpp \
+    taiko/result_window.cpp \
     taiko/taiko_performance_view.cpp \
     taiko/taiko_window.cpp
 
@@ -31,6 +32,7 @@ HEADERS += \
     option_menu_window.h \
     score.h \
     taiko/note_controller.h \
+    taiko/result_window.h \
     taiko/taiko_performance_view.h \
     taiko/taiko_window.h
 
@@ -38,6 +40,7 @@ FORMS += \
     mainwindow.ui \
     music_player_window.ui \
     option_menu_window.ui \
+    taiko/result_window.ui \
     taiko/taiko_window.ui
 
 # Default rules for deployment.

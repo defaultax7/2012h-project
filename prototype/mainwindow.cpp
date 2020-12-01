@@ -6,13 +6,15 @@
 
 #include <music_player/music_player_window.h>
 
+#include <taiko/taiko_window.h>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     this->setFixedSize(this->width(),this->height()); // prevent resize
-//    QSound::play(":/sound_effect/sound_effect/welcome.wav");  // play intro sound effect
+    //    QSound::play(":/sound_effect/sound_effect/welcome.wav");  // play intro sound effect
 }
 
 MainWindow::~MainWindow()
@@ -36,6 +38,13 @@ void MainWindow::on_music_btn_clicked()
 void MainWindow::on_option_btn_clicked()
 {
     option_menu_window* w = new option_menu_window(this);
+    w->show();
+    hide();
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    taiko_window* w = new taiko_window(this);
     w->show();
     hide();
 }
