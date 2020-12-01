@@ -1,0 +1,29 @@
+<RCC>
+    <qresource prefix="/image">
+        <file>image/orz.png</file>
+        <file>image/taiko_bg.png</file>
+        <file>image/red_note.png</file>
+        <file>image/blue_note.png</file>
+        <file>image/character.png</file>
+        <file>image/judging_ring.png</file>
+        <file>image/perfect.png</file>
+        <file>image/good.png</file>
+        <file>image/drum_l.png</file>
+        <file>image/drum_r.png</file>
+        <file>image/rim_l.png</file>
+        <file>image/rim_r.png</file>
+        <file>mania_test/images/small_square.png</file>
+        <file>mania_test/images/minions.jpg</file>
+        <file>mania_test/images/key_d.png</file>
+        <file>mania_test/images/key_e.png</file>
+        <file>mania_test/images/key_p.png</file>
+        <file>mania_test/images/key_s.png</file>
+        <file>mania_test/images/glowing_top.png</file>
+    </qresource>
+    <qresource prefix="/sound_effect">
+        <file>sound_effect/welcome.wav</file>
+        <file>sound_effect/ending.wav</file>
+        <file>sound_effect/drum_sound.wav</file>
+        <file>sound_effect/rim_sound.wav</file>
+    </qresource>
+</RCC>
