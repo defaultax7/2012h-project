@@ -54,7 +54,20 @@ void taiko_performance_view::refresh_UI() const
 
 void taiko_performance_view::set_note_left(int note_left)
 {
+    original_note_left = note_left;
     this->note_left = note_left;
+}
+
+void taiko_performance_view::reset()
+{
+    score.reset_score();
+    note_left = original_note_left;
+    perfect = 0;
+    good = 0;
+    miss = 0;
+    bad = 0;
+    combo = 0;
+    refresh_UI();
 }
 
 

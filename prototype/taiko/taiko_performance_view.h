@@ -22,11 +22,13 @@ public:
     void set_score(Score&);
     void refresh_UI() const;
     void set_note_left(int);
+    void reset();
 
 private slots:
     void update_performance(taiko_performance_view::Update_type);
 
 private:
+    unsigned int original_note_left = 0;
     unsigned int note_left = 0;
     unsigned int perfect = 0;
     unsigned int miss = 0;

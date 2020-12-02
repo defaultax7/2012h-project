@@ -161,6 +161,8 @@ void taiko_window::retry()
     music_player.setPosition(0);
     music_player.play();
 
+    p_view.reset();
+
     hide_pause_screen();
     note_controller.restart();
 }
