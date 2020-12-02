@@ -15,6 +15,8 @@ SOURCES += \
     mania_test/clickable_view.cpp \
     mania_test/lane.cpp \
     mania_test/mania_window.cpp \
+    mania_test/newtile.cpp \
+    mania_test/normaltile.cpp \
     music_player/music_player_window.cpp \
     music_player/my_player.cpp \
     taiko/normal_note.cpp \
@@ -30,6 +32,8 @@ HEADERS += \
     mania_test/clickable_view.h \
     mania_test/lane.h \
     mania_test/mania_window.h \
+    mania_test/newtile.h \
+    mania_test/normaltile.h \
     music_player/music_player_window.h \
     music_player/my_player.h \
     taiko/normal_note.h \
