@@ -19,6 +19,8 @@
         <file>mania_test/images/key_p.png</file>
         <file>mania_test/images/key_s.png</file>
         <file>mania_test/images/glowing_top.png</file>
+        <file>mania_test/images/pink_tile.png</file>
+        <file>mania_test/images/white_tile.png</file>
     </qresource>
     <qresource prefix="/sound_effect">
         <file>sound_effect/welcome.wav</file>
