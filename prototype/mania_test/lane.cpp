@@ -42,6 +42,7 @@ void lane::add_to_scene(int id, int total, QGraphicsScene *scene, QRectF bounds)
     whitepen.setWidth(2);
     left_line = scene->addLine(xpos,0, xpos,bounds.height()-key_height, whitepen);
     right_line = scene->addLine(xpos+key_width,0, xpos+key_width,bounds.height()-key_height, whitepen);
+
     int green_line_height = bounds.height()-key_height-green_height; //tailor made
     green_indicator = scene->addLine(xpos, green_line_height, xpos+key_width, green_line_height, greenpen);
     //piano_key = QGraphicsPixmapItem(piano_key_name);
@@ -50,8 +51,8 @@ void lane::add_to_scene(int id, int total, QGraphicsScene *scene, QRectF bounds)
     bound_rect = QRectF{(double)xpos,0, (double)key_width,bounds.height()};
     valid_press_height = bound_rect.height()-key_height-green_height;
     bottom_height = bound_rect.height()-key_height;
-    qDebug() << bound_rect.x() << endl;
-
+    //qDebug() << bound_rect.x() << endl;
+    falling_time = bottom_height/2; //here i hardcode this...
 
 
     //thetiles[0] = new normal_tile(st,ed, normal_tile::Tiletype::Pink);
@@ -84,9 +85,12 @@ void lane::remove_pressed_flash(QGraphicsScene *scene){
     scene->removeItem(glow_flash);
 }
 
-lane::Judge_result lane::on_key_pressed(QGraphicsScene *scene){
+lane::Judge_result lane::on_key_pressed(QGraphicsScene *scene, const int sec, const int ms){
     qDebug() << "id is " << id << endl;
     //is_long_pressing = true;
+    is_long_pressing = true; //now i need this for creator...
+    lastpress_sec = sec;
+    lastpress_ms = ms;
     add_pressed_flash(scene);
 
     //now judge
@@ -102,7 +106,7 @@ lane::Judge_result lane::on_key_pressed(QGraphicsScene *scene){
         else if (toptile->get_tile_catagory() == NewTile::Tile_Catagory::Long){
             LongTile* long_ptr = dynamic_cast<LongTile*>(toptile);
             long_ptr->set_ispresed(true);
-            is_long_pressing = true;
+            //previously set long_pressing here
             return Judge_result::Vaild_Long_Press;
         }
 
@@ -131,6 +135,7 @@ lane::Judge_result lane::update(QGraphicsScene *scene){
     lane::Judge_result response = Judge_result::Empty; //default response
 
     if (is_long_pressing) long_pressing_time++;
+    //long_pressing_time++;
     if (tile_list.empty()) return Judge_result::Empty;
 
     for (int i=1; i<tile_list.size(); ++i){
@@ -142,7 +147,7 @@ lane::Judge_result lane::update(QGraphicsScene *scene){
         if (long_ptr->get_position_point().y() >= bottom_height && long_ptr->get_tail_point().y() < valid_press_height && long_ptr->get_ispressed() == false){
             response = Judge_result::Missed_Long_Tile;
         }
-        else if (long_ptr->get_ispressed() && long_pressing_time % 10 == 0){ //avoid adding so many combo
+        else if (long_ptr->get_ispressed() && long_pressing_time % cycles_per_combo == 0){ //avoid adding so many combo, hardcode
             response = Judge_result::Continuing_Long_Tile;
         }
     }
@@ -198,5 +203,18 @@ NewTile* lane::addtile(Add_Catagory category, QGraphicsScene* scene){
 
 bool lane::is_tile_list_empty(){
     return tile_list.empty();
+}
+
+int lane::getlongpress_time(){
+    return long_pressing_time;
+}
+
+void lane::getlastpress_tme(int &sec, int &ms){
+    sec = lastpress_sec;
+    ms = lastpress_ms;
+}
+
+int lane::getfall_time(){
+    return falling_time;
 }
 

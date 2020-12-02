@@ -27,5 +27,10 @@
         <file>sound_effect/ending.wav</file>
         <file>sound_effect/drum_sound.wav</file>
         <file>sound_effect/rim_sound.wav</file>
+        <file>mania_test/music/super_mario.mp3</file>
+        <file>mania_test/music/super_mario_full.mp3</file>
+    </qresource>
+    <qresource prefix="/text">
+        <file>mania_test/beatmaps/mario_tiles.txt</file>
     </qresource>
 </RCC>

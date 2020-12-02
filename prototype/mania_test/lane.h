@@ -24,7 +24,7 @@ public:
     lane();
     lane(int keynum);
     void add_to_scene(int id, int total, QGraphicsScene *scene, QRectF bounds);
-    Judge_result on_key_pressed(QGraphicsScene *scene);
+    Judge_result on_key_pressed(QGraphicsScene *scene, const int sec, const int ms);
     void on_key_released(QGraphicsScene *scene);
     void add_pressed_flash(QGraphicsScene *scene);
     void remove_pressed_flash(QGraphicsScene *scene);
@@ -32,6 +32,9 @@ public:
     NewTile* addtile(Add_Catagory, QGraphicsScene*); //should be virtual anyway
     bool is_tile_list_empty();
     int getkeynum();
+    void getlastpress_tme(int&, int&);
+    int getlongpress_time();
+    int getfall_time();
 private:
 
     int id, keynum{Qt::Key_X};
@@ -48,19 +51,20 @@ private:
 
     //for glowing effects
     const QString glow_name;
-    const int flashtime{10}; //in milliseconds// now i use long press, so it is obsolete
+    //const int flashtime{10}; //in milliseconds// now i use long press, so it is obsolete
     QGraphicsPixmapItem *glow_flash;
 
     //for falling tiles
-    const int fall_time = 1200;//if fall time is constant
-    const int fall_speed = 2; //if fall speed is constant, now using
-    //tile *thetiles[100];
-    //NewTile *thetiles[100];
+    //const int fall_time = 1200;//if fall time is constant
+    const int fall_speed = 2; //if fall speed is constant, now using, however it is useless since i use qpointf instead
+    int falling_time;
     QList<NewTile*> tile_list;
 
     //for longpress
     bool is_long_pressing{false};
     int long_pressing_time{0};
+    int lastpress_sec{0}, lastpress_ms{0};
+    const int cycles_per_combo{15};
 };
 
 #endif // LANE_H
