@@ -38,6 +38,9 @@ private slots:
 
     void on_btn_exit_clicked();
 
+    void handle_music_finish_signal(QMediaPlayer::State);
+    void show_result();
+
 private:
     enum hit_type { drum , rim };
 
@@ -57,7 +60,6 @@ private:
 
     void showEvent(QShowEvent* event);
     void play_drum_flash(QString image_path, double x , double y);
-    void show_result();
     void pause();
     void resume();
     void retry();

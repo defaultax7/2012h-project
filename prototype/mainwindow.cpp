@@ -22,6 +22,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::showEvent(QShowEvent * event){
+    QPixmap pixmap(":/image/image/taiko_start_button.png");
+    QIcon ButtonIcon(pixmap);
+    ui->btn_start_taiko->setIcon(ButtonIcon);
+    ui->btn_start_taiko->setIconSize(pixmap.rect().size()/2);
+}
 
 void MainWindow::on_exit_btn_clicked()
 {
@@ -42,7 +48,7 @@ void MainWindow::on_option_btn_clicked()
     hide();
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_btn_start_taiko_clicked()
 {
     taiko_window* w = new taiko_window(this);
     w->show();

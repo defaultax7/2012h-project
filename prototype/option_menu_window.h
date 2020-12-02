@@ -18,15 +18,11 @@ public:
 private slots:
     void on_pushButton_clicked();
 
-    void on_horizontalSlider_valueChanged(int value);
-
     void on_pushButton_2_clicked();
 
     void on_music_vol_slider_valueChanged(int value);
 
     void on_effect_vol_slider_valueChanged(int value);
-
-    void on_lineEdit_textChanged(const QString &arg1);
 
     void on_txt_offset_textChanged(const QString &arg1);
 

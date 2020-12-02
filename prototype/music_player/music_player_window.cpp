@@ -44,7 +44,7 @@ music_player_window::~music_player_window()
 }
 
 void music_player_window::closeEvent(QCloseEvent *){
-    //    parentWidget()->show();
+    parentWidget()->show();
 }
 
 void music_player_window::on_search_song_textChanged(const QString &arg1)

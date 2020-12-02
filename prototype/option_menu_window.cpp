@@ -104,11 +104,6 @@ void option_menu_window::closeEvent(QCloseEvent *){
     parentWidget()->show();
 }
 
-void option_menu_window::on_horizontalSlider_valueChanged(int value)
-{
-
-}
-
 void option_menu_window::on_pushButton_2_clicked()
 {
 }
@@ -125,11 +120,6 @@ void option_menu_window::on_effect_vol_slider_valueChanged(int value)
     QSettings setting("HKUST" , "ORZ");
     ui->txt_effect_vol->setText(QString::number(value));
     setting.setValue("effect_vol", value);
-}
-
-void option_menu_window::on_lineEdit_textChanged(const QString &arg1)
-{
-
 }
 
 void option_menu_window::on_txt_offset_textChanged(const QString &arg1)

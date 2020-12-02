@@ -14,6 +14,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void showEvent(QShowEvent * event);
 
 private slots:
     void on_exit_btn_clicked();
@@ -22,8 +23,7 @@ private slots:
 
     void on_option_btn_clicked();
 
-
-    void on_pushButton_clicked();
+    void on_btn_start_taiko_clicked();
 
 private:
     Ui::MainWindow *ui;

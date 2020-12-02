@@ -45,12 +45,13 @@ taiko_window::taiko_window(QWidget *parent) :
     music_player.setMedia(QUrl("F:/testing/1.mp3"));
     connect(&music_player, SIGNAL(durationChanged(qint64)), this, SLOT(duration_change(qint64)));
     connect(&music_player, SIGNAL(positionChanged(qint64)), this, SLOT(current_time_change(qint64)));
+    connect(&music_player, SIGNAL(stateChanged(QMediaPlayer::State)), this, SLOT(handle_music_finish_signal(QMediaPlayer::State)));
 
     // emit note hit/miss signal to update performance view
     connect(&note_controller, SIGNAL(update_performance(taiko_performance_view::Update_type)), &p_view, SLOT(update_performance(taiko_performance_view::Update_type)));
 
     // start the game after 4 second
-//    QTimer::singleShot(5000, this, SLOT(start_game()));
+    //    QTimer::singleShot(5000, this, SLOT(start_game()));
 
     hide_pause_screen();
 
@@ -91,11 +92,12 @@ void taiko_window::keyPressEvent(QKeyEvent *event)
     }else if(event->key() == Qt::Key_1){
         // spawn note to test
         QTimer::singleShot(1, this, SLOT(start_game()));
-    }else if(event->key() == Qt::Key_0){
-        show_result();
     }else if(event->key() == Qt::Key_Escape){
         pause();
     }
+//    else if(event->key() == Qt::Key_0){
+//        show_result();
+//    }
 
 }
 
@@ -136,7 +138,8 @@ void taiko_window::play_drum_flash(QString image_path, double x, double y)
 
 void taiko_window::show_result()
 {
-    result_window* w = new result_window(parent);
+//    result_window* w = new result_window(parent);
+    result_window* w = new result_window();
     w->show();
     this->hide();
 }
@@ -207,4 +210,11 @@ void taiko_window::on_btn_retry_clicked()
 void taiko_window::on_btn_exit_clicked()
 {
     //    parentWidget()->show();
+}
+
+void taiko_window::handle_music_finish_signal(QMediaPlayer::State state)
+{
+    if(state == QMediaPlayer::State::StoppedState && music_player.duration() > 0 && music_player.position() == music_player.duration()){
+        QTimer::singleShot(2000, this , SLOT(show_result()));
+    }
 }
