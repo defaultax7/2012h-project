@@ -92,10 +92,18 @@ void mania_window::ui_view_clicked(int xpos, int ypos){
 
 void mania_window::on_pushButton_clicked()
 {
-    //now add a timer to it
-    global_timer = new QTimer;
-    connect(global_timer, &QTimer::timeout, this, &mania_window::update);
-    global_timer->start(refresh_rate);
+    //setup static tiles, remember to connect them die and miss
+    /*
+    for (int i=0; i<num_lanes-1; ++i){
+        NewTile* added_tile = thelanes[i]->addtile(lane::Add_Catagory::Normal, &thescene);
+        if (added_tile != nullptr) connect(added_tile, &NewTile::die, this, &mania_window::missed_tile_response);
+    }
+    */
+    NewTile* added_tile = thelanes[num_lanes-1]->addtile(lane::Add_Catagory::Long, &thescene);
+    if (added_tile != nullptr && added_tile->get_tile_catagory() != NewTile::Tile_Catagory::Long) connect(added_tile, &NewTile::die, this, &mania_window::missed_tile_response);
+
+
+
     //set the buttons
     ui->pushButton->setEnabled(false);
     ui->pushButton_2->setEnabled(true);
@@ -103,6 +111,12 @@ void mania_window::on_pushButton_clicked()
 }
 void mania_window::on_pushButton_2_clicked()
 {
+    //now add a timer to it
+    global_timer = new QTimer;
+    connect(global_timer, &QTimer::timeout, this, &mania_window::update);
+    global_timer->start(refresh_rate);
+
+    //disable itself
     ui->pushButton_2->setEnabled(false);
 }
 
@@ -134,12 +148,28 @@ void mania_window::keyReleaseEvent(QKeyEvent *event){
 
 void mania_window::update(){
     timeelasped = (timeelasped + refresh_rate) % 2000;
+
+    if (timeelasped % 1000 == 0){
+        int x = QRandomGenerator::global()->bounded(num_lanes);
+        int y = QRandomGenerator::global()->bounded(2);
+
+        if (thelanes[x]->is_tile_list_empty()){
+            NewTile* added_tile;
+            if (y == 0) added_tile = thelanes[x]->addtile(lane::Add_Catagory::Long, &thescene);
+            else added_tile = thelanes[x]->addtile(lane::Add_Catagory::Normal, &thescene);
+            if (added_tile != nullptr && added_tile->get_tile_catagory() != NewTile::Tile_Catagory::Long) connect(added_tile, &NewTile::die, this, &mania_window::missed_tile_response);
+        }
+
+        //global_timer->stop();
+    }
     for (int i=0; i<num_lanes; ++i){
-        if (timeelasped == i*200+400) {
-            NewTile* added_tile = thelanes[i]->addtile(lane::Tile_Catagory::Normal, &thescene);
+        /*
+        if (timeelasped == i*300+400) {
+            NewTile* added_tile = thelanes[i]->addtile(lane::Add_Catagory::Normal, &thescene);
             if (added_tile != nullptr) connect(added_tile, &NewTile::die, this, &mania_window::missed_tile_response);
         }
-        thelanes[i]->update(&thescene);
+        */
+        judge_response( thelanes[i]->update(&thescene));
     }
 }
 
@@ -147,9 +177,15 @@ void mania_window::judge_response(lane::Judge_result result){
     if (result == lane::Judge_result::Good){
         combo++;
         score+= (0.1*combo + 1)*300;
-    }else{
+    }else if (result == lane::Judge_result::Missed_Long_Tile){
         combo=0;
-        score-= 200;
+    }else if (result == lane::Judge_result::Continuing_Long_Tile){
+        combo++;
+        score+= (0.1*combo + 1)*300;
+    }else if (result == lane::Judge_result::Empty){
+        //nothing happen
+    }else if (result == lane::Judge_result::Undefined){
+        qDebug() << "noob undefined la" << endl;
     }
 
     ui->lcd_combo->display(combo);
@@ -158,7 +194,7 @@ void mania_window::judge_response(lane::Judge_result result){
 
 void mania_window::missed_tile_response(){
     combo=0;
-    score-= 200;
+    //score-= 200;
     ui->lcd_combo->display(combo);
     ui->lcd_score->display(score);
 }

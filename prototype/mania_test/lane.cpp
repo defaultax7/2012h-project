@@ -5,7 +5,6 @@ lane::lane(int keynum):
     keynum(keynum),
     glow_name(":/image/mania_test/images/glowing_top.png")
 {
-
 }
 
 int lane::getkeynum(){
@@ -49,6 +48,8 @@ void lane::add_to_scene(int id, int total, QGraphicsScene *scene, QRectF bounds)
     //piano_key = scene->addPixmap(piano_key_pic);
     //piano_key->setOffset(xpos, bounds.height()-195);
     bound_rect = QRectF{(double)xpos,0, (double)key_width,bounds.height()};
+    valid_press_height = bound_rect.height()-key_height-green_height;
+    bottom_height = bound_rect.height()-key_height;
     qDebug() << bound_rect.x() << endl;
 
 
@@ -66,6 +67,7 @@ void lane::add_pressed_flash(QGraphicsScene *scene)
     QPixmap glow_pix{glow_name};
     glow_pix = glow_pix.scaled(QSize(key_width,1), Qt::KeepAspectRatioByExpanding);
     glow_flash = new QGraphicsPixmapItem{glow_pix};
+    glow_flash->setZValue(2); //higher than tile i think
     glow_flash->setOffset(bound_rect.x(), bound_rect.y()+bound_rect.height()-key_height-40); //lazy, the glowing is of aspect ratio 4:1
     scene->addItem(glow_flash);
 
@@ -84,56 +86,117 @@ void lane::remove_pressed_flash(QGraphicsScene *scene){
 
 lane::Judge_result lane::on_key_pressed(QGraphicsScene *scene){
     qDebug() << "id is " << id << endl;
-    is_long_pressing = true;
+    //is_long_pressing = true;
     add_pressed_flash(scene);
 
     //now judge
-    if (tile_list.empty()) return Judge_result::Miss;
+    if (tile_list.empty()) return Judge_result::Empty;
+    NewTile *toptile = tile_list[0];
     qDebug() << "tile0 at " << tile_list[0]->get_position_point() << endl;
     if (tile_list[0]->get_position_point().y() >= bound_rect.height()-key_height-green_height){
-        scene->removeItem(tile_list[0]->get_pix_item());
-        tile_list.removeFirst();
-        return Judge_result::Good;
+        if (toptile->get_tile_catagory() == NewTile::Tile_Catagory::Normal){
+            scene->removeItem(tile_list[0]->get_pix_item());
+            tile_list.removeFirst();
+            return Judge_result::Good;
+        }
+        else if (toptile->get_tile_catagory() == NewTile::Tile_Catagory::Long){
+            LongTile* long_ptr = dynamic_cast<LongTile*>(toptile);
+            long_ptr->set_ispresed(true);
+            is_long_pressing = true;
+            return Judge_result::Vaild_Long_Press;
+        }
+
     }else{
-        return Judge_result::Miss;
+        return Judge_result::Empty;
     }
-    return Judge_result::Judge_Undefined;
+    return Judge_result::Undefined;
 }
 
 void lane::on_key_released(QGraphicsScene *scene){
     is_long_pressing = false;
+    long_pressing_time = 0;
     remove_pressed_flash(scene);
+
+    if (tile_list.empty()) return;
+    NewTile *toptile = tile_list[0];
+    if (toptile->get_tile_catagory() == NewTile::Tile_Catagory::Long){ //special handler of long tile
+        LongTile* long_ptr = dynamic_cast<LongTile*>(toptile);
+        long_ptr->set_ispresed(false);
+    }
+
 }
 
-void lane::update(QGraphicsScene *scene){
+lane::Judge_result lane::update(QGraphicsScene *scene){
     bool to_remove;
-    if (tile_list.size() == 0) return;
+    lane::Judge_result response = Judge_result::Empty; //default response
 
-    to_remove = tile_list[0]->update_remove();
+    if (is_long_pressing) long_pressing_time++;
+    if (tile_list.empty()) return Judge_result::Empty;
+
     for (int i=1; i<tile_list.size(); ++i){
         tile_list[i]->update_remove();
+    }
+    to_remove = tile_list[0]->update_remove(); //special treatment of bottom tile
+    if (tile_list[0]->get_tile_catagory() == NewTile::Tile_Catagory::Long){
+        LongTile* long_ptr = dynamic_cast<LongTile*>(tile_list[0]);
+        if (long_ptr->get_position_point().y() >= bottom_height && long_ptr->get_tail_point().y() < valid_press_height && long_ptr->get_ispressed() == false){
+            response = Judge_result::Missed_Long_Tile;
+        }
+        else if (long_ptr->get_ispressed() && long_pressing_time % 10 == 0){ //avoid adding so many combo
+            response = Judge_result::Continuing_Long_Tile;
+        }
+    }
+    for (int i=0; i<tile_list.size(); ++i){
+        if (tile_list[i]->get_tile_catagory() == NewTile::Tile_Catagory::Long){
+            scene->removeItem(tile_list[i]->get_pix_item());
+            tile_list[i]->update_pix_item();
+            scene->addItem(tile_list[i]->get_pix_item());
+        }
     }
     if (to_remove){
         scene->removeItem(tile_list[0]->get_pix_item());
         //tile_list[0]->remove_from_scene(scene);
         tile_list.removeFirst();
     }
+    return response;
 }
 
-NewTile* lane::addtile(Tile_Catagory category, QGraphicsScene* scene){
+NewTile* lane::addtile(Add_Catagory category, QGraphicsScene* scene){
     QPointF st = bound_rect.topLeft() ;
     QPointF ed = bound_rect.bottomLeft() - QPointF{0,(double)key_height};
     QPointF delta{0,2};
 
-    tile_catagory = category;
-    if (category == Tile_Catagory::Normal){
-        NewTile *temptile = new NormalTile(st,ed,delta);
-        if (id % 2) temptile->init(NewTile::TileType::Pink, key_width);
-        else temptile->init(NewTile::TileType::White, key_width);
+    add_catagory = category;
+    if (category == Add_Catagory::Normal){
+        NewTile *temptile{nullptr};
+        if (id % 2){
+            temptile = new NormalTile(st,ed,delta, NormalTile::Pink);
+        }else{
+            temptile = new NormalTile(st,ed,delta, NormalTile::White);
+        }
+        temptile->init(key_width);
+        //if (id % 2) temptile->init(NewTile::TileType::Pink, key_width);
+        //else temptile->init(NewTile::TileType::White, key_width);
+        scene->addItem(temptile->get_pix_item());
+        tile_list.append(temptile);
+        return temptile;
+    }
+    else if (category == Add_Catagory::Long){
+        NewTile *temptile{nullptr};
+        if (id % 2){
+            temptile = new LongTile(st,ed,delta, LongTile::Pink); //length not specified, so 1000
+        }else{
+            temptile = new LongTile(st,ed,delta, LongTile::White);
+        }
+        temptile->init(key_width);
         scene->addItem(temptile->get_pix_item());
         tile_list.append(temptile);
         return temptile;
     }
     return nullptr;
+}
+
+bool lane::is_tile_list_empty(){
+    return tile_list.empty();
 }
 

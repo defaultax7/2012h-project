@@ -5,12 +5,13 @@ NewTile::NewTile(QObject *parent) : QObject(parent)
 
 }
 
-NewTile::NewTile(QPointF start_point, QPointF end_point, QPointF delta, QObject *parent):
-    QObject(parent), start_point(start_point), end_point(end_point), delta(delta)
+NewTile::NewTile(QPointF start_point, QPointF end_point, QPointF delta,Tile_Catagory t_cata, QObject *parent):
+    QObject(parent), start_point(start_point), end_point(end_point), delta(delta), tile_catagory(t_cata)
 {
     pos_point = start_point;
 }
-void NewTile::init(TileType t_type, int width){ //this should not be used since virtual
+void NewTile::init( int width){ //this should not be used since virtual
+    /*
     tile_type = t_type;
     if (tile_type == TileType::White){
         tile_map.load(":/image/mania_test/images/white_tile.png");
@@ -22,6 +23,7 @@ void NewTile::init(TileType t_type, int width){ //this should not be used since 
     tile_item = new QGraphicsPixmapItem(tile_map);
     //scene->addItem(tile_item);
     tile_item->setOffset(start_point);
+    */
 }
 /*
 void NewTile::remove_from_scene(QGraphicsScene *scene){
@@ -44,5 +46,14 @@ QPointF NewTile::get_position_point(){
 
 QGraphicsPixmapItem* NewTile::get_pix_item(){
     return tile_item;
+}
+
+void NewTile::update_pix_item(){
+    delete tile_item;
+    tile_item = temp_tile_item;
+}
+
+NewTile::Tile_Catagory NewTile::get_tile_catagory(){
+    return tile_catagory;
 }
 

@@ -11,22 +11,25 @@ class NewTile : public QObject
 {
     Q_OBJECT
 public:
-    //enum Tile_Catagory{Normal, Long, Tile_Undefined};
-    enum TileType{White, Pink, Mario, Undefined};
+    enum Tile_Catagory{Normal, Long, Undefined};
+
     NewTile(QObject *parent = nullptr);
-    NewTile(QPointF start_point, QPointF end_point, QPointF delta, QObject *parent=nullptr);
-    virtual void init(TileType, int width);
+    //virtual ~NewTile();
+    NewTile(QPointF start_point, QPointF end_point, QPointF delta,Tile_Catagory, QObject *parent=nullptr);
+    virtual void init(int width);
     //void remove_from_scene();
     virtual bool update_remove();
     QPointF get_position_point();
     QGraphicsPixmapItem* get_pix_item();
+    void update_pix_item();
+    Tile_Catagory get_tile_catagory();
 signals:
     void die();
 protected:
     QPointF start_point, pos_point, end_point, delta;
-    QPixmap tile_map;
-    QGraphicsPixmapItem *tile_item;
-    TileType tile_type{TileType::Undefined};
+    QPixmap tile_map, temp_map;
+    QGraphicsPixmapItem *tile_item, *temp_tile_item;
+    Tile_Catagory tile_catagory;
 
     QTimer* timer;
     int refresh_rate{2}; //not changed afterwards

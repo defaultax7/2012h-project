@@ -14,6 +14,7 @@ SOURCES += \
     mainwindow.cpp \
     mania_test/clickable_view.cpp \
     mania_test/lane.cpp \
+    mania_test/longtile.cpp \
     mania_test/mania_window.cpp \
     mania_test/newtile.cpp \
     mania_test/normaltile.cpp \
@@ -31,6 +32,7 @@ HEADERS += \
     mainwindow.h \
     mania_test/clickable_view.h \
     mania_test/lane.h \
+    mania_test/longtile.h \
     mania_test/mania_window.h \
     mania_test/newtile.h \
     mania_test/normaltile.h \

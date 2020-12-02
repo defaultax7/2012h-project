@@ -8,6 +8,7 @@
 #include <QRectF>
 #include <QKeyEvent>
 #include <QTimer>
+#include <QRandomGenerator>
 #include "lane.h"
 
 namespace Ui {

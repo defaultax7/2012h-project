@@ -1,13 +1,11 @@
 #include "normaltile.h"
 
-NormalTile::NormalTile(QPointF start_point, QPointF end_point, QPointF delta, QObject *parent):
-    NewTile(start_point, end_point, delta, parent)
+NormalTile::NormalTile(QPointF start_point, QPointF end_point, QPointF delta,TileType t_type, QObject *parent):
+    NewTile(start_point, end_point, delta, Tile_Catagory::Normal, parent), tile_type(t_type)
 {
-
 }
 
-void NormalTile::init(TileType t_type, int width){
-    tile_type = t_type;
+void NormalTile::init(int width){
     if (tile_type == TileType::White){
         tile_map.load(":/image/mania_test/images/white_tile.png");
     }else if (tile_type == TileType::Pink){
