@@ -7,6 +7,7 @@
 class Note : public QObject
 {
     Q_OBJECT
+
 public:
     Note(double x, double y, double endpoint, double speed , QObject* parent= nullptr);
     ~Note();
@@ -14,9 +15,11 @@ public:
     void start_move();
     virtual void init(QGraphicsScene*) = 0;
     int getX() const;
+    void stop();
+    void unstop();
 
 protected:
-    QGraphicsPixmapItem* image_item;
+    QGraphicsPixmapItem* image_item = nullptr;
     double x;
     double y;
     double speed = 1;  // should scroll to left only
@@ -32,6 +35,7 @@ private:
     const unsigned int refresh_rate = 1;  // the unit is ms & is not unexpected to be changed
     const double offset = 0;
     const double endpoint = 0; // remove the note when reach the endpoint
+    bool is_stop = false;
 
 private slots:
     void move();

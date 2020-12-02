@@ -8,12 +8,11 @@
 #include <fstream>
 #include <string>
 #include <QTimer>
-using std::ws;
-
+#include <QList>
 
 Note_controller::Note_controller(QObject *parent) : QObject(parent)
 {
-
+    connect(&timer , SIGNAL(timeout()) , this , SLOT(testing()));
 }
 
 void Note_controller::setScene(QGraphicsScene* scene)
@@ -61,6 +60,13 @@ void Note_controller::init(QString beatmap_path)
 
 void Note_controller::start()
 {
+    count_time = new QTime();
+
+    last_elasped_time = 0;
+
+    current_index = 0;
+    timer.start(10);
+    count_time->start();
 
     std::ifstream beatmap("F:/testing/1.orz");
 
@@ -70,36 +76,20 @@ void Note_controller::start()
 
     beatmap >> num_of_notes;
 
+    notes_start_time = new int[num_of_notes];
     for(int i = 0; i < num_of_notes ; ++i){
-        Note* note = new Normal_note(750, 150 , 130 , 0.5 , Normal_note::normal_note_type::red_note , this);
+        Note* note = new Normal_note(800, 150 , 130 , 0.5 , Normal_note::normal_note_type::red_note , this);
         notes.append(note);
         int start_time;
         beatmap >> start_time;
-        qDebug() << temp.c_str(); // start time
-        QTimer::singleShot(start_time, this, SLOT(spawn_note()));
+        notes_start_time[i] = start_time;
         connect(note , SIGNAL(note_was_missed()) , this , SLOT(handle_note_miss_signal()));
         connect(note , SIGNAL(note_was_hit(int)) , this , SLOT(handle_note_hit_signal(int)));
-        beatmap >> temp;
-        qDebug() << temp.c_str(); // note type
-        beatmap >> temp;
-        qDebug() << temp.c_str(); // speed
+
+        beatmap >> temp; // note type
+        beatmap >> temp; // speed
     }
-    //    notes[0]->init(scene);
-    //    notes[0]->start_move();
-    //    for(int i = 0 ; i < 10 ; ++i){
-    //        int value = QRandomGenerator::global()->generate()%2;
-    //        //        Note* note = new Normal_note(650 + i * 100, 150 , 130 , 0.5 , Normal_note::note_type::blue_note , this);
-    //        Note* note;
-    //        if(value == 0){
-    //            note = new Normal_note(650 + i * 50, 150 , 130 , 0.5 , Normal_note::note_type::red_note , this);
-    //        }else{
-    //            note = new Normal_note(650 + i * 50, 150 , 130 , 0.5 , Normal_note::note_type::blue_note , this);
-    //        }
-    //        note->init(scene);
-    //        note->start_move();
-    //        note_queue.enqueue(note);
-    //        connect(note, SIGNAL(die()) , this , SLOT(dequeue()));
-    //    }
+
 }
 
 
@@ -127,6 +117,57 @@ void Note_controller::judge_note(hit_type hit_type)
         //            note->get_hit(bad);
         //        }
     }
+}
+
+void Note_controller::pause()
+{
+    // the game is not started yet
+    if(count_time == nullptr){
+        return;
+    }
+
+    // Qtime do not provide stop function so I have to delete it and make a new one
+    last_elasped_time += (count_time->elapsed()/10)*10;
+    delete count_time;
+
+    QList<Note*> temp;
+
+    // get all showing notes and stop them
+    while(!showing_notes.isEmpty()){
+        temp.append(showing_notes.dequeue());
+    }
+    for(int i = 0 ; i < temp.count() ; ++i){
+        temp.at(i)->stop();
+        showing_notes.enqueue(temp.at(i));
+    }
+}
+
+void Note_controller::resume()
+{
+    // get all showing notes and let them move again
+    QList<Note*> temp;
+    while(!showing_notes.isEmpty()){
+        temp.append(showing_notes.dequeue());
+    }
+    for(int i = 0 ; i < temp.count() ; ++i){
+        temp.at(i)->unstop();
+        showing_notes.enqueue(temp.at(i));
+    }
+
+    count_time = new QTime();
+    count_time->start();
+
+}
+
+void Note_controller::restart()
+{
+    while(!showing_notes.isEmpty()){
+        delete showing_notes.dequeue();
+    }
+    while(!notes.isEmpty()){
+        delete notes.dequeue();
+    }
+    start();
 }
 
 void Note_controller::dequeue()
@@ -157,6 +198,18 @@ void Note_controller::handle_note_hit_signal(int performance)
 void Note_controller::handle_note_miss_signal()
 {
     emit update_performance(taiko_performance_view::Update_type::Miss);
+}
+
+void Note_controller::testing()
+{
+    // when it is time to spawn a note, spawn it
+    // need /10*10 because sometime it last digit is not zero even it is set to be start(10), so use the property of int to make it be 0 again
+    if(count_time != nullptr){
+        if((count_time->elapsed()/10)*10 + last_elasped_time == notes_start_time[current_index]){
+            spawn_note();
+            ++current_index;
+        }
+    }
 }
 
 

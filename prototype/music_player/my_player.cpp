@@ -182,6 +182,8 @@ void my_player::reset_current_song()
 {
     pointing_to_song = false;
     player->stop();
+    // clear the song playing by the player
+    player->setMedia(QMediaContent());
     emit song_update("");
 }
 

@@ -42,27 +42,29 @@ private:
     enum hit_type { drum , rim };
 
     Ui::taiko_window *ui;
-    void showEvent(QShowEvent* event);
 
     QGraphicsScene scene;
     taiko_performance_view p_view;
     QMediaPlayer music_player;
     QTimer* timer;
-    unsigned const int drum_flash_time = 80;  // unit ms
-
-    void play_drum_flash(QString image_path, double x , double y);
-    void show_result();
-    void pause();
-    void resume();
-    void hide_pause_screen();
-    void show_pause_screen();
-
-    Note_controller note_controller;
-
     QGraphicsPixmapItem* judge;
     QSoundEffect drum_sound_player;
     QSoundEffect rim_sound_player;
     QWidget* parent;
+    Note_controller note_controller;
+    int pause_time;
+    unsigned const int drum_flash_time = 80;  // the time that drum flash lasting for ( unit ms )
+
+    void showEvent(QShowEvent* event);
+    void play_drum_flash(QString image_path, double x , double y);
+    void show_result();
+    void pause();
+    void resume();
+    void retry();
+    void hide_pause_screen();
+    void show_pause_screen();
+
+
 };
 
 #endif // TAIKO_WINDOW_H

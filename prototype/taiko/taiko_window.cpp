@@ -50,7 +50,7 @@ taiko_window::taiko_window(QWidget *parent) :
     connect(&note_controller, SIGNAL(update_performance(taiko_performance_view::Update_type)), &p_view, SLOT(update_performance(taiko_performance_view::Update_type)));
 
     // start the game after 4 second
-    QTimer::singleShot(20000, this, SLOT(start_game()));
+//    QTimer::singleShot(5000, this, SLOT(start_game()));
 
     hide_pause_screen();
 
@@ -145,12 +145,24 @@ void taiko_window::pause()
 {
     show_pause_screen();
     music_player.pause();
+    note_controller.pause();
 }
 
 void taiko_window::resume()
 {
     hide_pause_screen();
     music_player.play();
+    note_controller.resume();
+}
+
+void taiko_window::retry()
+{
+    // restart the music
+    music_player.setPosition(0);
+    music_player.play();
+
+    hide_pause_screen();
+    note_controller.restart();
 }
 
 void taiko_window::hide_pause_screen()
@@ -187,11 +199,10 @@ void taiko_window::on_btn_resume_clicked()
 
 void taiko_window::on_btn_retry_clicked()
 {
-    qDebug() << "retry clicked";
+    retry();
 }
 
 void taiko_window::on_btn_exit_clicked()
 {
     //    parentWidget()->show();
-    qDebug() << "exit clicked";
 }

@@ -11,7 +11,10 @@ Note::Note(double x, double y, double endpoint, double speed, QObject *parent) :
 Note::~Note()
 {
     delete timer;
-    delete image_item;
+    // if note is not put in the scene, image item will be nullptr
+    if(image_item != nullptr){
+        delete image_item;
+    }
 }
 
 void Note::start_move()
@@ -24,13 +27,24 @@ int Note::getX() const
     return x;
 }
 
+void Note::stop()
+{
+    is_stop = true;
+}
+
+void Note::unstop(){
+    is_stop = false;
+}
+
 void Note::move()
 {
-    x -= speed;
-    image_item->setPos(x , y);
-    if(image_item->pos().x() < endpoint ){
-        emit die();
-        emit note_was_missed();
-        delete this;
+    if(!is_stop){
+        x -= speed;
+        image_item->setPos(x , y);
+        if(image_item->pos().x() < endpoint ){
+            emit die();
+            emit note_was_missed();
+            delete this;
+        }
     }
 }
