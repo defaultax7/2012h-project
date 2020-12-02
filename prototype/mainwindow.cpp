@@ -2,6 +2,7 @@
 #include "option_menu_window.h"
 #include "ui_mainwindow.h"
 
+#include <QSettings>
 #include <QSound>
 
 #include <music_player/music_player_window.h>
@@ -15,6 +16,17 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     this->setFixedSize(this->width(),this->height()); // prevent resize
     //    QSound::play(":/sound_effect/sound_effect/welcome.wav");  // play intro sound effect
+
+    QSettings setting("HKUST" , "ORZ");
+
+    // init the setting for first time user
+    if(!setting.value("music_vol").isValid()){
+        setting.setValue("music_vol",100);
+    }if(!setting.value("effect_vol").isValid()){
+        setting.setValue("effect_vol",100);
+    }if(!setting.value("offset").isValid()){
+        setting.setValue("offset",0);
+    }
 }
 
 MainWindow::~MainWindow()

@@ -13,6 +13,9 @@
         <file>image/rim_l.png</file>
         <file>image/rim_r.png</file>
         <file>image/taiko_start_button.png</file>
+        <file>image/back_button.png</file>
+        <file>image/game_mode_icon.png</file>
+        <file>image/just_a_image.png</file>
     </qresource>
     <qresource prefix="/sound_effect">
         <file>sound_effect/welcome.wav</file>

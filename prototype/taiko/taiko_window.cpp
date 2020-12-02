@@ -9,6 +9,7 @@
 #include <QPixmap>
 #include <QGraphicsPixmapItem>
 #include <QTime>
+#include <QSettings>
 
 taiko_window::taiko_window(QWidget *parent) :
     QMainWindow(parent),
@@ -38,11 +39,22 @@ taiko_window::taiko_window(QWidget *parent) :
     note_controller.setScene(&scene);
     note_controller.init("");
 
+    // retrieve settings
+    QSettings setting("HKUST" , "ORZ");
+
+    // set the sound source for hitting effect
     drum_sound_player.setSource(QUrl::fromLocalFile(":/sound_effect/sound_effect/drum_sound.wav"));
     rim_sound_player.setSource(QUrl::fromLocalFile(":/sound_effect/sound_effect/rim_sound.wav"));
 
-    // set the music source for music player & bind it with progress bar
+    // set the effect volume based on setting from option panel
+    drum_sound_player.setVolume(setting.value("effect_vol").toInt());
+    rim_sound_player.setVolume(setting.value("effect_vol").toInt());
+
+    // set the music source for music player
     music_player.setMedia(QUrl("F:/testing/1.mp3"));
+    // set the volume based on setting from option panel
+    music_player.setVolume(setting.value("music_vol").toInt());
+    //  bind the music player with progress bar
     connect(&music_player, SIGNAL(durationChanged(qint64)), this, SLOT(duration_change(qint64)));
     connect(&music_player, SIGNAL(positionChanged(qint64)), this, SLOT(current_time_change(qint64)));
     connect(&music_player, SIGNAL(stateChanged(QMediaPlayer::State)), this, SLOT(handle_music_finish_signal(QMediaPlayer::State)));

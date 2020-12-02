@@ -78,19 +78,6 @@ void option_menu_window::map_setting_to_ui()
 
 void option_menu_window::showEvent(QShowEvent *event)
 {
-    QSettings setting("HKUST" , "ORZ");
-
-    qDebug() << setting.value("offset");;
-
-    // Set to 100 if setting is not found
-    if(!setting.value("music_vol").isValid()){
-        setting.setValue("music_vol",100);
-    }
-    if(!setting.value("effect_vol").isValid()){
-        setting.setValue("effect_vol",100);
-    }if(!setting.value("offset").isValid()){
-        setting.setValue("offset",0);
-    }
 
     map_setting_to_ui();
 }

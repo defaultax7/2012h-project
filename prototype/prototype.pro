@@ -14,6 +14,7 @@ SOURCES += \
     mainwindow.cpp \
     music_player/music_player_window.cpp \
     music_player/my_player.cpp \
+    taiko/map_selection_window.cpp \
     taiko/normal_note.cpp \
     taiko/note.cpp \
     option_menu_window.cpp \
@@ -27,6 +28,7 @@ HEADERS += \
     mainwindow.h \
     music_player/music_player_window.h \
     music_player/my_player.h \
+    taiko/map_selection_window.h \
     taiko/normal_note.h \
     taiko/note.h \
     option_menu_window.h \
@@ -40,6 +42,7 @@ FORMS += \
     mainwindow.ui \
     music_player_window.ui \
     option_menu_window.ui \
+    taiko/map_selection_window.ui \
     taiko/result_window.ui \
     taiko/taiko_window.ui
 
