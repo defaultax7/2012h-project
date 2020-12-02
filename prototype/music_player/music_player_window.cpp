@@ -199,13 +199,34 @@ void music_player_window::on_treeWidget_itemDoubleClicked(QTreeWidgetItem *item,
     }
 }
 
+QString music_player_window::number_to_timestring(qint64 current_time)
+{
+    QString hour = QString::number(current_time / 1000 / 3600);
+    if(hour.toInt() < 10){
+        hour = "0" + hour;
+    }
+    QString min = QString::number(current_time / 1000 / 60 % 60);
+    if(min.toInt() < 10){
+        min = "0" + min;
+    }
+    QString sec = QString::number(current_time / 1000 % 60);
+    if(sec.toInt() < 10){
+        sec = "0" + sec;
+    }
+    return hour + ":"  + min + ":" + sec;
+}
+
 void music_player_window::update_duration(qint64 new_duration)
 {
+    // sometime the duration is not correct is because the Microsoft DirectShow that Qmediaplayer is using
+    // https://bugreports.qt.io/browse/QTBUG-34306
+    ui->lb_duration->setText(number_to_timestring(new_duration));
     ui->prograss_bar->setMaximum(new_duration);
 }
 
 void music_player_window::update_current_time(qint64 current_time)
 {
+    ui->lb_current_time->setText(number_to_timestring(current_time));
     // if user is holding on the progress bar, dont update the current time
     if(!(ui->prograss_bar->isSliderDown())){
         ui->prograss_bar->setValue(current_time);
@@ -243,4 +264,9 @@ void music_player_window::auto_next_song()
     if(ui->cb_auto_next->checkState() == Qt::CheckState::Checked){
         player.next();
     }
+}
+
+void music_player_window::on_prograss_bar_valueChanged(int value)
+{
+    ui->lb_current_time->setText(number_to_timestring(value));
 }

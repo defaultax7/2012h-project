@@ -60,12 +60,15 @@ private slots:
 
     void auto_next_song();
 
+    void on_prograss_bar_valueChanged(int value);
+
 private:
     Ui::music_player_window *ui;
     my_player player;
     bool is_mute = false;
 
     void closeEvent(QCloseEvent *);
+    QString number_to_timestring(qint64);
 };
 
 #endif // MUSIC_PLAYER_WINDOW_H
