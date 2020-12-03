@@ -1,0 +1,17 @@
+4
+Mario
+/Mario/mario_tiles.txt
+/Mario/super_mario.mp3
+1
+Runengon
+/Runengon/antiPLUR - Runengon (Raveille) [Easy].osu
+/Runengon/audio.mp3
+2
+Reaction feat. Slyleaf
+/Reaction feat. Slyleaf/James Landino - Reaction feat. Slyleaf (AncuL) [Advanced].osu
+/Reaction feat. Slyleaf/audio.mp3
+3
+hk_anthem
+/hk_anthem/mario_tiles_modified.txt
+/hk_anthem/_Glory to Hong Kong Instrument.mp3
+1
