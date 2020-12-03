@@ -48,16 +48,16 @@ void MainWindow::on_exit_btn_clicked()
 
 void MainWindow::on_music_btn_clicked()
 {
-    music_player_window* w = new music_player_window(this);
+    music_player_window* w = new music_player_window();
     w->show();
-    hide();
+    close();
 }
 
 void MainWindow::on_option_btn_clicked()
 {
-    option_menu_window* w = new option_menu_window(this);
+    option_menu_window* w = new option_menu_window();
     w->show();
-    hide();
+    close();
 }
 
 void MainWindow::on_btn_start_taiko_clicked()

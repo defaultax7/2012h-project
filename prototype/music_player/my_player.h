@@ -21,6 +21,7 @@ public:
     void next();
     void prev();
     QLinkedList<QString> get_filtered_song_list(const QString&);
+    QLinkedList<QString> get_song_list();
     void jump_to(qint64);
     QMediaPlayer::State get_state() const;
     void pause();

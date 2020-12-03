@@ -62,6 +62,8 @@ private slots:
 
     void on_prograss_bar_valueChanged(int value);
 
+    void on_btn_save_list_clicked();
+
 private:
     Ui::music_player_window *ui;
     my_player player;

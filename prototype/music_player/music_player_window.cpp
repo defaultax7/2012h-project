@@ -4,6 +4,9 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <mainwindow.h>
+#include <fstream>
+
 
 music_player_window::music_player_window(QWidget *parent) :
     QMainWindow(parent),
@@ -14,7 +17,6 @@ music_player_window::music_player_window(QWidget *parent) :
     // Set icon for button
     ui->btn_open_folder->setIcon(style()->standardIcon(QStyle::SP_FileDialogEnd));
     ui->btn_open_music->setIcon(style()->standardIcon(QStyle::SP_DriveCDIcon));
-
     ui->btn_start->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
     ui->btn_next->setIcon(style()->standardIcon(QStyle::SP_MediaSeekForward));
     ui->btn_previous->setIcon(style()->standardIcon(QStyle::SP_MediaSeekBackward));
@@ -22,11 +24,12 @@ music_player_window::music_player_window(QWidget *parent) :
     ui->btn_mute->setIcon(style()->standardIcon(QStyle::SP_MediaVolume));
     ui->btn_delete->setIcon(style()->standardIcon(QStyle::SP_DialogDiscardButton));
     ui->btn_delete_all->setIcon(style()->standardIcon(QStyle::SP_MessageBoxCritical));
+    ui->btn_save_list->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
 
     // more space for path
     ui->treeWidget->setColumnWidth(0,250);
 
-    // connect my player to tree list
+    // connect my player signals to this window
     connect(&player , SIGNAL(song_list_changed(QLinkedList<QString>)) , this , SLOT(update_song_list(QLinkedList<QString>)));
     connect(&player , SIGNAL(current_time_update(qint64)) , this , SLOT(update_current_time(qint64)));
     connect(&player , SIGNAL(duration_update(qint64)) , this , SLOT(update_duration(qint64)));
@@ -35,6 +38,17 @@ music_player_window::music_player_window(QWidget *parent) :
     connect(&player , SIGNAL(auto_next_song()) , this , SLOT(auto_next_song()));
 
     this->setFixedSize(this->size());
+
+
+    QFile file("songlist.txt");
+    QString line;
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        QTextStream stream(&file);
+        while (!stream.atEnd()){
+            player.add_song(stream.readLine());
+        }
+    }
+    file.close();
 }
 
 
@@ -44,7 +58,8 @@ music_player_window::~music_player_window()
 }
 
 void music_player_window::closeEvent(QCloseEvent *){
-    parentWidget()->show();
+    MainWindow* w = new MainWindow();
+    w->show();
 }
 
 void music_player_window::on_search_song_textChanged(const QString &arg1)
@@ -99,7 +114,7 @@ void music_player_window::update_song_list(QLinkedList<QString> song_list)
 
     // load the latest song list to the view
     for (QLinkedList<QString>::iterator it = song_list.begin(); it != song_list.end(); ++it) {
-        // extract song name from abs path
+        // extract song name from absolute path
         QFileInfo fileInfo(*it);
         QString song_name(fileInfo.fileName());
         QStringList temp;
@@ -121,21 +136,20 @@ void music_player_window::on_btn_delete_clicked()
 
 void music_player_window::on_btn_open_folder_clicked()
 {
-    // ask a folder
-    //    QString dir_path = QFileDialog::getExistingDirectory(this, tr("Select a folder"), nullptr, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-
-    // use for testing
-    QString dir_path = "F:/music";
+    // ask for a folder
+    QString dir_path = QFileDialog::getExistingDirectory(this, tr("Select a folder"), nullptr, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
     // get mp3/wav inside the folder
     QDir dir(dir_path);
     QFileInfoList songs = dir.entryInfoList(QStringList() << "*.mp3" << "*.wav" ,QDir::Files);
     if(songs.isEmpty()){
         QMessageBox msgBox;
+        msgBox.setWindowTitle("Warning");
         msgBox.setText("No song found in the folder!");
         msgBox.exec();
         return;
     }
+    // put them in the music player
     QStringList songs_path;
     for (int i = 0 ; i < songs.count() ; ++i) {
         songs_path.append(songs.at(i).absoluteFilePath());
@@ -151,6 +165,7 @@ void music_player_window::on_btn_random_song_list_clicked()
 
 void music_player_window::on_btn_delete_all_clicked()
 {
+    // Ask for confirmation when deleting all song to prevent accidentally delete all of them
     QMessageBox mesBox;
     mesBox.setWindowTitle("Ask for confirmation.");
     mesBox.setText("Do you really want to remove all songs?");
@@ -164,6 +179,7 @@ void music_player_window::on_btn_delete_all_clicked()
 
 void music_player_window::on_btn_start_clicked()
 {
+    // change the icon and the function of start button base on the signal sent by music player
     if(player.get_state() == QMediaPlayer::State::PausedState || player.get_state() == QMediaPlayer::State::StoppedState){
         player.play();
     }else if(player.get_state() == QMediaPlayer::State::PlayingState){
@@ -183,16 +199,19 @@ void music_player_window::on_horizontalSlider_valueChanged(int value)
 
 void music_player_window::on_btn_next_clicked()
 {
+    // play next song
     player.next();
 }
 
 void music_player_window::on_btn_previous_clicked()
 {
+    // player previous song
     player.prev();
 }
 
 void music_player_window::on_treeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
+    // play selected song in treewidget when double click
     QModelIndexList list = ui->treeWidget->selectionModel()->selectedIndexes();
     if(!list.isEmpty()){
         player.play_song(list.at(0).data().toString());
@@ -201,6 +220,7 @@ void music_player_window::on_treeWidget_itemDoubleClicked(QTreeWidgetItem *item,
 
 QString music_player_window::number_to_timestring(qint64 current_time)
 {
+    // convert a time elapsed in ms to HH:MM:SS format string
     QString hour = QString::number(current_time / 1000 / 3600);
     if(hour.toInt() < 10){
         hour = "0" + hour;
@@ -269,4 +289,25 @@ void music_player_window::auto_next_song()
 void music_player_window::on_prograss_bar_valueChanged(int value)
 {
     ui->lb_current_time->setText(number_to_timestring(value));
+}
+
+void music_player_window::on_btn_save_list_clicked()
+{
+    // remove the old file if exist
+    if (QFile::exists("songlist.txt"))
+    {
+        QFile::remove("songlist.txt");
+    }
+
+    // create a text file "songlist"
+    QFile file("songlist.txt");
+    if ( file.open(QIODevice::ReadWrite) )
+    {
+        // write the current song list into the file
+        QTextStream stream( &file );
+        QLinkedList<QString> song_list = player.get_song_list();
+        for(QLinkedList<QString>::iterator it = song_list.begin() ; it != song_list.end() ; ++it){
+            stream << *it << endl;
+        }
+    }
 }

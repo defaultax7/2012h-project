@@ -341,6 +341,16 @@ QPushButton:pressed{
      </property>
     </column>
    </widget>
+   <widget class="QTableWidget" name="tableWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>90</y>
+      <width>401</width>
+      <height>341</height>
+     </rect>
+    </property>
+   </widget>
    <zorder>label_3</zorder>
    <zorder>btn_back</zorder>
    <zorder>txt_search</zorder>
@@ -352,6 +362,7 @@ QPushButton:pressed{
    <zorder>btn_random_mode</zorder>
    <zorder>label_2</zorder>
    <zorder>tableWidget</zorder>
+   <zorder>tableWidget_2</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

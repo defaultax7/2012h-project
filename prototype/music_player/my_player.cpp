@@ -17,6 +17,7 @@ void my_player::setMuted(bool is_mute)
 
 void my_player::add_song(QString song)
 {
+    // add the song to the list if not already existed
     if(!song_list.contains(song)){
         song_list.append(song);
     }
@@ -34,8 +35,8 @@ void my_player::remove_song(QString song)
 {
     for(QLinkedList<QString>::iterator it = song_list.begin() ; it != song_list.end() ; ++it){
         if(*it == song){
-            // if the song to be removed is being played
-            if(*current_song == song){
+            // if there is a song playing and it is the song to be removed
+            if(pointing_to_song && *current_song == song){
                 reset_current_song();
             }
             song_list.erase(it);
@@ -50,11 +51,14 @@ void my_player::shuffle_song_list()
     // create new seed base on current time
     srand (time(NULL));
 
+    // create a temp list use for shuffle
     QList<QString> temp;
     for(QLinkedList<QString>::iterator it = song_list.begin() ; it != song_list.end() ; ++it){
         temp.append(*it);
     }
+    // empty current song list
     song_list.clear();
+    // need to save the size for, because the method use will change the size every execution
     int size = temp.count();
     for(int i = 0; i < size ; ++i){
         song_list.append(temp.takeAt(rand() % temp.count()));
@@ -65,6 +69,7 @@ void my_player::shuffle_song_list()
 
 void my_player::remove_all()
 {
+    // remove all the song
     song_list.clear();
     reset_current_song();
     emit song_list_changed(song_list);
@@ -72,7 +77,7 @@ void my_player::remove_all()
 
 void my_player::play_song(QString song_path)
 {
-    // set current song
+    // set current song by going through the song_list
     for(current_song = song_list.begin() ; current_song != song_list.end() ; ++current_song ){
         if(*current_song == song_path){
             player->setMedia(QUrl(*current_song));
@@ -102,6 +107,7 @@ void my_player::next()
             ++current_song;
         }
         if(current_song != song_list.end()){
+            // go to the next song
             player->setMedia(QUrl(*current_song));
             player->play();
             emit song_update(*current_song);
@@ -114,6 +120,7 @@ void my_player::prev()
     if(pointing_to_song){
         // it is not circular, no go back from first one
         if(current_song != song_list.begin()){
+            // go to the previous song
             --current_song;
             player->setMedia(QUrl(*current_song));
             player->play();
@@ -138,6 +145,11 @@ QLinkedList<QString> my_player::get_filtered_song_list(const QString& filter_str
     }
 
     return filtered_list;
+}
+
+QLinkedList<QString> my_player::get_song_list()
+{
+    return song_list;
 }
 
 void my_player::jump_to(qint64 new_pos)
@@ -172,9 +184,11 @@ void my_player::current_time_change(qint64 current_time)
 
 void my_player::player_state_change(QMediaPlayer::State state)
 {
+    // if these conditions are fulfilled, that mean the song is end and a auto_next_song signal will be send to let the window handle go to next song or not
     if(state == QMediaPlayer::State::StoppedState && player->duration() > 0 && player->position() == player->duration()){
         emit auto_next_song();
     }
+    // the function/icon of the start button in the window is state-dependant, a signal will be send to it to update it
     emit update_start_button(state);
 }
 

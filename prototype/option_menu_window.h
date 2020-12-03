@@ -2,6 +2,7 @@
 #define OPTION_MENU_WINDOW_H
 
 #include <QMainWindow>
+#include <QSettings>
 
 namespace Ui {
 class option_menu_window;
@@ -30,10 +31,10 @@ private:
     Ui::option_menu_window *ui;
 
     void closeEvent(QCloseEvent *);
-    bool validate_config_file();
+    void showEvent(QShowEvent* event);
     void map_setting_to_ui();
 
-    void showEvent(QShowEvent* event);
+    QSettings setting{"HKUST" , "ORZ"};
 };
 
 #endif // OPTION_MENU_WINDOW_H
