@@ -36,12 +36,23 @@ void Note::unstop(){
     is_stop = false;
 }
 
+void Note::set_fade_out(bool fade_out)
+{
+    is_fade_out = fade_out;
+}
+
 void Note::move()
 {
     if(!is_stop){
         x -= speed;
         image_item->setPos(x , y);
-        if(image_item->pos().x() < endpoint ){
+        if(is_fade_out){
+            if(x < fade_out_point){
+                image_item->setOpacity(opacity);
+                opacity -= fade_out_rate;
+            }
+        }
+        if(x < endpoint ){
             emit die();
             emit note_was_missed();
             delete this;

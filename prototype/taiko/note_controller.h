@@ -16,7 +16,7 @@ class Note_controller : public QObject
 public:
     enum hit_type{drum , rim};
     enum performance{perfect, good, bad};
-    Note_controller(bool random_mode , QObject *parent = nullptr);
+    Note_controller(bool random_mode , bool fade_out_mode , QObject *parent = nullptr);
     void setScene(QGraphicsScene*);
     void init(QString beatmap_path);
     void start();
@@ -46,6 +46,7 @@ private:
     int current_index = 0;
     int last_elasped_time = 0;
     bool random_mode = false;
+    bool fade_out_mode = false;
 };
 
 #endif // NOTE_GENERATOR_H

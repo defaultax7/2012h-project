@@ -10,7 +10,7 @@
 #include <QTimer>
 #include <QList>
 
-Note_controller::Note_controller(bool random_mode , QObject *parent) : random_mode(random_mode) ,  QObject(parent)
+Note_controller::Note_controller(bool random_mode , bool fade_out_mode , QObject *parent) : random_mode(random_mode) , fade_out_mode(fade_out_mode) ,  QObject(parent)
 {
     connect(&timer , SIGNAL(timeout()) , this , SLOT(testing()));
 }
@@ -105,9 +105,11 @@ void Note_controller::start()
 
         Note* note;
         if(random_mode){
-            note = new Normal_note(800, 150 , 130 , 0.5 , Normal_note::normal_note_type(rand() % 2) , this);
-        }else{
-            note = new Normal_note(800, 150 , 130 , 0.5 , Normal_note::normal_note_type(note_type) , this);
+            note_type = rand() % 2;
+        }
+        note = new Normal_note(800, 150 , 130 , 0.5 , Normal_note::normal_note_type(note_type) , this);
+        if(fade_out_mode){
+            note->set_fade_out(fade_out_mode);
         }
         notes.append(note);
         notes_start_time[i] = start_time;

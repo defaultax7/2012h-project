@@ -17,6 +17,7 @@ public:
     int getX() const;
     void stop();
     void unstop();
+    void set_fade_out(bool);
 
 protected:
     QGraphicsPixmapItem* image_item = nullptr;
@@ -35,6 +36,10 @@ private:
     const unsigned int refresh_rate = 1;  // the unit is ms & is not unexpected to be changed
     const double offset = 0;
     const double endpoint = 0; // remove the note when reach the endpoint
+    const double fade_out_point = 500;
+    const double fade_out_rate = 0.005;
+    double opacity = 1;
+    bool is_fade_out = false;
     bool is_stop = false;
 
     friend class Note_controller;
