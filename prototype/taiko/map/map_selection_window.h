@@ -4,7 +4,9 @@
 #include "Taiko_map.h"
 
 #include <QMainWindow>
+#include <QMediaPlayer>
 #include <QString>
+#include <QTreeWidgetItem>
 
 namespace Ui {
 class map_selection_window;
@@ -32,19 +34,23 @@ private slots:
 
     void on_btn_back_clicked();
 
+    void on_map_tree_itemDoubleClicked(QTreeWidgetItem *item, int column);
+
 private:
     Ui::map_selection_window *ui;
     QString btn_active_style;
     QString btn_inactive_style;
+    QList<Taiko_map*> map_list;
+    QMediaPlayer* music_player;
     bool auto_mode = false;
     bool high_speed_mode = false;
     bool dark_mode = false;
     bool fade_out_mode = false;
     bool random_mode = false;
-    QList<Taiko_map*> map_list;
 
     void closeEvent(QCloseEvent *);
     void add_map(QString map_path);
+    bool file_exist(QString path);
 };
 
 #endif // MAP_SELECTION_WINDOW_H

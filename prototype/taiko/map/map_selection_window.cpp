@@ -6,12 +6,21 @@
 #include <QDebug>
 #include <fstream>
 #include <string>
+#include <QUrl>
+#include <QMediaPlaylist>
+
+// init the number of maps
+unsigned int Taiko_map::total_num_of_map = 0;
 
 map_selection_window::map_selection_window(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::map_selection_window)
 {
     ui->setupUi(this);
+
+    music_player = new QMediaPlayer();
+
+    this->setFixedSize(this->size());
 
     btn_inactive_style = "QPushButton { \
             font-size: 16px;\
@@ -124,38 +133,119 @@ void map_selection_window::closeEvent(QCloseEvent *)
     MainWindow* w = new MainWindow();
     w->show();
     close();
+    delete music_player;
 }
 
 void map_selection_window::add_map(QString map_path)
 {
+    // create a stringlist for creating QTreeWidgetItem later
     QStringList info_list;
+
+    // use to get the paht of the root folder
+    QFileInfo info(map_path);
+
+    // read the file
     std::ifstream map(map_path.toStdString());
 
     // read all the map information and save them to a temp variable;
     std::string map_name;
     map >> map_name;
     info_list.append(map_name.c_str());
+
     std::string duration;
     map >> duration;
     info_list.append(duration.c_str());
+
     std::string creator;
     map >> creator;
     info_list.append(creator.c_str());
+
     std::string difficulty;
     map >> difficulty;
     info_list.append(difficulty.c_str());
+
+    // assume the song is put in the same folder
     std::string song_name;
     map >> song_name;
     std::string song_path;
-    // assume the song is put in the same folder
-    QFileInfo info(map_path);
     song_path = info.dir().path().toStdString() + "/" + song_name;
 
-    map_list.append(new Taiko_map(map_name.c_str() , duration.c_str() , creator.c_str() , difficulty.c_str() , map_path , song_path.c_str()));
-    info_list.append(song_path.c_str());
+    int offset;
+    map >> offset;
+
+    // assume the preview song is called "preview.mp3" and put in the same folder
+    std::string song_preview_path;
+    song_preview_path = info.dir().path().toStdString() + "/preview.mp3";
+
+    // create a map and put it into the list
+    Taiko_map* taiko_map= new Taiko_map(map_name.c_str() , duration.c_str() , creator.c_str() , difficulty.c_str() , info.dir().path() , map_path , song_path.c_str() , song_preview_path.c_str() , offset);
+    map_list.append(taiko_map);
+
+    info_list.append(QString::number(taiko_map->id));
 
     QTreeWidgetItem* infos = new QTreeWidgetItem(info_list);
 
     ui->map_tree->addTopLevelItem(infos);
 
+}
+
+void map_selection_window::on_map_tree_itemDoubleClicked(QTreeWidgetItem *item, int column)
+{
+    // stop the music first
+    music_player->stop();
+    // get the map by ID ( id is same as the index of list )
+    Taiko_map* map = map_list.at(item->data(4,0).toInt());
+    QString song_preview_path = map->song_preview_path;
+    if(file_exist(song_preview_path)){
+
+        // play the preview song of selected map and loop it
+        QMediaPlaylist *playlist = new QMediaPlaylist();
+        playlist->addMedia(QUrl(song_preview_path));
+        playlist->setPlaybackMode(QMediaPlaylist::Loop);
+
+        music_player->setPlaylist(playlist);
+        music_player->play();
+    }
+
+    // clear the current score for showing the new score
+    ui->score_tree->clear();
+
+    // find the result file
+    std::string result_path = map->root_folder.toStdString() + "/result.txt";
+    if(!file_exist(result_path.c_str())){
+
+        // create a text file "songlist"
+        QFile file(result_path.c_str());
+        if ( file.open(QIODevice::ReadWrite) )
+        {
+            // write the current song list into the file
+            QTextStream stream( &file );
+            stream << "" << endl;
+        }
+
+    }else{
+        QFile result_file(result_path.c_str());
+        QStringList result_row;
+        if (result_file.open(QIODevice::ReadOnly))
+        {
+           QTextStream temp(&result_file);
+           // read the file line by line and split each line by space
+           while (!temp.atEnd())
+           {
+              result_row.append(temp.readLine().split(" "));
+           }
+           result_file.close();
+           QTreeWidgetItem* infos = new QTreeWidgetItem(result_row);
+           ui->score_tree->addTopLevelItem(infos);
+        }
+    }
+}
+
+bool map_selection_window::file_exist(QString path){
+    QFileInfo check_file(path);
+    if (check_file.exists() && check_file.isFile()) {
+        return true;
+    } else {
+        return false;
+    }
 }
