@@ -13,15 +13,13 @@
 
 #include <taiko/map/map_selection_window.h>
 
-taiko_window::taiko_window(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::taiko_window)
+taiko_window::taiko_window(QString map_path , QString song_path, int note_left , bool auto_mode, bool high_speed_mode, bool dark_mode, bool fade_out_mode, bool random_mode, QWidget *parent) : QMainWindow(parent), ui(new Ui::taiko_window),
+    auto_mode(auto_mode) , high_speed_mode(high_speed_mode) , dark_mode(dark_mode) , fade_out_mode(fade_out_mode) , random_mode(random_mode)
 {
-
     ui->setupUi(this);
 
-    p_view.set_note_left(100);
-
+    // setup the performance view
+    p_view.set_note_left(note_left);
     p_view.set_perfect_label(ui->lb_perfect_count);
     p_view.set_good_label(ui->lb_good_count);
     p_view.set_bad_label(ui->lb_bad_count);
@@ -37,7 +35,7 @@ taiko_window::taiko_window(QWidget *parent) :
     this->setFixedSize(this->size());  // prevent resizing
 
     note_controller.setScene(&scene);
-    note_controller.init("");
+    note_controller.init(map_path);
 
     // retrieve settings
     QSettings setting("HKUST" , "ORZ");
@@ -51,7 +49,9 @@ taiko_window::taiko_window(QWidget *parent) :
     rim_sound_player.setVolume(setting.value("effect_vol").toInt());
 
     // set the music source for music player
-    music_player.setMedia(QUrl("F:/testing/1.mp3"));
+    //    music_player.setMedia(QUrl("F:/testing/1.mp3"));
+    music_player.setMedia(QUrl(song_path));
+
     // set the volume based on setting from option panel
     music_player.setVolume(setting.value("music_vol").toInt());
     //  bind the music player with progress bar
@@ -107,9 +107,9 @@ void taiko_window::keyPressEvent(QKeyEvent *event)
     }else if(event->key() == Qt::Key_Escape){
         pause();
     }
-//    else if(event->key() == Qt::Key_0){
-//        show_result();
-//    }
+    //    else if(event->key() == Qt::Key_0){
+    //        show_result();
+    //    }
 
 }
 
@@ -131,8 +131,18 @@ void taiko_window::showEvent(QShowEvent *event)
     // let the image fit the whole graphic view
     ui->graphicsView->fitInView(scene.sceneRect(),Qt::KeepAspectRatio);
 
+    // put the judging area image to the scene
     judge = scene.addPixmap(QPixmap(":/image/image/judging_ring.png"));
     judge->setPos(130,120);
+
+    if(dark_mode){
+        // add a black rect to block the vision
+        QGraphicsRectItem* black = scene.addRect(  400 , 117 , 470 , 130 , QPen() , QBrush(Qt::black));
+        // let it always on top
+        black->setZValue(1);
+    }
+
+    p_view.refresh_UI();
 
 }
 
@@ -145,19 +155,21 @@ void taiko_window::closeEvent(QCloseEvent *)
 
 void taiko_window::play_drum_flash(QString image_path, double x, double y)
 {
+    // show the drum flash
     QGraphicsPixmapItem* drum_flash = scene.addPixmap(image_path);
     drum_flash->setPos(x,y);
     QTime t;
     t.start();
+    // proceed to other process
     while (t.elapsed() < drum_flash_time) {
         QCoreApplication::processEvents();
     }
+    // remove the flash when time is reached
     scene.removeItem(drum_flash);
 }
 
 void taiko_window::show_result()
 {
-//    result_window* w = new result_window(parent);
     result_window* w = new result_window();
     w->show();
     this->hide();
@@ -228,7 +240,7 @@ void taiko_window::on_btn_retry_clicked()
 
 void taiko_window::on_btn_exit_clicked()
 {
-    //    parentWidget()->show();
+    close();
 }
 
 void taiko_window::handle_music_finish_signal(QMediaPlayer::State state)

@@ -151,6 +151,7 @@ void map_selection_window::closeEvent(QCloseEvent *)
         w->show();
     }
     for(int i = 0; i < map_list.count() ; ++i){
+        // dont delete the selected map, it will be passed to the game mode
         delete map_list.at(i);
     }
     delete music_player;
@@ -187,12 +188,15 @@ void map_selection_window::add_map(QString map_path)
     int offset;
     map >> offset;
 
+    int note_left;
+    map >> note_left;
+
     // assume the preview song is called "preview.mp3" and put in the same folder
     std::string song_preview_path;
     song_preview_path = info.dir().path().toStdString() + "/preview.mp3";
 
     // create a map and put it into the list
-    Taiko_map* taiko_map= new Taiko_map(map_name.c_str() , duration.c_str() , creator.c_str() , difficulty.c_str() , info.dir().path() , map_path , song_path.c_str() , song_preview_path.c_str() , offset);
+    Taiko_map* taiko_map= new Taiko_map(map_name.c_str() , duration.c_str() , creator.c_str() , difficulty.c_str() , info.dir().path() , map_path , song_path.c_str() , song_preview_path.c_str() , offset , note_left);
     map_list.append(taiko_map);
     add_map_to_tree(taiko_map);
 
@@ -274,7 +278,7 @@ void map_selection_window::on_btn_start_clicked()
         msgBox.exec();
     }else{
         started_game = true;
-        taiko_window* w = new taiko_window();
+        taiko_window* w = new taiko_window(map_list.at(selected_map_index)->map_path , map_list.at(selected_map_index)->song_path , map_list.at(selected_map_index)->note_left , auto_mode , high_speed_mode , dark_mode , fade_out_mode , random_mode );
         w->show();
         close();
     }

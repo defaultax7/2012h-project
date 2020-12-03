@@ -13,6 +13,8 @@
 #include <QTimer>
 #include <QSoundEffect>
 
+#include <taiko/map/Taiko_map.h>
+
 namespace Ui {
 class taiko_window;
 }
@@ -22,7 +24,7 @@ class taiko_window : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit taiko_window(QWidget *parent = nullptr);
+    explicit taiko_window(QString map_path , QString song_path , int note_left , bool auto_mode , bool high_speed_mode , bool dark_mode , bool fade_out_mode , bool random_mode , QWidget *parent = nullptr);
     ~taiko_window();
 
     void keyPressEvent(QKeyEvent *event);
@@ -55,6 +57,11 @@ private:
     QSoundEffect rim_sound_player;
     QWidget* parent;
     Note_controller note_controller;
+    bool auto_mode = false;
+    bool high_speed_mode = false;
+    bool dark_mode = false;
+    bool fade_out_mode = false;
+    bool random_mode = false;
     int pause_time;
     unsigned const int drum_flash_time = 80;  // the time that drum flash lasting for ( unit ms )
 

@@ -71,10 +71,18 @@ void Note_controller::start()
     std::ifstream beatmap("F:/testing/1.orz");
 
     std::string temp;
-    beatmap >> temp;  // ignore title
-    beatmap >> temp;  // ignore level
+    beatmap >> temp;  // ignore map name
+    beatmap >> temp;  // ignore duration
+    beatmap >> temp;  // ignore creator
+    beatmap >> temp;  // ignore difficulty
+    beatmap >> temp;  // ignore song name
+
+//    // this is offset
+//    beatmap >> temp;
 
     beatmap >> num_of_notes;
+
+    qDebug() << num_of_notes;
 
     notes_start_time = new int[num_of_notes];
     for(int i = 0; i < num_of_notes ; ++i){
