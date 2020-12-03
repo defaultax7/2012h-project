@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Taiko map selection</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="btn_back">
@@ -510,6 +510,44 @@ QPushButton:pressed{
      </property>
     </column>
    </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>430</y>
+      <width>201</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Selected Map:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_selected_map">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>430</y>
+      <width>201</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
    <zorder>label_3</zorder>
    <zorder>btn_back</zorder>
    <zorder>txt_search</zorder>
@@ -526,6 +564,8 @@ QPushButton:pressed{
    <zorder>comboBox</zorder>
    <zorder>score_tree</zorder>
    <zorder>map_tree</zorder>
+   <zorder>label_5</zorder>
+   <zorder>lb_selected_map</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

@@ -8,6 +8,7 @@
 #include <string>
 #include <QUrl>
 #include <QMediaPlaylist>
+#include <QMessageBox>
 
 // init the number of maps
 unsigned int Taiko_map::total_num_of_map = 0;
@@ -21,6 +22,15 @@ map_selection_window::map_selection_window(QWidget *parent) :
     music_player = new QMediaPlayer();
 
     this->setFixedSize(this->size());
+
+    // enable sorting for both tree view
+    QHeaderView* map_tree_header = ui->map_tree->header();
+    map_tree_header->setSectionsClickable(true);
+    connect(map_tree_header, SIGNAL(sectionClicked(int)), this, SLOT(sort_map_tree_by_header(int)));
+
+    QHeaderView* score_tree_header = ui->score_tree->header();
+    score_tree_header->setSectionsClickable(true);
+    connect(score_tree_header, SIGNAL(sectionClicked(int)), this, SLOT(sort_score_tree_by_header(int)));
 
     btn_inactive_style = "QPushButton { \
             font-size: 16px;\
@@ -71,6 +81,9 @@ void map_selection_window::showEvent(QShowEvent *event)
     while (it.hasNext()){
         add_map(it.next());
     }
+
+
+    //    qDebug() << ui->map_tree->header->sectionClicked();
 }
 
 void map_selection_window::on_btn_auto_mode_clicked()
@@ -138,31 +151,24 @@ void map_selection_window::closeEvent(QCloseEvent *)
 
 void map_selection_window::add_map(QString map_path)
 {
-    // create a stringlist for creating QTreeWidgetItem later
-    QStringList info_list;
-
     // use to get the paht of the root folder
     QFileInfo info(map_path);
 
     // read the file
     std::ifstream map(map_path.toStdString());
 
-    // read all the map information and save them to a temp variable;
+    // read all the map information and save them to a temp variable ( they are used to create the taiko map object later )
     std::string map_name;
     map >> map_name;
-    info_list.append(map_name.c_str());
 
     std::string duration;
     map >> duration;
-    info_list.append(duration.c_str());
 
     std::string creator;
     map >> creator;
-    info_list.append(creator.c_str());
 
     std::string difficulty;
     map >> difficulty;
-    info_list.append(difficulty.c_str());
 
     // assume the song is put in the same folder
     std::string song_name;
@@ -180,21 +186,22 @@ void map_selection_window::add_map(QString map_path)
     // create a map and put it into the list
     Taiko_map* taiko_map= new Taiko_map(map_name.c_str() , duration.c_str() , creator.c_str() , difficulty.c_str() , info.dir().path() , map_path , song_path.c_str() , song_preview_path.c_str() , offset);
     map_list.append(taiko_map);
-
-    info_list.append(QString::number(taiko_map->id));
-
-    QTreeWidgetItem* infos = new QTreeWidgetItem(info_list);
-
-    ui->map_tree->addTopLevelItem(infos);
+    add_map_to_tree(taiko_map);
 
 }
 
 void map_selection_window::on_map_tree_itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
+    // set the selected index and get the map by ID ( id is same as the index of list )
+    selected_map_index = item->data(4,0).toInt();
+    Taiko_map* map = map_list.at(selected_map_index);
+
+    // update the selected map view
+    ui->lb_selected_map->setText(map->map_name);
+
     // stop the music first
     music_player->stop();
-    // get the map by ID ( id is same as the index of list )
-    Taiko_map* map = map_list.at(item->data(4,0).toInt());
+
     QString song_preview_path = map->song_preview_path;
     if(file_exist(song_preview_path)){
 
@@ -228,15 +235,15 @@ void map_selection_window::on_map_tree_itemDoubleClicked(QTreeWidgetItem *item, 
         QStringList result_row;
         if (result_file.open(QIODevice::ReadOnly))
         {
-           QTextStream temp(&result_file);
-           // read the file line by line and split each line by space
-           while (!temp.atEnd())
-           {
-              result_row.append(temp.readLine().split(" "));
-           }
-           result_file.close();
-           QTreeWidgetItem* infos = new QTreeWidgetItem(result_row);
-           ui->score_tree->addTopLevelItem(infos);
+            QTextStream temp(&result_file);
+            // read the file line by line and split each line by space
+            while (!temp.atEnd())
+            {
+                result_row.append(temp.readLine().split(" "));
+            }
+            result_file.close();
+            QTreeWidgetItem* infos = new QTreeWidgetItem(result_row);
+            ui->score_tree->addTopLevelItem(infos);
         }
     }
 }
@@ -248,4 +255,80 @@ bool map_selection_window::file_exist(QString path){
     } else {
         return false;
     }
+}
+
+void map_selection_window::on_btn_start_clicked()
+{
+    if(selected_map_index == -1){
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Warning");
+        msgBox.setText("Please select a map first!");
+        msgBox.exec();
+    }
+    //    ui->map_tree->sortByColumn(1, Qt::DescendingOrder);
+}
+
+void map_selection_window::reset_selected_song(){
+    //    selected_map_index = -1;
+    //    ui->score_tree->clear();
+    ui->map_tree->clear();
+}
+
+void map_selection_window::add_map_to_tree(Taiko_map * map)
+{
+    // add one map to the map tree view
+    QStringList temp;
+    temp.append(map->map_name);
+    temp.append(map->duration);
+    temp.append(map->creator);
+    temp.append(map->difficulty);
+    temp.append(QString::number(map->id));
+    QTreeWidgetItem* item = new QTreeWidgetItem(temp);
+    ui->map_tree->addTopLevelItem(item);
+}
+
+void map_selection_window::refresh_filtered_list()
+{
+    reset_selected_song();
+    for (int i = 0; i < map_list.count() ; ++i) {
+        // filter difficulty first
+        if(map_list.at(i)->difficulty == ui->comBox_difficulty->currentText() || ui->comBox_difficulty->currentText() == "Any"){
+            // filter by map name
+            if(ui->comboBox->currentIndex() == 0){
+                if (map_list.at(i)->map_name.toStdString().find(ui->txt_search->text().toStdString()) != std::string::npos) {
+                    add_map_to_tree(map_list.at(i));
+                }
+            }else if(ui->comboBox->currentIndex() == 1){
+                // filter by creator nam
+                if (map_list.at(i)->creator.toStdString().find(ui->txt_search->text().toStdString()) != std::string::npos) {
+                    add_map_to_tree(map_list.at(i));
+                }
+            }
+        }
+    }
+}
+
+void map_selection_window::on_comBox_difficulty_currentIndexChanged(const QString &arg1)
+{
+    refresh_filtered_list();
+}
+
+void map_selection_window::on_comboBox_currentIndexChanged(int index)
+{
+    refresh_filtered_list();
+}
+
+void map_selection_window::on_txt_search_textChanged(const QString &arg1)
+{
+    refresh_filtered_list();
+}
+
+void map_selection_window::sort_map_tree_by_header(int header_index)
+{
+    ui->map_tree->sortByColumn(header_index, Qt::DescendingOrder);
+}
+
+void map_selection_window::sort_score_tree_by_header(int header_index)
+{
+    ui->score_tree->sortByColumn(header_index, Qt::DescendingOrder);
 }
