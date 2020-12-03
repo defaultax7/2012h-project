@@ -20,11 +20,6 @@ void Note_controller::setScene(QGraphicsScene* scene)
     this->scene = scene;
 }
 
-void Note_controller::init(QString beatmap_path)
-{
-
-}
-
 void Note_controller::start()
 {
     if(random_mode){
@@ -38,12 +33,11 @@ void Note_controller::start()
     // reset the last elasped time
     last_elasped_time = 0;
 
-
     current_index = 0;
     timer.start(10);
     count_time->start();
 
-    std::ifstream beatmap("F:/testing/1.orz");
+    std::ifstream beatmap(beatmap_path.toStdString());
 
     std::string temp;
     beatmap >> temp;  // ignore map name
@@ -52,8 +46,7 @@ void Note_controller::start()
     beatmap >> temp;  // ignore difficulty
     beatmap >> temp;  // ignore song name
 
-    //    // this is offset
-    //    beatmap >> temp;
+    beatmap >> offset;
 
     beatmap >> num_of_notes;
 
@@ -203,7 +196,7 @@ void Note_controller::check_is_time_spawn_note()
     // when it is time to spawn a note, spawn it
     // need /10*10 because sometime it last digit is not zero even it is set to be start(10), so use the property of int to make it be 0 again
     if(count_time != nullptr){
-        if((count_time->elapsed() + last_elasped_time)/10*10 == notes_start_time[current_index]){
+        if((count_time->elapsed() + last_elasped_time + offset)/10*10 == notes_start_time[current_index]){
             spawn_note();
             ++current_index;
         }

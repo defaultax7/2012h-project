@@ -18,7 +18,6 @@ public:
     enum performance{perfect, good, bad};
     Note_controller(QString beatmap_path, bool random_mode , bool fade_out_mode , QObject *parent = nullptr);
     void setScene(QGraphicsScene*);
-    void init(QString beatmap_path);
     void start();
     void judge_note(hit_type hit_type);
     void pause();
@@ -46,6 +45,7 @@ private:
     int* notes_start_time;
     int current_index = 0;
     int last_elasped_time = 0;
+    int offset = 0;
     bool random_mode = false;
     bool fade_out_mode = false;
 };
