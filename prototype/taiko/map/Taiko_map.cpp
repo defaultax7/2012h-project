@@ -5,3 +5,8 @@ Taiko_map::Taiko_map(QString map_name, QString duration, QString creator, QStrin
     id = total_num_of_map;
     ++total_num_of_map;
 }
+
+Taiko_map::~Taiko_map()
+{
+    --total_num_of_map;
+}

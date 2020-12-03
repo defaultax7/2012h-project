@@ -59,6 +59,7 @@ private:
     bool dark_mode = false;
     bool fade_out_mode = false;
     bool random_mode = false;
+    bool started_game = false;
     unsigned int selected_map_index = -1;
 
     void closeEvent(QCloseEvent *);

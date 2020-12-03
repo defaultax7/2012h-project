@@ -10,6 +10,8 @@
 #include <QMediaPlaylist>
 #include <QMessageBox>
 
+#include <taiko/taiko_window.h>
+
 // init the number of maps
 unsigned int Taiko_map::total_num_of_map = 0;
 
@@ -17,6 +19,7 @@ map_selection_window::map_selection_window(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::map_selection_window)
 {
+
     ui->setupUi(this);
 
     music_player = new QMediaPlayer();
@@ -143,10 +146,15 @@ void map_selection_window::on_btn_back_clicked()
 
 void map_selection_window::closeEvent(QCloseEvent *)
 {
-    MainWindow* w = new MainWindow();
-    w->show();
-    close();
+    if(!started_game){
+        MainWindow* w = new MainWindow();
+        w->show();
+    }
+    for(int i = 0; i < map_list.count() ; ++i){
+        delete map_list.at(i);
+    }
     delete music_player;
+    close();
 }
 
 void map_selection_window::add_map(QString map_path)
@@ -264,8 +272,12 @@ void map_selection_window::on_btn_start_clicked()
         msgBox.setWindowTitle("Warning");
         msgBox.setText("Please select a map first!");
         msgBox.exec();
+    }else{
+        started_game = true;
+        taiko_window* w = new taiko_window();
+        w->show();
+        close();
     }
-    //    ui->map_tree->sortByColumn(1, Qt::DescendingOrder);
 }
 
 void map_selection_window::reset_selected_song(){

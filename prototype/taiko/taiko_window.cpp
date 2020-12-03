@@ -11,12 +11,12 @@
 #include <QTime>
 #include <QSettings>
 
+#include <taiko/map/map_selection_window.h>
+
 taiko_window::taiko_window(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::taiko_window)
 {
-    // pass it to result window later
-    this->parent = parent;
 
     ui->setupUi(this);
 
@@ -134,6 +134,13 @@ void taiko_window::showEvent(QShowEvent *event)
     judge = scene.addPixmap(QPixmap(":/image/image/judging_ring.png"));
     judge->setPos(130,120);
 
+}
+
+void taiko_window::closeEvent(QCloseEvent *)
+{
+    map_selection_window* w = new map_selection_window();
+    w->show();
+    close();
 }
 
 void taiko_window::play_drum_flash(QString image_path, double x, double y)

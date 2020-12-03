@@ -59,6 +59,7 @@ private:
     unsigned const int drum_flash_time = 80;  // the time that drum flash lasting for ( unit ms )
 
     void showEvent(QShowEvent* event);
+    void closeEvent(QCloseEvent *);
     void play_drum_flash(QString image_path, double x , double y);
     void pause();
     void resume();
