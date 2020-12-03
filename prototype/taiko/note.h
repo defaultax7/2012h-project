@@ -37,6 +37,8 @@ private:
     const double endpoint = 0; // remove the note when reach the endpoint
     bool is_stop = false;
 
+    friend class Note_controller;
+
 private slots:
     void move();
 //    virtual void get_hit() = 0;

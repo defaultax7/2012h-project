@@ -50,7 +50,7 @@ private:
 
     QGraphicsScene scene;
     taiko_performance_view p_view;
-    QMediaPlayer music_player;
+    QMediaPlayer* music_player;
     QTimer* timer;
     QGraphicsPixmapItem* judge;
     QSoundEffect drum_sound_player;

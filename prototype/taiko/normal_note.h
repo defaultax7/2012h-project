@@ -15,6 +15,9 @@ public:
 
 private:
     normal_note_type type;
+
+    friend class Note_controller;
+
 private slots:
     void self_destruct();
 };

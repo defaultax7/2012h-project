@@ -10,7 +10,7 @@
 #include <QTimer>
 #include <QList>
 
-Note_controller::Note_controller(QObject *parent) : QObject(parent)
+Note_controller::Note_controller(bool random_mode , QObject *parent) : random_mode(random_mode) ,  QObject(parent)
 {
     connect(&timer , SIGNAL(timeout()) , this , SLOT(testing()));
 }
@@ -60,9 +60,17 @@ void Note_controller::init(QString beatmap_path)
 
 void Note_controller::start()
 {
+    if(random_mode){
+        // create new seed base on current time
+        srand (time(NULL));
+    }
+
+    // prepare a Qtime to count the time elapsed
     count_time = new QTime();
 
+    // reset the last elasped time
     last_elasped_time = 0;
+
 
     current_index = 0;
     timer.start(10);
@@ -77,8 +85,8 @@ void Note_controller::start()
     beatmap >> temp;  // ignore difficulty
     beatmap >> temp;  // ignore song name
 
-//    // this is offset
-//    beatmap >> temp;
+    //    // this is offset
+    //    beatmap >> temp;
 
     beatmap >> num_of_notes;
 
@@ -86,16 +94,25 @@ void Note_controller::start()
 
     notes_start_time = new int[num_of_notes];
     for(int i = 0; i < num_of_notes ; ++i){
-        Note* note = new Normal_note(800, 150 , 130 , 0.5 , Normal_note::normal_note_type::red_note , this);
-        notes.append(note);
         int start_time;
         beatmap >> start_time;
+
+        int note_type;
+        beatmap >> note_type;
+
+        int speed;
+        beatmap >> speed;
+
+        Note* note;
+        if(random_mode){
+            note = new Normal_note(800, 150 , 130 , 0.5 , Normal_note::normal_note_type(rand() % 2) , this);
+        }else{
+            note = new Normal_note(800, 150 , 130 , 0.5 , Normal_note::normal_note_type(note_type) , this);
+        }
+        notes.append(note);
         notes_start_time[i] = start_time;
         connect(note , SIGNAL(note_was_missed()) , this , SLOT(handle_note_miss_signal()));
         connect(note , SIGNAL(note_was_hit(int)) , this , SLOT(handle_note_hit_signal(int)));
-
-        beatmap >> temp; // note type
-        beatmap >> temp; // speed
     }
 
 }
@@ -112,13 +129,17 @@ void Note_controller::judge_note(hit_type hit_type)
         double bad_range = 60;
         // if it is within the perfect range, send hit signal to note
         if(center - perfect_range < showing_notes.head()->getX() && showing_notes.head()->getX() < center + perfect_range){
-            Note* note = showing_notes.dequeue();
-            note->get_hit(perfect);
+            if(((Normal_note*)showing_notes.head())->type == hit_type){
+                Note* note = showing_notes.dequeue();
+                note->get_hit(perfect);
+            }
         }
         // if it is within the good range, send hit signal to note
         else if(center - good_range < showing_notes.head()->getX() && showing_notes.head()->getX() < center + good_range){
-            Note* note = showing_notes.dequeue();
-            note->get_hit(good);
+            if(((Normal_note*)showing_notes.head())->type == hit_type){
+                Note* note = showing_notes.dequeue();
+                note->get_hit(good);
+            }
         }
         //        else if(center - bad_range< showing_notes.head()->getX() && showing_notes.head()->getX() < center + bad_range){
         //            Note* note = showing_notes.dequeue();
@@ -135,7 +156,7 @@ void Note_controller::pause()
     }
 
     // Qtime do not provide stop function so I have to delete it and make a new one
-    last_elasped_time += (count_time->elapsed()/10)*10;
+    last_elasped_time += count_time->elapsed();
     delete count_time;
 
     QList<Note*> temp;
@@ -213,7 +234,7 @@ void Note_controller::testing()
     // when it is time to spawn a note, spawn it
     // need /10*10 because sometime it last digit is not zero even it is set to be start(10), so use the property of int to make it be 0 again
     if(count_time != nullptr){
-        if((count_time->elapsed()/10)*10 + last_elasped_time == notes_start_time[current_index]){
+        if((count_time->elapsed() + last_elasped_time)/10*10 == notes_start_time[current_index]){
             spawn_note();
             ++current_index;
         }

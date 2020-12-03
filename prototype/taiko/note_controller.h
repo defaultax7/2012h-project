@@ -16,7 +16,7 @@ class Note_controller : public QObject
 public:
     enum hit_type{drum , rim};
     enum performance{perfect, good, bad};
-    Note_controller(QObject *parent = nullptr);
+    Note_controller(bool random_mode , QObject *parent = nullptr);
     void setScene(QGraphicsScene*);
     void init(QString beatmap_path);
     void start();
@@ -38,13 +38,14 @@ private slots:
 private:
     QGraphicsScene* scene;
     QQueue<Note*> showing_notes;
-    unsigned int num_of_notes = 0;
     QQueue<Note*> notes;
     QTimer timer;
     QTime* count_time = nullptr;
+    unsigned int num_of_notes = 0;
     int* notes_start_time;
     int current_index = 0;
     int last_elasped_time = 0;
+    bool random_mode = false;
 };
 
 #endif // NOTE_GENERATOR_H

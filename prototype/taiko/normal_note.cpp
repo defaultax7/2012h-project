@@ -27,6 +27,7 @@ void Normal_note::self_destruct()
 
 
 void Normal_note::get_hit(int performance){
+
     // perfect
     if(performance == 0){
         image_item->setPixmap(QPixmap(":/image/image/perfect.png"));

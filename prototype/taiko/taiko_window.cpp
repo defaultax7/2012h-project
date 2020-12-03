@@ -14,9 +14,11 @@
 #include <taiko/map/map_selection_window.h>
 
 taiko_window::taiko_window(QString map_path , QString song_path, int note_left , bool auto_mode, bool high_speed_mode, bool dark_mode, bool fade_out_mode, bool random_mode, QWidget *parent) : QMainWindow(parent), ui(new Ui::taiko_window),
-    auto_mode(auto_mode) , high_speed_mode(high_speed_mode) , dark_mode(dark_mode) , fade_out_mode(fade_out_mode) , random_mode(random_mode)
+    auto_mode(auto_mode) , high_speed_mode(high_speed_mode) , dark_mode(dark_mode) , fade_out_mode(fade_out_mode) , random_mode(random_mode) , note_controller(random_mode)
 {
     ui->setupUi(this);
+
+    music_player = new QMediaPlayer();
 
     // setup the performance view
     p_view.set_note_left(note_left);
@@ -50,14 +52,14 @@ taiko_window::taiko_window(QString map_path , QString song_path, int note_left ,
 
     // set the music source for music player
     //    music_player.setMedia(QUrl("F:/testing/1.mp3"));
-    music_player.setMedia(QUrl(song_path));
+    music_player->setMedia(QUrl(song_path));
 
     // set the volume based on setting from option panel
-    music_player.setVolume(setting.value("music_vol").toInt());
+    music_player->setVolume(setting.value("music_vol").toInt());
     //  bind the music player with progress bar
-    connect(&music_player, SIGNAL(durationChanged(qint64)), this, SLOT(duration_change(qint64)));
-    connect(&music_player, SIGNAL(positionChanged(qint64)), this, SLOT(current_time_change(qint64)));
-    connect(&music_player, SIGNAL(stateChanged(QMediaPlayer::State)), this, SLOT(handle_music_finish_signal(QMediaPlayer::State)));
+    connect(music_player, SIGNAL(durationChanged(qint64)), this, SLOT(duration_change(qint64)));
+    connect(music_player, SIGNAL(positionChanged(qint64)), this, SLOT(current_time_change(qint64)));
+    connect(music_player, SIGNAL(stateChanged(QMediaPlayer::State)), this, SLOT(handle_music_finish_signal(QMediaPlayer::State)));
 
     // emit note hit/miss signal to update performance view
     connect(&note_controller, SIGNAL(update_performance(taiko_performance_view::Update_type)), &p_view, SLOT(update_performance(taiko_performance_view::Update_type)));
@@ -116,7 +118,7 @@ void taiko_window::keyPressEvent(QKeyEvent *event)
 
 void taiko_window::start_game()
 {
-    music_player.play();
+    music_player->play();
     note_controller.start();
 }
 
@@ -148,6 +150,7 @@ void taiko_window::showEvent(QShowEvent *event)
 
 void taiko_window::closeEvent(QCloseEvent *)
 {
+    delete music_player;
     map_selection_window* w = new map_selection_window();
     w->show();
     close();
@@ -178,22 +181,22 @@ void taiko_window::show_result()
 void taiko_window::pause()
 {
     show_pause_screen();
-    music_player.pause();
+    music_player->pause();
     note_controller.pause();
 }
 
 void taiko_window::resume()
 {
     hide_pause_screen();
-    music_player.play();
+    music_player->play();
     note_controller.resume();
 }
 
 void taiko_window::retry()
 {
     // restart the music
-    music_player.setPosition(0);
-    music_player.play();
+    music_player->setPosition(0);
+    music_player->play();
 
     p_view.reset();
 
@@ -245,7 +248,7 @@ void taiko_window::on_btn_exit_clicked()
 
 void taiko_window::handle_music_finish_signal(QMediaPlayer::State state)
 {
-    if(state == QMediaPlayer::State::StoppedState && music_player.duration() > 0 && music_player.position() == music_player.duration()){
+    if(state == QMediaPlayer::State::StoppedState && music_player->duration() > 0 && music_player->position() == music_player->duration()){
         QTimer::singleShot(2000, this , SLOT(show_result()));
     }
 }
