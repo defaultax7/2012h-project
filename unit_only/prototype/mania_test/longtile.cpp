@@ -3,6 +3,7 @@
 LongTile::LongTile(QPointF start_point, QPointF end_point, QPointF delta,TileType t_type,QString folder, int length, QObject *parent):
     NewTile(start_point, end_point, delta, Long,folder, parent), tile_type(t_type), length(length)
 {
+    //length = delta
     tail_point = start_point - QPointF(0,length);
 }
 
@@ -26,9 +27,9 @@ void LongTile::init(int width){
     tile_item->setOffset(offset_point);
 }
 
-bool LongTile::update_remove(){
-    pos_point += delta;
-    tail_point += delta;
+bool LongTile::update_remove(double actual_cycle){
+    pos_point += delta*actual_cycle;
+    tail_point += delta*actual_cycle;
 
     QPointF offset_point = tail_point;
     //if (tail_point.y() < 0) offset_point.setY(0);

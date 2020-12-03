@@ -9,7 +9,7 @@ public:
     enum TileType{White, Pink, Mario, Undefined};
     LongTile(QPointF start_point, QPointF end_point, QPointF delta,TileType,QString, int length=1000, QObject *parent=nullptr);
     virtual void init(int);
-    virtual bool update_remove();
+    virtual bool update_remove(double actual_cycle);
     void set_ispresed(bool);
     bool get_ispressed();
     const QPointF get_tail_point();

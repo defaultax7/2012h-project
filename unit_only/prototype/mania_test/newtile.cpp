@@ -13,7 +13,8 @@ NewTile::NewTile(QPointF start_point, QPointF end_point, QPointF delta,Tile_Cata
 void NewTile::init( int width){ //this should not be used since virtual
 }
 
-bool NewTile::update_remove(){ //this also should not be used
+bool NewTile::update_remove(double actual_cycle){ //this also should not be used
+    /*
     pos_point += delta;
     tile_item->setOffset(pos_point);
 
@@ -21,6 +22,8 @@ bool NewTile::update_remove(){ //this also should not be used
         emit die();
         return true;
     }
+    return false;
+    */
     return false;
 }
 QPointF NewTile::get_position_point(){

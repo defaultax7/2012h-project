@@ -9,7 +9,7 @@ public:
     enum TileType{White, Pink, Mario, Undefined};
     NormalTile(QPointF start_point, QPointF end_point, QPointF delta,TileType,QString, QObject *parent=nullptr);
     virtual void init(int);
-    virtual bool update_remove();
+    virtual bool update_remove(double actual_cycle);
 private:
     TileType tile_type{TileType::Undefined};
 };

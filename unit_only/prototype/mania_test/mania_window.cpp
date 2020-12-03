@@ -114,6 +114,8 @@ void mania_window::on_pushButton_2_clicked()
     global_timer = new QTimer;
     connect(global_timer, &QTimer::timeout, this, &mania_window::update);
     global_timer->start(refresh_rate);
+    //original_time = previous_time = clock();
+    original_time = previous_time = std::chrono::system_clock::now();
 
     //lets play the music and see coherence...
     music_player = new QMediaPlayer();
@@ -197,9 +199,11 @@ void mania_window::keyPressEvent(QKeyEvent *event){
 void mania_window::keyReleaseEvent(QKeyEvent *event){
     if (game_mode == Play){
         if (!event->isAutoRepeat()){
+            //debug
+            qDebug() << "real time??? " <<real_time_elasped << endl;
             for (int i=0; i<num_lanes; ++i){
                 if (event->key() == thelanes[i]->getkeynum() ){
-                    qDebug() << "lane " << i << "is released." << endl;
+                    //qDebug() << "lane " << i << "is released." << endl;
 
                     if (game_mode == mania_window::Creative){
                         creative_addline(i);
@@ -209,6 +213,7 @@ void mania_window::keyReleaseEvent(QKeyEvent *event){
                     return;
                 }
             }
+
         }
     }
 }
@@ -234,38 +239,55 @@ void mania_window::creative_addline(int lane_num){
 void mania_window::update(){
     time_update();
 
+
     if (game_mode == mania_window::Game_Mode::Play){
         for (int i=0; i<num_lanes; ++i){
             if (tile_info_atlane[i].empty()) continue;
             Tile_Adding_Info info = tile_info_atlane[i][0];
-            if ((timeelaseped_sec- info.time_to_add_sec)*1000 + (timeelasped_ms-info.time_to_add_ms) >= 0){
+            //if ((timeelaseped_sec- info.time_to_add_sec)*1000 + (timeelasped_ms-info.time_to_add_ms) >= 0){
+            if (real_time_elasped >= info.real_time_to_add){
                 NewTile* added_tile;
                 if (info.catagory == lane::Add_Catagory::Normal){
-                    added_tile = thelanes[i]->addtile(lane::Add_Catagory::Normal, &thescene);
+                    added_tile = thelanes[i]->addtile(lane::Add_Catagory::Normal, &thescene, info.long_cycle);
                     connect(added_tile, &NewTile::die, this, &mania_window::missed_tile_response);
                 }else if (info.catagory == lane::Add_Catagory::Long){
-                    added_tile = thelanes[i]->addtile(lane::Add_Catagory::Long, &thescene);
+                    added_tile = thelanes[i]->addtile(lane::Add_Catagory::Long, &thescene, info.long_cycle);
                 }else{
                     qDebug() << "noob nullptr" << endl;
                 }
                 tile_info_atlane[i].removeFirst();
-                if (!tile_info_atlane[i].empty()) tile_info_atlane[i].removeFirst();
+                //if (!tile_info_atlane[i].empty()) tile_info_atlane[i].removeFirst();
                 //playing half notes only for now is deliberate otherwise it is too difficult for me...
              }
         }
     }
+    //clock_t now =clock();
+    //double time_used = ((double)(now-previous_time)/ CLOCKS_PER_SEC)*1000;
+    //previous_time = now; //this is to ensure that the error won't add up...???
+
+    std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = now-previous_time;
+    double time_used = elapsed_seconds.count()*1000;
+    previous_time = now;
 
     for (int i=0; i<num_lanes; ++i){ //judge can be used for both creation and playing
-        judge_response( thelanes[i]->update(&thescene));
+        judge_response( thelanes[i]->update(&thescene, time_used/refresh_rate));
     }
 }
 void mania_window::time_update(){
+    //clock_t now = clock();
+    //real_time_elasped = ((double)(now-original_time)/ CLOCKS_PER_SEC)*1000;
+    std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds= now-original_time;
+    real_time_elasped = elapsed_seconds.count()*1000;
+
     timeelasped_ms += refresh_rate;
     if (timeelasped_ms >= 1000){
         timeelaseped_sec++;
         timeelasped_ms -=1000;
     }
-    ui->lcd_time->display(timeelaseped_sec);
+    //ui->lcd_time->display(timeelaseped_sec);
+    ui->lcd_time->display((int)real_time_elasped/1000);
 }
 void mania_window::judge_response(lane::Judge_result result){
     if (result == lane::Judge_result::Good){
@@ -322,7 +344,7 @@ void mania_window::output_close(){
 void mania_window::parse_tiles(QString file_name){
     if (!input_standard_begin(file_name)) return;
 
-    QString line;
+    QString line="";
 
     if (file_name.right(4) == ".txt"){
         in_stream->readLineInto(&line);
@@ -371,28 +393,87 @@ void mania_window::parse_tiles(QString file_name){
                 this_info.long_cycle = line.mid(left+1,right-left-1).toInt();
                 right++; left=right;
             }
-            qDebug() <<this_info.catagory <<" " << this_info.lane_num << " " << this_info.time_to_add_sec <<" "<<
-                     this_info.time_to_add_ms << " " << this_info.long_cycle << " " << endl;
+            //qDebug() <<this_info.catagory <<" " << this_info.lane_num << " " << this_info.time_to_add_sec <<" "<<
+                     //this_info.time_to_add_ms << " " << this_info.long_cycle << " " << endl;
 
             //now add this to the qlist
             //first do modifications to offset the falling time
-            int reduced_time = thelanes[this_info.lane_num]->getfall_time()-120;
+            int reduced_time = thelanes[this_info.lane_num]->getfalling_time()-120;
             //this 120 offset is my mistake in creation.....
             this_info.time_to_add_ms -= reduced_time;
             while (this_info.time_to_add_ms < 0){
                 this_info.time_to_add_ms += 1000;
                 this_info.time_to_add_sec -=1;
             }
+            this_info.real_time_to_add = 1000*this_info.time_to_add_sec+this_info.time_to_add_ms;
             tile_info_atlane[this_info.lane_num].append(this_info);
         }
     }
     else if (file_name.right(4) == ".osu"){
+        /* dummy implementaion only
         num_lanes = 1;
         thelanes[0] = new lane(lane_keys[0], folder_for_all);
         thelanes[0]->add_to_scene(0, num_lanes, &thescene, bound_rect);
         tile_info_atlane.append(QList<Tile_Adding_Info>());
         Tile_Adding_Info this_info;
         tile_info_atlane[0].append(this_info);
+        */
+
+        //first time parse the lanes, next time parse the tiles
+        QMap<int, int> map;
+        QSet<int> x_cor_set;
+        QRegExp rx_comma("[,]"), rx_colon("[:]");// match a comma/colon
+        while (line != "[HitObjects]") in_stream->readLineInto(&line); //unrelated
+        while (in_stream->readLineInto(&line)){//the lines with numbers begin
+            QStringList list = line.split(rx_comma, QString::SkipEmptyParts);
+            //qDebug() << list << endl;
+            x_cor_set.insert(list.at(0).toInt());
+        }
+        //qDebug() << x_cor_set;
+        QList<int> cor_list = x_cor_set.toList();
+        std::sort(cor_list.begin(), cor_list.end());
+        for (int i=0; i<cor_list.size(); ++i){
+            map.insert(cor_list[i], i);
+            //qDebug() << map.value(cor_list[i]) << "from map value " <<  cor_list[i] << endl;
+        }
+
+        //now we put all the lanes into the game since lane_num is determined now
+        num_lanes = cor_list.size();
+        for (int i=0; i<num_lanes; ++i){
+            thelanes[i] = new lane(lane_keys[i], folder_for_all);
+            thelanes[i]->add_to_scene(i, num_lanes, &thescene, bound_rect);
+            tile_info_atlane.append(QList<Tile_Adding_Info>());
+        }
+
+        //now go to second time to parse the tiles
+        input_standard_end();
+        if (!input_standard_begin(file_name)) return;
+        line = "";
+        while (line != "[HitObjects]") in_stream->readLineInto(&line); //unrelated
+        //in_stream->readLineInto(&line); //for simplicity, now skip the first tile...
+        while (in_stream->readLineInto(&line)){//the lines with numbers begin
+            QStringList list = line.split(rx_comma, QString::SkipEmptyParts);
+
+            int lane_num = map.value(list.at(0).toInt());
+            QString colonstr = list.at(list.size()-1);
+            QStringList remaining = colonstr.split(rx_colon, QString::SkipEmptyParts);
+
+            Tile_Adding_Info this_info;
+            int reduced_time = list.at(2).toInt() - thelanes[lane_num]->getfalling_time();
+
+            this_info.lane_num = lane_num;
+            this_info.time_to_add_sec = reduced_time/1000;
+            this_info.time_to_add_ms = reduced_time%1000;
+            this_info.real_time_to_add = reduced_time;
+
+            if (remaining.size() > 4){ //mania longtile would get a endtime before that
+                this_info.catagory = lane::Add_Catagory::Long;
+                this_info.long_cycle = (remaining.at(0).toInt() - list.at(2).toInt()); //adhoc...
+            }else if (remaining.size() == 4){ //osu norm, 0:0:0:0
+                this_info.catagory = lane::Add_Catagory::Normal;
+            }
+            tile_info_atlane[lane_num].append(this_info);
+        }
     }
 
     input_standard_end();

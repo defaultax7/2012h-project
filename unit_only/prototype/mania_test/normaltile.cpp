@@ -16,11 +16,11 @@ void NormalTile::init(int width){
     tile_map = tile_map.scaled(width,1, Qt::KeepAspectRatioByExpanding);
     tile_item = new QGraphicsPixmapItem(tile_map);
     //scene->addItem(tile_item);
-    tile_item->setOffset(start_point);
+    tile_item->setOffset(start_point-QPointF(0,20)); //tailor
 }
 
-bool NormalTile::update_remove(){
-    pos_point += delta;
+bool NormalTile::update_remove(double actual_cycle){
+    pos_point += delta*actual_cycle;
     tile_item->setOffset(pos_point);
 
     if (pos_point.y() >= end_point.y()) { //this is custom made condition

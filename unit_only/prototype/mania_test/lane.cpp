@@ -59,7 +59,7 @@ void lane::add_to_scene(int id, int total, QGraphicsScene *scene, QRectF bounds)
     valid_press_height = bound_rect.height()-key_height-green_height;
     bottom_height = bound_rect.height()-key_height;
 
-    falling_time = bottom_height/2; //here i hardcode this...
+    falling_time = bottom_height/falling_speed; //here i hardcode this...
 }
 
 void lane::add_pressed_flash(QGraphicsScene *scene)
@@ -86,7 +86,7 @@ void lane::remove_pressed_flash(QGraphicsScene *scene){
     }
 }
 
-lane::Judge_result lane::on_key_pressed(QGraphicsScene *scene, const int sec, const int ms){
+lane::Judge_result lane::on_key_pressed(QGraphicsScene *scene, const int sec, const int ms){ //the time is for creation only...
     qDebug() << "id is " << id << endl;
     //is_long_pressing = true;
     is_long_pressing = true; //now i need this for creator...
@@ -131,7 +131,7 @@ void lane::on_key_released(QGraphicsScene *scene){
 
 }
 
-lane::Judge_result lane::update(QGraphicsScene *scene){
+lane::Judge_result lane::update(QGraphicsScene *scene, double actual_cycle){
     bool to_remove;
     lane::Judge_result response = Judge_result::Empty; //default response
 
@@ -139,9 +139,9 @@ lane::Judge_result lane::update(QGraphicsScene *scene){
     if (tile_list.empty()) return Judge_result::Empty;
 
     for (int i=1; i<tile_list.size(); ++i){
-        tile_list[i]->update_remove();
+        tile_list[i]->update_remove(actual_cycle);
     }
-    to_remove = tile_list[0]->update_remove(); //special treatment of bottom tile
+    to_remove = tile_list[0]->update_remove(actual_cycle); //special treatment of bottom tile
     if (tile_list[0]->get_tile_catagory() == NewTile::Tile_Catagory::Long){
         LongTile* long_ptr = static_cast<LongTile*>(tile_list[0]);
         if (long_ptr->get_ispressed() && long_pressing_time % cycles_per_combo == 0){ //avoid adding so many combo, hardcode
@@ -161,10 +161,10 @@ lane::Judge_result lane::update(QGraphicsScene *scene){
     return response;
 }
 
-NewTile* lane::addtile(Add_Catagory category, QGraphicsScene* scene){
+NewTile* lane::addtile(Add_Catagory category, QGraphicsScene* scene, int cycles){
     QPointF st = bound_rect.topLeft() ;
     QPointF ed = bound_rect.bottomLeft() - QPointF{0,(double)key_height};
-    QPointF delta{0,2};
+    QPointF delta{0,falling_speed};
 
     add_catagory = category;
     if (category == Add_Catagory::Normal){
@@ -184,9 +184,9 @@ NewTile* lane::addtile(Add_Catagory category, QGraphicsScene* scene){
     else if (category == Add_Catagory::Long){
         NewTile *temptile{nullptr};
         if (id % 2){
-            temptile = new LongTile(st,ed,delta, LongTile::Pink, folder_for_all); //length not specified, so 1000
+            temptile = new LongTile(st,ed,delta, LongTile::Pink, folder_for_all, cycles*falling_speed); //length not specified, so 1000 //f... not specified????
         }else{
-            temptile = new LongTile(st,ed,delta, LongTile::White, folder_for_all);
+            temptile = new LongTile(st,ed,delta, LongTile::White, folder_for_all, cycles*falling_speed);
         }
         temptile->init(key_width);
         scene->addItem(temptile->get_pix_item());
@@ -209,7 +209,10 @@ void lane::getlastpress_tme(int &sec, int &ms){
     ms = lastpress_ms;
 }
 
-int lane::getfall_time(){
+int lane::getfalling_time(){
     return falling_time;
 }
 
+double lane::getfalling_speed(){
+    return falling_speed;
+}

@@ -14,6 +14,8 @@
 #include <QMediaPlaylist>
 #include <QTreeWidget>
 #include <QFileDialog>
+#include <ctime>
+#include <chrono>
 namespace Ui {
 class mania_window;
 }
@@ -71,7 +73,10 @@ private:
 
     //the timer
     QTimer *global_timer;
-    int refresh_rate{2}, timeelasped_ms{0}, timeelaseped_sec{0};
+    int refresh_rate{1};
+    double timeelasped_ms{0}, timeelaseped_sec{0}, real_time_elasped{0}; //dont use int and use ctime afu..
+    //clock_t original_time,previous_time;
+    std::chrono::time_point<std::chrono::system_clock> original_time,previous_time;
 
     //score calculation
     int combo{0} ,score{0};
@@ -91,6 +96,7 @@ private:
         lane::Add_Catagory catagory{lane::Add_Catagory::Normal};
         int lane_num{0};
         int time_to_add_sec{3}, time_to_add_ms{0};
+        double real_time_to_add{0.0};
         int long_cycle{-1};
     };
     QList<QList<Tile_Adding_Info>> tile_info_atlane; //this would be initialized by parser in mania_window...

@@ -28,13 +28,14 @@ public:
     void on_key_released(QGraphicsScene *scene);
     void add_pressed_flash(QGraphicsScene *scene);
     void remove_pressed_flash(QGraphicsScene *scene);
-    Judge_result update(QGraphicsScene *scene);
-    NewTile* addtile(Add_Catagory, QGraphicsScene*); //should be virtual anyway
+    Judge_result update(QGraphicsScene *scene, double actual_cycle);
+    NewTile* addtile(Add_Catagory, QGraphicsScene*, int); //should be virtual anyway
     bool is_tile_list_empty();
     int getkeynum();
     void getlastpress_tme(int&, int&);
     int getlongpress_time();
-    int getfall_time();
+    int getfalling_time();
+    double getfalling_speed();
 private:
 
     int id, keynum{Qt::Key_X};
@@ -56,7 +57,7 @@ private:
 
     //for falling tiles
     //const int fall_time = 1200;//if fall time is constant
-    const int fall_speed = 2; //if fall speed is constant, now using, however it is useless since i use qpointf instead
+    const double falling_speed = 2.5; //if fall speed is constant, now using, vimportant, should be set through constructor though...
     int falling_time;
     QList<NewTile*> tile_list;
 

@@ -18,7 +18,7 @@ public:
     NewTile(QPointF start_point, QPointF end_point, QPointF delta,Tile_Catagory,QString, QObject *parent=nullptr);
     virtual void init(int width);
     //void remove_from_scene();
-    virtual bool update_remove();
+    virtual bool update_remove(double actual_cycle);
     QPointF get_position_point();
     QGraphicsPixmapItem* get_pix_item();
     void update_pix_item();
