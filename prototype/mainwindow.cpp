@@ -7,6 +7,7 @@
 
 #include <music_player/music_player_window.h>
 
+#include <taiko/map/map_selection_window.h>
 #include <taiko/taiko_window.h>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -62,7 +63,7 @@ void MainWindow::on_option_btn_clicked()
 
 void MainWindow::on_btn_start_taiko_clicked()
 {
-    taiko_window* w = new taiko_window(this);
+    map_selection_window *w = new map_selection_window();
     w->show();
-    hide();
+    close();
 }

@@ -1,6 +1,8 @@
 #ifndef MAP_SELECTION_WINDOW_H
 #define MAP_SELECTION_WINDOW_H
 
+#include "Taiko_map.h"
+
 #include <QMainWindow>
 #include <QString>
 
@@ -28,6 +30,8 @@ private slots:
 
     void on_btn_random_mode_clicked();
 
+    void on_btn_back_clicked();
+
 private:
     Ui::map_selection_window *ui;
     QString btn_active_style;
@@ -37,6 +41,10 @@ private:
     bool dark_mode = false;
     bool fade_out_mode = false;
     bool random_mode = false;
+    QList<Taiko_map*> map_list;
+
+    void closeEvent(QCloseEvent *);
+    void add_map(QString map_path);
 };
 
 #endif // MAP_SELECTION_WINDOW_H
