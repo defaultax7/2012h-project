@@ -57,6 +57,7 @@ private:
     QSoundEffect rim_sound_player;
     QWidget* parent;
     Note_controller note_controller;
+    QString map_path;
     bool auto_mode = false;
     bool high_speed_mode = false;
     bool dark_mode = false;

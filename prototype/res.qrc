@@ -35,6 +35,7 @@
         <file>image/c.png</file>
         <file>image/d.png</file>
         <file>image/s.png</file>
+        <file>image/combo.png</file>
     </qresource>
     <qresource prefix="/sound_effect">
         <file>sound_effect/welcome.wav</file>

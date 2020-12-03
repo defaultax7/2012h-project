@@ -18,6 +18,11 @@ void Score::refresh_score() const
     score_lb->setText(QString::number(point));
 }
 
+int Score::get_score() const
+{
+    return point;
+}
+
 void Score::set_label(QLabel * lb)
 {
     score_lb = lb;

@@ -1,22 +1,22 @@
 #ifndef PERFORMANCE_H
 #define PERFORMANCE_H
 
+#include <score.h>
 
-class performance
+
+
+class Performance
 {
 public:
-    performance();
-
-private:
+    enum rank{ S , A , B , C , D};
+    Performance(int total_note , int perfect , int miss , int good , int combo , Score score);
+    rank get_rank() const;
     unsigned int total_note = 0;
     unsigned int perfect = 0;
     unsigned int miss = 0;
     unsigned int good = 0;
-    unsigned int combo = 0;
     unsigned int highest_combo = 0;
-    unsigned int base_score_per_note = 100;
-    unsigned int max_score_per_note = 200;
-    unsigned int combo_extra_score = 10; // extra score for note for every 10 combo
+    Score score;
 };
 
 #endif // PERFORMANCE_H

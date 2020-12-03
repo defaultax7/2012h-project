@@ -1,6 +1,7 @@
 #ifndef TAIKO_PERFORMANCE_VIEW_H
 #define TAIKO_PERFORMANCE_VIEW_H
 
+#include "performance.h"
 #include "score.h"
 
 #include <QLabel>
@@ -23,6 +24,7 @@ public:
     void refresh_UI() const;
     void set_note_left(int);
     void reset();
+    Performance get_performance() const;
 
 private slots:
     void update_performance(taiko_performance_view::Update_type);

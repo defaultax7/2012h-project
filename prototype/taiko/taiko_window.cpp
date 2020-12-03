@@ -15,7 +15,7 @@
 #include <taiko/map/map_selection_window.h>
 
 taiko_window::taiko_window(QString map_path , QString song_path, int note_left , bool auto_mode, bool high_speed_mode, bool dark_mode, bool fade_out_mode, bool random_mode, QWidget *parent) : QMainWindow(parent), ui(new Ui::taiko_window),
-    auto_mode(auto_mode) , high_speed_mode(high_speed_mode) , dark_mode(dark_mode) , fade_out_mode(fade_out_mode) , random_mode(random_mode) , note_controller(map_path, random_mode , fade_out_mode)
+    auto_mode(auto_mode) , high_speed_mode(high_speed_mode) , dark_mode(dark_mode) , fade_out_mode(fade_out_mode) , random_mode(random_mode) , note_controller(map_path, random_mode , fade_out_mode) , map_path(map_path)
 {
     ui->setupUi(this);
 
@@ -182,7 +182,7 @@ void taiko_window::play_drum_flash(QString image_path, double x, double y)
 
 void taiko_window::show_result()
 {
-    result_window* w = new result_window();
+    result_window* w = new result_window(p_view.get_performance() , map_path);
     w->show();
     close();
 }
