@@ -10,9 +10,9 @@
 #include <QTimer>
 #include <QList>
 
-Note_controller::Note_controller(bool random_mode , bool fade_out_mode , QObject *parent) : random_mode(random_mode) , fade_out_mode(fade_out_mode) ,  QObject(parent)
+Note_controller::Note_controller(QString beatmap_path, bool random_mode , bool fade_out_mode , QObject *parent) : beatmap_path(beatmap_path) , random_mode(random_mode) , fade_out_mode(fade_out_mode) ,  QObject(parent)
 {
-    connect(&timer , SIGNAL(timeout()) , this , SLOT(testing()));
+    connect(&timer , SIGNAL(timeout()) , this , SLOT(check_is_time_spawn_note()));
 }
 
 void Note_controller::setScene(QGraphicsScene* scene)
@@ -22,39 +22,6 @@ void Note_controller::setScene(QGraphicsScene* scene)
 
 void Note_controller::init(QString beatmap_path)
 {
-    //    beatmap_path = "F:/testing/1.orz";
-
-    //    std::ifstream beatmap(beatmap_path.toStdString());
-
-    //    std::string temp;
-    //    beatmap >> temp;  // ignore title
-    //    beatmap >> temp;  // ignore level
-
-    //    beatmap >> num_of_notes;
-
-    //    notes = new Note*[num_of_notes];
-    //    for(int i = 0; i < num_of_notes ; ++i){
-    //        notes[i] = new Normal_note(650 + i * 50, 150 , 130 , 0.5 , Normal_note::note_type::red_note , this);
-    //        beatmap >> temp;
-    //        qDebug() << temp.c_str(); // start time
-    //        beatmap >> temp;
-    //        qDebug() << temp.c_str(); // note type
-    //        beatmap >> temp;
-    //        qDebug() << temp.c_str(); // speed
-    //    }
-
-    //    QFile inputFile(beatmap_path);
-
-    //    if (inputFile.open(QIODevice::ReadOnly))
-    //    {
-    //        QTextStream in(&inputFile);
-    //        while (!in.atEnd())
-    //        {
-    //            QString line = in.readLine();
-    //            qDebug() << line;
-    //        }
-    //        inputFile.close();
-    //    }
 
 }
 
@@ -231,7 +198,7 @@ void Note_controller::handle_note_miss_signal()
     emit update_performance(taiko_performance_view::Update_type::Miss);
 }
 
-void Note_controller::testing()
+void Note_controller::check_is_time_spawn_note()
 {
     // when it is time to spawn a note, spawn it
     // need /10*10 because sometime it last digit is not zero even it is set to be start(10), so use the property of int to make it be 0 again

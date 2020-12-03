@@ -438,6 +438,42 @@ QPushButton:pressed{
      <string>Exit</string>
     </property>
    </widget>
+   <widget class="QGraphicsView" name="graphicsView_2">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>280</y>
+      <width>711</width>
+      <height>261</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGraphicsView{
+background-color: rgba(0, 0, 0, 0.3);
+}</string>
+    </property>
+   </widget>
+   <zorder>graphicsView</zorder>
+   <zorder>graphicsView_2</zorder>
+   <zorder>label</zorder>
+   <zorder>lb_score</zorder>
+   <zorder>music_progress_bar</zorder>
+   <zorder>lb_note_left</zorder>
+   <zorder>label_3</zorder>
+   <zorder>lb_perfect_count</zorder>
+   <zorder>label_5</zorder>
+   <zorder>lb_good_count</zorder>
+   <zorder>label_7</zorder>
+   <zorder>lb_bad_count</zorder>
+   <zorder>label_2</zorder>
+   <zorder>lb_miss_count</zorder>
+   <zorder>label_12</zorder>
+   <zorder>lb_roll_count</zorder>
+   <zorder>label_6</zorder>
+   <zorder>pause_smoke</zorder>
+   <zorder>btn_resume</zorder>
+   <zorder>btn_retry</zorder>
+   <zorder>btn_exit</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

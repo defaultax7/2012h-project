@@ -10,11 +10,12 @@
 #include <QGraphicsPixmapItem>
 #include <QTime>
 #include <QSettings>
+#include <QGraphicsDropShadowEffect>
 
 #include <taiko/map/map_selection_window.h>
 
 taiko_window::taiko_window(QString map_path , QString song_path, int note_left , bool auto_mode, bool high_speed_mode, bool dark_mode, bool fade_out_mode, bool random_mode, QWidget *parent) : QMainWindow(parent), ui(new Ui::taiko_window),
-    auto_mode(auto_mode) , high_speed_mode(high_speed_mode) , dark_mode(dark_mode) , fade_out_mode(fade_out_mode) , random_mode(random_mode) , note_controller(random_mode , fade_out_mode)
+    auto_mode(auto_mode) , high_speed_mode(high_speed_mode) , dark_mode(dark_mode) , fade_out_mode(fade_out_mode) , random_mode(random_mode) , note_controller(map_path, random_mode , fade_out_mode)
 {
     ui->setupUi(this);
 
@@ -37,7 +38,6 @@ taiko_window::taiko_window(QString map_path , QString song_path, int note_left ,
     this->setFixedSize(this->size());  // prevent resizing
 
     note_controller.setScene(&scene);
-    note_controller.init(map_path);
 
     // retrieve settings
     QSettings setting("HKUST" , "ORZ");
@@ -63,6 +63,10 @@ taiko_window::taiko_window(QString map_path , QString song_path, int note_left ,
 
     // emit note hit/miss signal to update performance view
     connect(&note_controller, SIGNAL(update_performance(taiko_performance_view::Update_type)), &p_view, SLOT(update_performance(taiko_performance_view::Update_type)));
+
+    // after song the is finish, there will be few second staying on this window before going to result window
+    connect(timer , SIGNAL(timeout()), this , SLOT(show_result()));
+    timer->setSingleShot(true);
 
     // start the game after 4 second
     //    QTimer::singleShot(5000, this, SLOT(start_game()));
@@ -109,9 +113,9 @@ void taiko_window::keyPressEvent(QKeyEvent *event)
     }else if(event->key() == Qt::Key_Escape){
         pause();
     }
-    //    else if(event->key() == Qt::Key_0){
-    //        show_result();
-    //    }
+    else if(event->key() == Qt::Key_0){
+        show_result();
+    }
 
 }
 
@@ -144,6 +148,11 @@ void taiko_window::showEvent(QShowEvent *event)
         black->setZValue(1);
     }
 
+    // apply shadow effect for performance frame to make it look better
+    QGraphicsDropShadowEffect* show_effect = new QGraphicsDropShadowEffect();
+    show_effect->setBlurRadius(20);
+    ui->graphicsView_2->setGraphicsEffect(show_effect);
+
     p_view.refresh_UI();
 
 }
@@ -151,6 +160,7 @@ void taiko_window::showEvent(QShowEvent *event)
 void taiko_window::closeEvent(QCloseEvent *)
 {
     delete music_player;
+    delete timer;
     map_selection_window* w = new map_selection_window();
     w->show();
     close();
@@ -249,6 +259,7 @@ void taiko_window::on_btn_exit_clicked()
 void taiko_window::handle_music_finish_signal(QMediaPlayer::State state)
 {
     if(state == QMediaPlayer::State::StoppedState && music_player->duration() > 0 && music_player->position() == music_player->duration()){
-        QTimer::singleShot(2000, this , SLOT(show_result()));
+        timer->start(2000);
+//        QTimer::singleShot(2000, this , SLOT(show_result()));
     }
 }

@@ -16,7 +16,7 @@ class Note_controller : public QObject
 public:
     enum hit_type{drum , rim};
     enum performance{perfect, good, bad};
-    Note_controller(bool random_mode , bool fade_out_mode , QObject *parent = nullptr);
+    Note_controller(QString beatmap_path, bool random_mode , bool fade_out_mode , QObject *parent = nullptr);
     void setScene(QGraphicsScene*);
     void init(QString beatmap_path);
     void start();
@@ -33,7 +33,7 @@ private slots:
     void spawn_note();
     void handle_note_hit_signal(int);
     void handle_note_miss_signal();
-    void testing();
+    void check_is_time_spawn_note();
 
 private:
     QGraphicsScene* scene;
@@ -41,6 +41,7 @@ private:
     QQueue<Note*> notes;
     QTimer timer;
     QTime* count_time = nullptr;
+    QString beatmap_path;
     unsigned int num_of_notes = 0;
     int* notes_start_time;
     int current_index = 0;
