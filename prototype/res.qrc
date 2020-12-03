@@ -30,6 +30,11 @@
         <file>image/result_good.png</file>
         <file>image/result_miss.png</file>
         <file>image/result_perfect.png</file>
+        <file>image/a.png</file>
+        <file>image/b.png</file>
+        <file>image/c.png</file>
+        <file>image/d.png</file>
+        <file>image/s.png</file>
     </qresource>
     <qresource prefix="/sound_effect">
         <file>sound_effect/welcome.wav</file>

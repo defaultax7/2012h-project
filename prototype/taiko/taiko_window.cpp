@@ -25,7 +25,7 @@ taiko_window::taiko_window(QString map_path , QString song_path, int note_left ,
     p_view.set_note_left(note_left);
     p_view.set_perfect_label(ui->lb_perfect_count);
     p_view.set_good_label(ui->lb_good_count);
-    p_view.set_bad_label(ui->lb_bad_count);
+//    p_view.set_bad_label(ui->lb_bad_count);
     p_view.set_miss_label(ui->lb_miss_count);
     p_view.set_combo_label(ui->lb_roll_count);
     p_view.set_note_left_label(ui->lb_note_left);
@@ -68,9 +68,6 @@ taiko_window::taiko_window(QString map_path , QString song_path, int note_left ,
     connect(timer , SIGNAL(timeout()), this , SLOT(show_result()));
     timer->setSingleShot(true);
 
-    // start the game after 4 second
-    //    QTimer::singleShot(5000, this, SLOT(start_game()));
-
     hide_pause_screen();
 
 }
@@ -107,14 +104,10 @@ void taiko_window::keyPressEvent(QKeyEvent *event)
         rim_sound_player.play();
         play_drum_flash(":/image/image/rim_r.png" , 70 , 131);
 
-    }else if(event->key() == Qt::Key_1){
-        // spawn note to test
-        QTimer::singleShot(1, this, SLOT(start_game()));
+    }else if(event->key() == Qt::Key_Space){
+        start_game();
     }else if(event->key() == Qt::Key_Escape){
         pause();
-    }
-    else if(event->key() == Qt::Key_0){
-        show_result();
     }
 
 }
@@ -122,8 +115,11 @@ void taiko_window::keyPressEvent(QKeyEvent *event)
 
 void taiko_window::start_game()
 {
+    // start to play the song and spawn note
     music_player->play();
     note_controller.start();
+    // hide the promt start label
+    ui->lb_promt_start->setVisible(false);
 }
 
 void taiko_window::showEvent(QShowEvent *event)
@@ -161,8 +157,11 @@ void taiko_window::closeEvent(QCloseEvent *)
 {
     delete music_player;
     delete timer;
-    map_selection_window* w = new map_selection_window();
-    w->show();
+    // if it is going to the result window, map_selection_window should not be shown
+    if(!showing_result){
+        map_selection_window* w = new map_selection_window();
+        w->show();
+    }
     close();
 }
 
@@ -185,7 +184,7 @@ void taiko_window::show_result()
 {
     result_window* w = new result_window();
     w->show();
-    this->hide();
+    close();
 }
 
 void taiko_window::pause()
@@ -258,8 +257,8 @@ void taiko_window::on_btn_exit_clicked()
 
 void taiko_window::handle_music_finish_signal(QMediaPlayer::State state)
 {
+    showing_result = true;
     if(state == QMediaPlayer::State::StoppedState && music_player->duration() > 0 && music_player->position() == music_player->duration()){
         timer->start(2000);
-//        QTimer::singleShot(2000, this , SLOT(show_result()));
     }
 }

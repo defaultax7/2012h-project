@@ -34,7 +34,7 @@ private:
     unsigned int miss = 0;
     unsigned int good = 0;
     unsigned int combo = 0;
-    unsigned int bad = 0;
+//    unsigned int bad = 0;
     unsigned int highest_combo = 0;
     unsigned int base_score_per_note = 100;
     unsigned int max_score_per_note = 200;

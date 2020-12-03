@@ -188,48 +188,10 @@
      <string>0</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_7">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>470</y>
-      <width>151</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Arial</family>
-      <pointsize>30</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Bad</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lb_bad_count">
-    <property name="geometry">
-     <rect>
-      <x>250</x>
-      <y>470</y>
-      <width>151</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Arial</family>
-      <pointsize>30</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>0</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>390</x>
+      <x>50</x>
       <y>470</y>
       <width>151</width>
       <height>31</height>
@@ -248,7 +210,7 @@
    <widget class="QLabel" name="lb_miss_count">
     <property name="geometry">
      <rect>
-      <x>610</x>
+      <x>250</x>
       <y>470</y>
       <width>151</width>
       <height>31</height>
@@ -453,6 +415,30 @@ background-color: rgba(0, 0, 0, 0.3);
 }</string>
     </property>
    </widget>
+   <widget class="QLabel" name="lb_promt_start">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>185</y>
+      <width>421</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>30</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel{
+color : white;
+}</string>
+    </property>
+    <property name="text">
+     <string>Press space to start</string>
+    </property>
+   </widget>
    <zorder>graphicsView</zorder>
    <zorder>graphicsView_2</zorder>
    <zorder>label</zorder>
@@ -463,8 +449,6 @@ background-color: rgba(0, 0, 0, 0.3);
    <zorder>lb_perfect_count</zorder>
    <zorder>label_5</zorder>
    <zorder>lb_good_count</zorder>
-   <zorder>label_7</zorder>
-   <zorder>lb_bad_count</zorder>
    <zorder>label_2</zorder>
    <zorder>lb_miss_count</zorder>
    <zorder>label_12</zorder>
@@ -474,6 +458,7 @@ background-color: rgba(0, 0, 0, 0.3);
    <zorder>btn_resume</zorder>
    <zorder>btn_retry</zorder>
    <zorder>btn_exit</zorder>
+   <zorder>lb_promt_start</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

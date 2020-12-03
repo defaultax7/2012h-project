@@ -47,7 +47,7 @@ void taiko_performance_view::refresh_UI() const
     perfect_lb->setText(QString::number(perfect));
     good_lb->setText(QString::number(good));
     miss_lb->setText(QString::number(miss));
-    bad_lb->setText(QString::number(bad));
+//    bad_lb->setText(QString::number(bad));
     combo_lb->setText(QString::number(combo));
     score.refresh_score();
 }
@@ -65,7 +65,7 @@ void taiko_performance_view::reset()
     perfect = 0;
     good = 0;
     miss = 0;
-    bad = 0;
+//    bad = 0;
     combo = 0;
     refresh_UI();
 }
@@ -88,7 +88,7 @@ void taiko_performance_view::update_performance(taiko_performance_view::Update_t
             highest_combo = combo;
         }
     }else if(update_type == Update_type::Bad){
-        ++bad;
+//        ++bad;
         combo = 0;
     }else if(update_type == Update_type::Miss){
         ++miss;

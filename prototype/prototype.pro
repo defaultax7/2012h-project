@@ -21,6 +21,7 @@ SOURCES += \
     option_menu_window.cpp \
     score.cpp \
     taiko/note_controller.cpp \
+    taiko/performance.cpp \
     taiko/result_window.cpp \
     taiko/taiko_performance_view.cpp \
     taiko/taiko_window.cpp
@@ -36,6 +37,7 @@ HEADERS += \
     option_menu_window.h \
     score.h \
     taiko/note_controller.h \
+    taiko/performance.h \
     taiko/result_window.h \
     taiko/taiko_performance_view.h \
     taiko/taiko_window.h

@@ -62,6 +62,7 @@ private:
     bool dark_mode = false;
     bool fade_out_mode = false;
     bool random_mode = false;
+    bool showing_result = false;
     int pause_time;
     unsigned const int drum_flash_time = 80;  // the time that drum flash lasting for ( unit ms )
 
