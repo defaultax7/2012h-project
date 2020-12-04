@@ -18,6 +18,7 @@ public:
     void stop();
     void unstop();
     void set_fade_out(bool);
+    void set_auto(bool);
 
 protected:
     QGraphicsPixmapItem* image_item = nullptr;
@@ -26,6 +27,7 @@ protected:
     double speed = 1;  // should scroll to left only
     QTimer* timer;
     const unsigned int afterlife_time = 200;  // unit ms
+    bool is_auto = false;
 
 signals:
     void die();
@@ -36,11 +38,13 @@ private:
     const unsigned int refresh_rate = 1;  // the unit is ms & is not unexpected to be changed
     const double offset = 0;
     const double endpoint = 0; // remove the note when reach the endpoint
+    const double perfect_point = 158;
     const double fade_out_point = 500;
     const double fade_out_rate = 0.005;
     double opacity = 1;
     bool is_fade_out = false;
     bool is_stop = false;
+    bool is_hit = false;
 
     friend class Note_controller;
 

@@ -16,13 +16,14 @@ class Note_controller : public QObject
 public:
     enum hit_type{drum , rim};
     enum performance{perfect, good, bad};
-    Note_controller(QString beatmap_path, bool random_mode , bool fade_out_mode , QObject *parent = nullptr);
+    Note_controller(QString beatmap_path, bool random_mode , bool fade_out_mode , bool auto_mode , QObject *parent = nullptr);
     void setScene(QGraphicsScene*);
     void start();
     void judge_note(hit_type hit_type);
     void pause();
     void resume();
     void restart();
+    bool is_auto() const;
 
 signals:
     void update_performance(taiko_performance_view::Update_type);
@@ -48,6 +49,7 @@ private:
     int offset = 0;
     bool random_mode = false;
     bool fade_out_mode = false;
+    bool auto_mode  = false;
 };
 
 #endif // NOTE_GENERATOR_H

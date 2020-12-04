@@ -41,21 +41,37 @@ void Note::set_fade_out(bool fade_out)
     is_fade_out = fade_out;
 }
 
+void Note::set_auto(bool is_auto)
+{
+    this->is_auto = is_auto;
+}
+
 void Note::move()
 {
-    if(!is_stop){
-        x -= speed;
-        image_item->setPos(x , y);
-        if(is_fade_out){
-            if(x < fade_out_point){
-                image_item->setOpacity(opacity);
-                opacity -= fade_out_rate;
+    if(!is_hit){
+        if(!is_stop){
+            x -= speed;
+            image_item->setPos(x , y);
+            if(is_fade_out){
+                if(x < fade_out_point){
+                    image_item->setOpacity(opacity);
+                    opacity -= fade_out_rate;
+                }
             }
-        }
-        if(x < endpoint ){
-            emit die();
-            emit note_was_missed();
-            delete this;
+            // hit itself when reach the perfect point
+            if(is_auto){
+                if(x == perfect_point){
+                    emit die();
+                    get_hit(0);
+                    is_hit = true;
+                    return;
+                }
+            }
+            if(x < endpoint ){
+                emit die();
+                emit note_was_missed();
+                delete this;
+            }
         }
     }
 }

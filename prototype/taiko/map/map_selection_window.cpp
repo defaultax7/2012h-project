@@ -247,13 +247,13 @@ void map_selection_window::on_map_tree_itemDoubleClicked(QTreeWidgetItem *item, 
 
     }else{
         QFile result_file(result_path.c_str());
-        QStringList result_row;
         if (result_file.open(QIODevice::ReadOnly))
         {
             QTextStream temp(&result_file);
             // read the file line by line and split each line by space
             while (!temp.atEnd())
             {
+                QStringList result_row;
                 result_row.append(temp.readLine().split(" "));
                 QTreeWidgetItem* infos = new QTreeWidgetItem(result_row);
                 ui->score_tree->addTopLevelItem(infos);

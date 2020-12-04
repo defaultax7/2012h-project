@@ -10,7 +10,7 @@
 #include <QTimer>
 #include <QList>
 
-Note_controller::Note_controller(QString beatmap_path, bool random_mode , bool fade_out_mode , QObject *parent) : beatmap_path(beatmap_path) , random_mode(random_mode) , fade_out_mode(fade_out_mode) ,  QObject(parent)
+Note_controller::Note_controller(QString beatmap_path, bool random_mode , bool fade_out_mode , bool auto_mode , QObject *parent) : beatmap_path(beatmap_path) , random_mode(random_mode) , fade_out_mode(fade_out_mode) , auto_mode(auto_mode) , QObject(parent)
 {
     connect(&timer , SIGNAL(timeout()) , this , SLOT(check_is_time_spawn_note()));
 }
@@ -68,6 +68,9 @@ void Note_controller::start()
         note = new Normal_note(800, 150 , 130 , 0.5 , Normal_note::normal_note_type(note_type) , this);
         if(fade_out_mode){
             note->set_fade_out(fade_out_mode);
+        }
+        if(auto_mode){
+            note->set_auto(auto_mode);
         }
         notes.append(note);
         notes_start_time[i] = start_time + offset;
@@ -157,6 +160,11 @@ void Note_controller::restart()
         delete notes.dequeue();
     }
     start();
+}
+
+bool Note_controller::is_auto() const
+{
+    return auto_mode;
 }
 
 void Note_controller::dequeue()
