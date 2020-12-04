@@ -9,6 +9,7 @@
 #include <QUrl>
 #include <QMediaPlaylist>
 #include <QMessageBox>
+#include <QSettings>
 
 #include <taiko/taiko_window.h>
 
@@ -23,6 +24,11 @@ map_selection_window::map_selection_window(QWidget *parent) :
     ui->setupUi(this);
 
     music_player = new QMediaPlayer();
+
+    // retrieve settings
+    QSettings setting("HKUST" , "ORZ");
+
+    music_player->setVolume(setting.value("music_vol").toInt());
 
     this->setFixedSize(this->size());  // prevent resizing
 

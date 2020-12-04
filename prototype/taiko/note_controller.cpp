@@ -9,6 +9,7 @@
 #include <string>
 #include <QTimer>
 #include <QList>
+#include <QSettings>
 
 Note_controller::Note_controller(QString beatmap_path, bool random_mode , bool fade_out_mode , bool auto_mode , QObject *parent) : beatmap_path(beatmap_path) , random_mode(random_mode) , fade_out_mode(fade_out_mode) , auto_mode(auto_mode) , QObject(parent)
 {
@@ -50,6 +51,9 @@ void Note_controller::start()
 
     beatmap >> num_of_notes;
 
+    // retrieve settings
+    QSettings setting("HKUST" , "ORZ");
+
     notes_start_time = new int[num_of_notes];
     for(int i = 0; i < num_of_notes ; ++i){
         int start_time;
@@ -73,7 +77,7 @@ void Note_controller::start()
             note->set_auto(auto_mode);
         }
         notes.append(note);
-        notes_start_time[i] = start_time + offset;
+        notes_start_time[i] = start_time + offset + setting.value("offset").toInt();
         connect(note , SIGNAL(note_was_missed()) , this , SLOT(handle_note_miss_signal()));
         connect(note , SIGNAL(note_was_hit(int)) , this , SLOT(handle_note_hit_signal(int)));
     }
@@ -202,7 +206,7 @@ void Note_controller::check_is_time_spawn_note()
     // when it is time to spawn a note, spawn it
     // need /10*10 because sometime it last digit is not zero even it is set to be start(10), so use the property of int to make it be 0 again
     if(count_time != nullptr){
-        int time = (count_time->elapsed() + last_elasped_time + offset)/10*10;
+        int time = (count_time->elapsed() + last_elasped_time)/10*10;
         if(time == notes_start_time[current_index]){
             spawn_note();
             ++current_index;
