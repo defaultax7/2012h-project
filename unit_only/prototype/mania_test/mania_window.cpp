@@ -51,6 +51,9 @@ mania_window::mania_window(QWidget *parent) :
     //setup keys for the lanes
     setup_lanekeys(folder_for_all+"/data/lanes.txt");
 
+    //about labels
+    //ui->label_4->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+
     //QDir dir( QGuiApplication::applicationDirPath() );
             //dir.cd( "C:/DotaClient" );
             //QDir::setSearchPaths( "qml", QStringList( dir.absolutePath() ) );
@@ -109,13 +112,10 @@ void mania_window::on_pushButton_2_clicked()
 {
     qDebug() << current_beatmap_path << " is beatmap" << endl;
     qDebug() << current_song_path << " is song" << endl;
-
-    //now add a timer to it
-    global_timer = new QTimer;
-    connect(global_timer, &QTimer::timeout, this, &mania_window::update);
-    global_timer->start(refresh_rate);
-    //original_time = previous_time = clock();
-    original_time = previous_time = std::chrono::system_clock::now();
+    //now change to game_status
+    game_status = Progressing;
+    //now add add timers
+    start_timers();
 
     //lets play the music and see coherence...
     music_player = new QMediaPlayer();
@@ -173,16 +173,29 @@ void mania_window::on_pushButton_4_clicked()
     //disable itself then
     ui->pushButton_4->setEnabled(false);
 }
+void mania_window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column){
+    if (item->isDisabled()) return;
+    int topnum = ui->treeWidget->indexOfTopLevelItem(item);
+    //qDebug() << "row: " << topnum << endl;
+
+    //label:
+    label_set_adjust(ui->label_4, item->text(0));
+
+    //setup the paths
+    current_song_path = song_paths[topnum];
+    current_beatmap_path = beatmap_paths[topnum];
+    //column = 0; //don't blame me:)
+}
 
 void mania_window::keyPressEvent(QKeyEvent *event){
     //qDebug() << "keypressed" << endl;
-    //(event->isAutoRepeat)
-    if (game_mode == Play){
+    if (event->isAutoRepeat()) return;
+    if (game_mode == Play && game_status == Progressing){
         if (!event->isAutoRepeat()){
             for (int i=0; i<num_lanes; ++i){
                 if (event->key() == thelanes[i]->getkeynum() ){
-                        qDebug() << "lane " << i << "is pressed." << endl;
-                        judge_response(thelanes[i]->on_key_pressed(&thescene, timeelaseped_sec,timeelasped_ms));
+                        //qDebug() << "lane " << i << "is pressed." << endl;
+                        judge_response(thelanes[i]->on_key_pressed(&thescene, -1,-1)); //broken, use dummy instead
 
                     if (game_mode == mania_window::Creative){
                         //nothing else i think
@@ -190,17 +203,24 @@ void mania_window::keyPressEvent(QKeyEvent *event){
                     return;
                 }
             }
+            if (event->key() == Qt::Key_Escape){ //trying to pause the game
+                pause();
+            }
         }
     }else{
-        //nothing
+        //resume
+        if (game_status == Paused && event->key() == Qt::Key_Escape){ //trying to pause the game
+            resume();
+        }
     }
 
 }
 void mania_window::keyReleaseEvent(QKeyEvent *event){
-    if (game_mode == Play){
+    if (game_mode == Play && game_status == Progressing){
         if (!event->isAutoRepeat()){
             //debug
-            qDebug() << "real time??? " <<real_time_elasped << endl;
+            //qDebug() << "real time??? " <<real_time_elasped << endl;
+            //qDebug() << "qElasped time??? " << elapsed_timer->elapsed() << endl;
             for (int i=0; i<num_lanes; ++i){
                 if (event->key() == thelanes[i]->getkeynum() ){
                     //qDebug() << "lane " << i << "is released." << endl;
@@ -238,14 +258,18 @@ void mania_window::creative_addline(int lane_num){
 
 void mania_window::update(){
     time_update();
+    //qDebug() << "wtf" << endl;
 
-
-    if (game_mode == mania_window::Game_Mode::Play){
+    if (game_mode == mania_window::Game_Mode::Play && game_status == Progressing){
         for (int i=0; i<num_lanes; ++i){
             if (tile_info_atlane[i].empty()) continue;
             Tile_Adding_Info info = tile_info_atlane[i][0];
             //if ((timeelaseped_sec- info.time_to_add_sec)*1000 + (timeelasped_ms-info.time_to_add_ms) >= 0){
-            if (real_time_elasped >= info.real_time_to_add){
+            //if (real_time_elasped >= info.real_time_to_add){
+            //qDebug() << elapsed_timer->elapsed() << info.time_to_add_sec*1000+info.time_to_add_ms << endl;
+            //long used = elapsed_timer->elapsed();
+            if (qtime_elapsed >= info.time_to_add_sec*1000+info.time_to_add_ms){
+                //qDebug() << "true" << endl;
                 NewTile* added_tile;
                 if (info.catagory == lane::Add_Catagory::Normal){
                     added_tile = thelanes[i]->addtile(lane::Add_Catagory::Normal, &thescene, info.long_cycle);
@@ -265,10 +289,14 @@ void mania_window::update(){
     //double time_used = ((double)(now-previous_time)/ CLOCKS_PER_SEC)*1000;
     //previous_time = now; //this is to ensure that the error won't add up...???
 
-    std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed_seconds = now-previous_time;
-    double time_used = elapsed_seconds.count()*1000;
-    previous_time = now;
+    //std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+    //std::chrono::duration<double> elapsed_seconds = now-previous_time;
+    //double time_used = elapsed_seconds.count()*1000;
+    //previous_time = now;
+    qtime_now = elapsed_timer->elapsed()-qtime_paused;
+    long time_used = qtime_now-qtime_previous;
+    qDebug() << time_used << endl;
+    qtime_previous = qtime_now;
 
     for (int i=0; i<num_lanes; ++i){ //judge can be used for both creation and playing
         judge_response( thelanes[i]->update(&thescene, time_used/refresh_rate));
@@ -277,17 +305,21 @@ void mania_window::update(){
 void mania_window::time_update(){
     //clock_t now = clock();
     //real_time_elasped = ((double)(now-original_time)/ CLOCKS_PER_SEC)*1000;
-    std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed_seconds= now-original_time;
-    real_time_elasped = elapsed_seconds.count()*1000;
+    //std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+    //std::chrono::duration<double> elapsed_seconds= now-original_time;
+    //real_time_elasped = elapsed_seconds.count()*1000;
 
+    /*
     timeelasped_ms += refresh_rate;
     if (timeelasped_ms >= 1000){
         timeelaseped_sec++;
         timeelasped_ms -=1000;
     }
+    */
     //ui->lcd_time->display(timeelaseped_sec);
-    ui->lcd_time->display((int)real_time_elasped/1000);
+    //ui->lcd_time->display((int)real_time_elasped/1000);
+    qtime_elapsed = elapsed_timer->elapsed()-qtime_paused;
+    ui->lcd_time->display((int)qtime_elapsed/1000);
 }
 void mania_window::judge_response(lane::Judge_result result){
     if (result == lane::Judge_result::Good){
@@ -312,9 +344,25 @@ void mania_window::missed_tile_response(){
     ui->lcd_combo->display(combo);
     //ui->lcd_score->display(score);
 }
+void mania_window::start_timers(){
+    //cycle timer
+    global_timer = new QTimer;
+    connect(global_timer, &QTimer::timeout, this, &mania_window::update);
+    global_timer->start(refresh_rate);
+
+    //original_time = previous_time = std::chrono::system_clock::now();
+    qtime_previous = qtime_now = qtime_elapsed = 0;
+
+    //elapsed timer
+    elapsed_timer = new QElapsedTimer;
+    elapsed_timer->start();
+
+}
 void mania_window::stop_timer(){
-    if (global_timer != nullptr){
-        global_timer->stop();
+    if (game_mode == Play && game_status == Progressing){
+        if (global_timer != nullptr){
+            global_timer->stop();
+        }
     }
 }
 
@@ -516,19 +564,73 @@ void mania_window::setup_info(QString file_name){
 
     input_standard_end();
 }
-void mania_window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column){
-    if (item->isDisabled()) return;
-    int topnum = ui->treeWidget->indexOfTopLevelItem(item);
-    qDebug() << "row: " << topnum << endl;
-    ui->label_4->setText(item->text(0));
-    current_song_path = song_paths[topnum];
-    current_beatmap_path = beatmap_paths[topnum];
-    //column = 0; //don't blame me:)
-}
+
 void mania_window::disable_tree(){
     for (int i=0; i<tree_items.size(); ++i){
         tree_items[i]->setDisabled(true);
     }
     ui->treeWidget->setFocusPolicy(Qt::NoFocus);
     ui->treeWidget->setAttribute(Qt::WA_ShowWithoutActivating);
+}
+
+void mania_window::label_set_adjust(QLabel *label, QString newtext){
+    int fit = false;
+    QFont myFont = label->font();
+    myFont.setPointSize(16);
+    while (!fit)
+    {
+        QFontMetrics fm( myFont );
+        QRect bound = fm.boundingRect(0,0, label->width(), label->height(), Qt::TextWordWrap | Qt::AlignLeft, newtext);
+
+        if (bound.width() <= label->width() &&
+            bound.height() <= label->height())
+            fit = true;
+        else
+            myFont.setPointSize(myFont.pointSize() - 1);
+    }
+    //qDebug() << myFont.pointSize() << " em?" << endl; so this code has error...
+    label->setFont(myFont);
+    label->setText(newtext);
+}
+
+void mania_window::pause(){
+    if (game_mode == Play && game_status == Progressing){
+        game_status = Paused;
+        if (global_timer != nullptr) global_timer->stop();
+        music_player->pause();
+
+        if (pause_timer == nullptr){
+            pause_timer = new QElapsedTimer;
+            pause_timer->start();
+        }else{
+            pause_timer->restart(); //no stoparrrrr
+        }
+
+        for (int i=0; i<num_lanes; ++i){
+            if (thelanes[i]->getlongpress_time()>0)thelanes[i]->on_key_released(&thescene);
+        }
+    }
+}
+
+void mania_window::resume(){
+    if (game_mode == Play && game_status == Paused){
+        music_player->play();
+        game_status = Progressing;
+
+        if (global_timer != nullptr){
+            global_timer->stop();
+            delete global_timer;
+            global_timer = nullptr;
+        }
+
+        global_timer = new QTimer();
+        connect(global_timer, &QTimer::timeout, this, &mania_window::update);
+        global_timer->start(refresh_rate);
+
+        qtime_paused += pause_timer->elapsed();
+    }
+}
+
+void mania_window::debug_only(){
+    qDebug() << "i have a bug" << endl;
 }

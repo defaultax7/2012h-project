@@ -16,6 +16,9 @@
 #include <QFileDialog>
 #include <ctime>
 #include <chrono>
+#include <QLabel>
+#include <QElapsedTimer>
+
 namespace Ui {
 class mania_window;
 }
@@ -26,6 +29,7 @@ class mania_window : public QMainWindow
 
 public:
     enum Game_Mode{Undefined, Play, Creative};
+    enum Game_Status{Waiting, Progressing, Paused};
     explicit mania_window(QWidget *parent = nullptr);
     ~mania_window();
 
@@ -43,11 +47,17 @@ private slots:
     void time_update();
 
     void output_close();
+    void start_timers();
     void stop_timer();
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
+
+    void debug_only();
+
 private:
     void judge_response(lane::Judge_result);
+
     void pause(); //not implemented now...
+    void resume();
     void parse_tiles(QString file_name);
     void creative_addline(int lane_num);
     void setup_lanekeys(QString);
@@ -55,6 +65,9 @@ private:
     bool input_standard_begin(QString);
     void input_standard_end();
     void disable_tree();
+    void label_set_adjust(QLabel *label, QString newtext);
+    //void update_events();
+
     Ui::mania_window *ui;
     QGraphicsScene thescene{0,0,0,0};
 
@@ -66,17 +79,20 @@ private:
     //game_mode and stage related
     bool ispaused{false};
     Game_Mode game_mode{Undefined};
+    Game_Status game_status{Waiting};
 
     //local images, debug only
     QGraphicsPixmapItem *localitems[100]; //pointers to temp local items
     QString images[100]; //useless
 
     //the timer
-    QTimer *global_timer;
+    QTimer *global_timer, *global_timer2;
     int refresh_rate{1};
-    double timeelasped_ms{0}, timeelaseped_sec{0}, real_time_elasped{0}; //dont use int and use ctime afu..
+    //double timeelasped_ms{0}, timeelaseped_sec{0}, real_time_elasped{0}; //dont use int and use ctime afu..
     //clock_t original_time,previous_time;
-    std::chrono::time_point<std::chrono::system_clock> original_time,previous_time;
+    //std::chrono::time_point<std::chrono::system_clock> original_time,previous_time;
+    qint64 qtime_previous{0}, qtime_now{0}, qtime_elapsed{0}, qtime_paused{0};
+    QElapsedTimer *elapsed_timer{nullptr}, *pause_timer{nullptr};
 
     //score calculation
     int combo{0} ,score{0};
