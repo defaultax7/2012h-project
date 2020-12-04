@@ -58,6 +58,10 @@ private:
     QWidget* parent;
     Note_controller note_controller;
     QString map_path;
+    QStringList drum_l_list_string;
+    QStringList drum_r_list_string;
+    QStringList rim_l_list_string;
+    QStringList rim_r_list_string;
     bool auto_mode = false;
     bool high_speed_mode = false;
     bool dark_mode = false;

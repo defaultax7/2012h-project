@@ -21,13 +21,36 @@ MainWindow::MainWindow(QWidget *parent)
     QSettings setting("HKUST" , "ORZ");
 
     // init the setting for first time user
-    if(!setting.value("music_vol").isValid()){
+    if(!setting.contains("music_vol")){
         setting.setValue("music_vol",100);
-    }if(!setting.value("effect_vol").isValid()){
+    }
+    if(!setting.contains("effect_vol")){
         setting.setValue("effect_vol",100);
-    }if(!setting.value("offset").isValid()){
+    }
+    if(!setting.contains("offset")){
         setting.setValue("offset",0);
     }
+    if(!setting.contains("drum_l_key")){
+        QStringList temp;
+        temp.append("Z");
+        setting.setValue("drum_l_key", temp);
+    }
+    if(!setting.contains("drum_r_key")){
+        QStringList temp;
+        temp.append("M");
+        setting.setValue("drum_r_key", temp);
+    }
+    if(!setting.contains("rim_l_key")){
+        QStringList temp;
+        temp.append("A");
+        setting.setValue("rim_l_key", temp);
+    }
+    if(!setting.contains("rim_r_key")){
+        QStringList temp;
+        temp.append("K");
+        setting.setValue("rim_r_key", temp);
+    }
+
 }
 
 MainWindow::~MainWindow()

@@ -25,7 +25,7 @@ taiko_window::taiko_window(QString map_path , QString song_path, int note_left ,
     p_view.set_note_left(note_left);
     p_view.set_perfect_label(ui->lb_perfect_count);
     p_view.set_good_label(ui->lb_good_count);
-//    p_view.set_bad_label(ui->lb_bad_count);
+    //    p_view.set_bad_label(ui->lb_bad_count);
     p_view.set_miss_label(ui->lb_miss_count);
     p_view.set_combo_label(ui->lb_roll_count);
     p_view.set_note_left_label(ui->lb_note_left);
@@ -70,6 +70,20 @@ taiko_window::taiko_window(QString map_path , QString song_path, int note_left ,
 
     hide_pause_screen();
 
+    // map the key setting to the list view
+    if(setting.contains("drum_l_key")){
+        drum_l_list_string = setting.value("drum_l_key").toStringList();
+    }
+    if(setting.contains("drum_r_key")){
+        drum_r_list_string = setting.value("drum_r_key").toStringList();
+    }
+    if(setting.contains("rim_l_key")){
+        rim_l_list_string = setting.value("rim_l_key").toStringList();
+    }
+    if(setting.contains("rim_r_key")){
+        rim_r_list_string = setting.value("rim_r_key").toStringList();
+    }
+
 }
 
 taiko_window::~taiko_window()
@@ -79,23 +93,16 @@ taiko_window::~taiko_window()
 
 void taiko_window::keyPressEvent(QKeyEvent *event)
 {
-    // testing key, bind key later
-    if(event->key() == Qt::Key_J){
+    QString key_to_String = QKeySequence(event->key()).toString();
 
-        hit_drum_r();
-
-    }else if(event->key() == Qt::Key_F){
-
+    if(drum_l_list_string.contains(key_to_String)){
         hit_drum_l();
-
-    }else if(event->key() == Qt::Key_D){
-
-        hit_rim_l();
-
-    }else if(event->key() == Qt::Key_K){
-
+    }else if(drum_r_list_string.contains(key_to_String)){
+        hit_drum_r();
+    }else if(rim_r_list_string.contains(key_to_String)){
         hit_rim_r();
-
+    }else if(rim_l_list_string.contains(key_to_String)){
+        hit_rim_l();
     }else if(event->key() == Qt::Key_Space){
         start_game();
     }else if(event->key() == Qt::Key_Escape){

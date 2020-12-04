@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QKeyEvent>
+#include <QListWidget>
 
 namespace Ui {
 class taiko_key_binding;
@@ -39,8 +40,13 @@ private slots:
 
     void on_btn_remove_rim_r_clicked();
 
+
 private:
     Ui::taiko_key_binding *ui;
+    QStringList drum_l_list_string;
+    QStringList drum_r_list_string;
+    QStringList rim_l_list_string;
+    QStringList rim_r_list_string;
     bool setting_key = false;
     key_setting current_key_setting;
 
@@ -48,6 +54,7 @@ private:
 
     void show_smoke_screen();
     void hide_smoke_screen();
+    void map_list_to_list_view(QStringList key_list , QListWidget* list_view);
 
 };
 
