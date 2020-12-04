@@ -2,6 +2,7 @@
 using std::ifstream;
 using std::noskipws;
 using std::ws;
+
 #include <Mainwindow.h>
 #include <iostream>
 using std::cout;
@@ -12,9 +13,7 @@ using std::endl;
 #include "ui_mania_window.h"
 #include "clickable_view.h"
 
-mania_window::mania_window(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::mania_window)
+mania_window::mania_window(QWidget *parent) : QMainWindow(parent), ui(new Ui::mania_window) //constructor to setup everything
 {
     // solve qrc problems like read-only->create our own folder :) //done
     if (!QDir(folder_for_all).exists()) QDir().mkdir(folder_for_all);
@@ -24,17 +23,11 @@ mania_window::mania_window(QWidget *parent) :
     ui->gview->setScene(&thescene);
     ui->gview->show();
 
-    //ui->gview->fitInView(bound_rect, Qt::KeepAspectRatio); //dont use it...
     ui->gview->setAlignment(Qt::AlignTop|Qt::AlignLeft);
     ui->actionaction_2->setVisible(false); //this is new toolbar version
     ui->actionaction_editor1->setVisible(false); //give up on toolbar
 
-    //set images, an obsolete part......
-    //images[1] = ":/image/mania_test/images/minions.jpg";
-    //localitems[1] = thescene.addPixmap(QPixmap(images[1]));
-    //localitems[1]->setOffset(200,-200);
-
-    //ui->gview->resize(500,300); it is resizing the view itself...
+    //setting up the view
     ui->gview->scale(1/viewtoscene_scale, 1/viewtoscene_scale); //worked, but not good though?
     bound_rect.setWidth(bound_rect.width()*viewtoscene_scale);
     bound_rect.setHeight(bound_rect.height()*viewtoscene_scale);
@@ -43,57 +36,30 @@ mania_window::mania_window(QWidget *parent) :
     connect(ui->gview, &clickable_view::mouseClicked, this, &mania_window::ui_view_clicked);
 
     //about labels
-    //ui->label_4->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
     ui->label_piconly->setPixmap(QPixmap(folder_for_all+"/images/orz_mania.png"));
 
-    //setup keys for the lanes
+    //setup default keys for the lanes
     setup_lanekeys(folder_for_all+"/data/lanes.txt");
 
-    //adhoc
+    //adhoc initializations of remaining pointers and combo box, spin box etc
     for (int i=0; i<100; ++i) thelanes[i] = nullptr;
-
-    set_initial_conditions();
-    ui->spinBox->setMaximum(9); //em it is 0 to 9
+    set_initial_conditions(); //this is the initial state before and after each playing/creation
+    ui->spinBox->setMaximum(9); //now i allow 10 keys, but the scene also don't have place for it ...
     for (int i=0; i<26; ++i){
         char ch = 'A'+i;
         ui->comboBox->addItem(QString(ch));
     }
-    /*
-    int idx = ui->comboBox->findText(QString(lane_keys[0]), Qt::MatchExactly );
+    ui->comboBox->setCurrentIndex(3);
 
-    qDebug() << idx << "noob" << endl;
-    qDebug() << QKeySequence(lane_keys[0]).toString() << endl;
-    if (idx != -1)
-    */
-    ui->comboBox->setCurrentIndex(3); //i have no time, so...
-    /*
-    //QDir dir( QGuiApplication::applicationDirPath() );
-            //dir.cd( "C:/DotaClient" );
-            //QDir::setSearchPaths( "qml", QStringList( dir.absolutePath() ) );
-    //QKeySequence seq = QKeySequence("D");
-    //qDebug() << seq.count(); // 1
-    //if (seq[0] == Qt::Key_D) qDebug() << "it is d."; // ok, worked
+    ui->spinBox_numcreate->setMinimum(2);
+    ui->spinBox_numcreate->setMaximum(7);
 
-
-    QFileDialog dialog;
-    dialog.setViewMode(QFileDialog::Detail);
-    dialog.setFileMode(QFileDialog::ExistingFile);
-    dialog.setNameFilter(tr("Description (*.txt)"));
-    //dialog.setSizePolicy(QSizePolicy::Fixed);
-    dialog.setFixedSize(320,240);
-    if (dialog.exec()) {
-        QStringList fileNames = dialog.selectedFiles();
-        qDebug() << fileNames[0] << endl;
-    }
-    */
 }
-
-void mania_window::set_initial_conditions(){
+void mania_window::set_initial_conditions(){//the initial conditions
     //gamemode
     game_mode = Undefined;
     game_status = Waiting;
-    //simple_text_item = thescene.addSimpleText("Please choose a beatmap to play", QFont("Times", 1000, QFont::Bold));
-    //simple_text_item->setPos(100,100);
+
     text_item = (thescene.addText(tr("Please do the key binding and select a song."), QFont("Times", 50, QFont::Bold)));
     text_item->setDefaultTextColor(Qt::blue);
     text_item->setPos(40,40);
@@ -105,40 +71,44 @@ void mania_window::set_initial_conditions(){
     ui->pushButton_4->setEnabled(false);
     ui->pushButton_5->setEnabled(false);
 
-    //time
+    //time, timers are controlled by actions of buttons
     qtime_previous = qtime_now= qtime_elapsed= qtime_paused = 0;
-    //combo score
+    //combo score and related displays
     combo = score = 0;
-    //related labels
     ui->lcd_combo->display(combo);
     ui->lcd_score->display(score);
     ui->lcd_time->display(0);
 
-    //tree clear
+    //reset the treewidget
     ui->treeWidget->clear();
-    tree_items.clear();
-    //now setup the info of song+beatmap bundles, and setup the tree for display
+    tree_items.clear(); //clear the lines of pointer since they become useless:)
     connect(ui->treeWidget, &QTreeWidget::itemPressed, this, &mania_window::on_treeWidget_itemClicked);
     setup_info(folder_for_all + info_file_name);
 
     //spin combo boxes
     ui->comboBox->setEnabled(true);
     ui->spinBox->setEnabled(true);
-
 }
-mania_window::~mania_window()
+mania_window::~mania_window()//delete the pointers
 {
     delete ui;
+    delete global_timer;
+    delete global_timer2;
+    delete elapsed_timer;
+    delete pause_timer;
+    delete music_player;
+    //delete play_list;
+    for (int i=0; i<num_lanes; ++i) delete thelanes[i];
 }
 
-void mania_window::ui_view_clicked(int xpos, int ypos){
+void mania_window::ui_view_clicked(int xpos, int ypos){ //a debug function only
     qDebug() << "view coordinate: " <<xpos << " " << ypos << endl;
     QPointF scene_coor = ui->gview->mapToScene(xpos, ypos); //scenecoordinate...
     qDebug() << "scene coordinate: " << scene_coor.x() << " " << scene_coor.y() << endl;
 
 }
 
-void mania_window::on_pushButton_clicked()
+void mania_window::on_pushButton_clicked() //setup for playing
 {
     //stupid cases:)
     //fist ready to reset the error message
@@ -180,13 +150,13 @@ void mania_window::on_pushButton_clicked()
     //so now can parse the tiles and setup the playing envionment(lanes);
     //parse_tiles(":/text/mania_test/beatmaps/mario_tiles.txt"); //this should be modified...
     parse_tiles(folder_for_all+"/bundles"+current_beatmap_path);
-    //now disable the treewidget
+    //now disable the treewidget and the combo spin check boxes
     disable_tree();
-    //and the combo spin boxes
     ui->comboBox->setEnabled(false);
     ui->spinBox->setEnabled(false);
+    ui->spinBox_numcreate->setEnabled(false);
 }
-void mania_window::on_pushButton_2_clicked()
+void mania_window::on_pushButton_2_clicked() //begin the gameplay
 {
     qDebug() << current_beatmap_path << " is beatmap" << endl;
     qDebug() << current_song_path << " is song" << endl;
@@ -201,16 +171,15 @@ void mania_window::on_pushButton_2_clicked()
     //lets play the music and see coherence...
     if (music_player != nullptr) delete music_player;
     music_player = new QMediaPlayer();
-    //music_player->setPlaylist(play_list);
+    music_player->setVolume(50);
     music_player->setMedia(QUrl(folder_for_all+"/bundles"+current_song_path));
-    //music_player->setMedia(QUrl("qrc:/sound_effect/mania_test/music/super_mario_full.mp3"));
     music_player->play();
     connect(music_player, &QMediaPlayer::stateChanged, this, &mania_window::stop_progress);
 
     //disable itself
     ui->pushButton_2->setEnabled(false);
 }
-void mania_window::on_pushButton_3_clicked()
+void mania_window::on_pushButton_3_clicked() //setup fro creation
 {
     //remove text message
     if (text_item != nullptr){
@@ -223,7 +192,7 @@ void mania_window::on_pushButton_3_clicked()
     ui->pushButton_3->setEnabled(false);
     ui->pushButton_4->setEnabled(true);
 
-    num_lanes = 6;
+    num_lanes = ui->spinBox_numcreate->value();
     for (int i=0; i<num_lanes; ++i){
         if (thelanes[i] != nullptr) delete thelanes[i];
         thelanes[i] = new lane(lane_keys[i], folder_for_all);
@@ -231,21 +200,32 @@ void mania_window::on_pushButton_3_clicked()
         tile_info_atlane.append(QList<Tile_Adding_Info>());;
     }
     output_standard("/trial.txt");
+    //now disable the treewidget and the combo spin check boxes
     disable_tree();
+    ui->comboBox->setEnabled(false);
+    ui->spinBox->setEnabled(false);
+    ui->spinBox_numcreate->setEnabled(false);
 
+    //now add a dialog
+    QFileDialog dialog;
+    dialog.setViewMode(QFileDialog::Detail);
+    dialog.setFileMode(QFileDialog::ExistingFile);
+    dialog.setNameFilter(tr("music (*.mp3 *.wav)"));
+    //dialog.setSizePolicy(QSizePolicy::Fixed);
+    dialog.setFixedSize(320,240);
+    if (dialog.exec()) {
+        QStringList fileNames = dialog.selectedFiles();
+        qDebug() << fileNames[0] << endl;
+        current_song_path = fileNames[0];
+    }
 
 }
-void mania_window::on_pushButton_4_clicked()
+void mania_window::on_pushButton_4_clicked() //begin creation
 {
     //add a timer
     start_timers();
 
     //load the music then play then creative
-
-    //em what's the problem???
-    //play_list = new QMediaPlaylist();
-    //qDebug() << play_list->addMedia(QUrl(":/sound_effect/mania_test/music/super_mario.mp3")) << endl;
-    //play_list->setPlaybackMode(QMediaPlaylist::Loop);
     if (game_mode != Game_Mode::Creative){
         qDebug() << "stupid, wrong game mode" << endl;
         return;
@@ -254,14 +234,21 @@ void mania_window::on_pushButton_4_clicked()
 
     if (music_player != nullptr) delete music_player;
     music_player = new QMediaPlayer();
-    music_player->setMedia(QUrl(folder_for_all+"/bundles"+current_song_path));
+    music_player->setVolume(50);
+
+    if (current_song_path.at(0) == "/"){ //relative
+        music_player->setMedia(QUrl(folder_for_all+"/bundles"+current_song_path));
+    }else{ //absolute
+        music_player->setMedia(QUrl(current_song_path));
+    }
+
     music_player->play();
     connect(music_player, &QMediaPlayer::stateChanged, this, &mania_window::stop_progress);
 
     //disable itself then
     ui->pushButton_4->setEnabled(false);
 }
-void mania_window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column){
+void mania_window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column){ //change the chosen song when tree is clicked
     if (item->isDisabled()) return;
     int topnum = ui->treeWidget->indexOfTopLevelItem(item);
     //qDebug() << "row: " << topnum << endl;
@@ -275,7 +262,7 @@ void mania_window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column){
     //column = 0; //don't blame me:)
 }
 
-void mania_window::keyPressEvent(QKeyEvent *event){
+void mania_window::keyPressEvent(QKeyEvent *event){ //when you press keyboard
     //qDebug() << "keypressed" << endl;
     if (event->isAutoRepeat()) return;
     if (game_mode == Play){
@@ -307,7 +294,7 @@ void mania_window::keyPressEvent(QKeyEvent *event){
     }
 
 }
-void mania_window::keyReleaseEvent(QKeyEvent *event){
+void mania_window::keyReleaseEvent(QKeyEvent *event){ //when you released keyboard
     if (game_mode == Play && game_status == Progressing){
         if (!event->isAutoRepeat()){
             for (int i=0; i<num_lanes; ++i){
@@ -331,7 +318,7 @@ void mania_window::keyReleaseEvent(QKeyEvent *event){
         }
     }
 }
-void mania_window::creative_addline(int lane_num){
+void mania_window::creative_addline(int lane_num){ //to generate output in creative mode
     int pressed_time = thelanes[lane_num]->getlongpress_time();
     pressed_time -= pressed_time % 20;
 
@@ -351,7 +338,7 @@ void mania_window::creative_addline(int lane_num){
     }
 }
 
-void mania_window::update(){
+void mania_window::update(){//update the status of the graphicsscene at some fixed interval
     time_update();
     //qDebug() << "wtf" << endl;
 
@@ -389,7 +376,7 @@ void mania_window::update(){
         judge_response( thelanes[i]->update(&thescene, time_used/refresh_rate));
     }
 }
-void mania_window::time_update(){
+void mania_window::time_update(){//just update the time
     //clock_t now = clock();
     //real_time_elasped = ((double)(now-original_time)/ CLOCKS_PER_SEC)*1000;
     //std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
@@ -408,7 +395,7 @@ void mania_window::time_update(){
     qtime_elapsed = elapsed_timer->elapsed()-qtime_paused;
     ui->lcd_time->display((int)qtime_elapsed/1000);
 }
-void mania_window::judge_response(lane::Judge_result result){
+void mania_window::judge_response(lane::Judge_result result){//passing the press/long press info to the lanes and they return the result
     if (result == lane::Judge_result::Good){
         combo++;
         score+= (0.05*combo + 1)*300;
@@ -426,12 +413,12 @@ void mania_window::judge_response(lane::Judge_result result){
     ui->lcd_combo->display(combo);
     ui->lcd_score->display(score);
 }
-void mania_window::missed_tile_response(){
+void mania_window::missed_tile_response(){//connected to when you missed a tile in a lane
     combo=0;
     ui->lcd_combo->display(combo);
     //ui->lcd_score->display(score);
 }
-void mania_window::start_timers(){
+void mania_window::start_timers(){ //timer controllers, begin them
     //cycle timer
     if (global_timer != nullptr) delete global_timer;
     global_timer = new QTimer;
@@ -447,7 +434,7 @@ void mania_window::start_timers(){
     elapsed_timer->start();
 
 }
-void mania_window::stop_progress(){
+void mania_window::stop_progress(){ //stop the play/creation progress
     if (game_mode == Play && game_status == Progressing){
         if (global_timer != nullptr){
             global_timer->stop();
@@ -464,7 +451,7 @@ void mania_window::stop_progress(){
     }
 }
 
-bool mania_window::input_standard_begin(QString file_name){
+bool mania_window::input_standard_begin(QString file_name){//standard procedure with that file
     input = new QFile(file_name);
     //input->setFileName(file_name);
     if (!input->open(QIODevice::ReadOnly)){
@@ -474,12 +461,12 @@ bool mania_window::input_standard_begin(QString file_name){
     in_stream = new QTextStream(input);
     return true;
 }
-void mania_window::input_standard_end(){
+void mania_window::input_standard_end(){//standard procedure to end input
     input->close();
     delete input;
     delete in_stream;
 }
-bool mania_window::output_standard(QString file_name){
+bool mania_window::output_standard(QString file_name){ //output begin standards
     if (output != nullptr) delete output;
     output = new QFile(folder_for_all+"/outputs"+file_name);
     if (!output->open(QIODevice::WriteOnly | QIODevice::Text)){
@@ -492,7 +479,7 @@ bool mania_window::output_standard(QString file_name){
     if (game_mode == Creative) *out_stream << num_lanes << endl;
     return true;
 }
-void mania_window::output_close(){
+void mania_window::output_close(){ //output end standards
     if (output != nullptr){
         output->close();
         output = nullptr;
@@ -504,7 +491,7 @@ void mania_window::output_close(){
 
 }
 
-void mania_window::parse_tiles(QString file_name){
+void mania_window::parse_tiles(QString file_name){ //parse the texttile and store the info of tiles locally
     if (!input_standard_begin(file_name)) return;
 
     QString line="";
@@ -643,7 +630,7 @@ void mania_window::parse_tiles(QString file_name){
 
     input_standard_end();
 }
-void mania_window::setup_lanekeys(QString file_name){
+void mania_window::setup_lanekeys(QString file_name){ //just setup the default keys for the lanes
     if (!input_standard_begin(file_name)) return;
 
     QString line;
@@ -658,7 +645,7 @@ void mania_window::setup_lanekeys(QString file_name){
     input_standard_end();
 }
 
-void mania_window::setup_info(QString file_name){
+void mania_window::setup_info(QString file_name){ //setup the treewidget
     if (!input_standard_begin(file_name)) return;
 
     QString line;
@@ -681,8 +668,7 @@ void mania_window::setup_info(QString file_name){
 
     input_standard_end();
 }
-
-void mania_window::disable_tree(){
+void mania_window::disable_tree(){//to disable the tree
     for (int i=0; i<tree_items.size(); ++i){
         tree_items[i]->setDisabled(true);
     }
@@ -690,7 +676,7 @@ void mania_window::disable_tree(){
     ui->treeWidget->setAttribute(Qt::WA_ShowWithoutActivating);
 }
 
-void mania_window::label_set_adjust(QLabel *label, QString newtext){
+void mania_window::label_set_adjust(QLabel *label, QString newtext){ //for auto resize of label text
     int fit = false;
     QFont myFont = label->font();
     myFont.setPointSize(16);
@@ -717,7 +703,7 @@ void mania_window::closeEvent(QCloseEvent *)
     close();
 }
 
-void mania_window::pause(){
+void mania_window::pause(){ //for pauses in playing mode
     if (game_mode == Play && game_status == Progressing){
         game_status = Paused;
         if (global_timer != nullptr) global_timer->stop();
@@ -739,7 +725,7 @@ void mania_window::pause(){
     }
 }
 
-void mania_window::resume(){
+void mania_window::resume(){ //return to the ongoing game in play mode
     if (game_mode == Play && game_status == Paused){
         music_player->play();
         game_status = Progressing;
@@ -761,29 +747,22 @@ void mania_window::resume(){
     }
 }
 
-void mania_window::debug_only(){
+void mania_window::debug_only(){ //debug only
     qDebug() << "i have a bug" << endl;
 }
 
-void mania_window::on_pushButton_5_clicked()
+void mania_window::on_pushButton_5_clicked() //the button to get back to initial conditions
 {
     set_initial_conditions();
 }
 
-void mania_window::on_spinBox_valueChanged(int arg1)
+void mania_window::on_spinBox_valueChanged(int arg1)//for key binding
 {
     qDebug() << "i have a number: " << arg1 << endl;
     ui->comboBox->setCurrentIndex(ui->comboBox->findText(QKeySequence(lane_keys[arg1]).toString() ));
 }
 
-void mania_window::on_comboBox_currentIndexChanged(int index)
-{
-    //int lane_num = ui->comboBox->currentIndex();
-    //QKeySequence seq = QKeySequence(ui->comboBox->itemText(index));
-    //lane_keys[lane_num] = seq[0];
-}
-
-void mania_window::on_comboBox_currentTextChanged(const QString &arg1)
+void mania_window::on_comboBox_currentTextChanged(const QString &arg1)//for key binding
 {
 
     int lane_num = ui->spinBox->value();
