@@ -174,7 +174,7 @@ void taiko_window::play_drum_flash(QString image_path, double x, double y)
 
 void taiko_window::show_result()
 {
-    result_window* w = new result_window(p_view.get_performance() , map_path);
+    result_window* w = new result_window(p_view.get_performance() , map_path , auto_mode);
     w->show();
     close();
 }

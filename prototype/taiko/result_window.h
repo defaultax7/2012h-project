@@ -15,7 +15,7 @@ class result_window : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit result_window(Performance performance , QString map_path ,  QWidget *parent = nullptr);
+    explicit result_window(Performance performance , QString map_path , bool auto_mode ,  QWidget *parent = nullptr);
     ~result_window();
 
 private slots:

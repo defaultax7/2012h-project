@@ -9,7 +9,7 @@
 #include <QGraphicsPixmapItem>
 #include <QDirIterator>
 
-result_window::result_window(Performance performance, QString map_path, QWidget *parent) :
+result_window::result_window(Performance performance, QString map_path, bool auto_mode ,  QWidget *parent) :
     QMainWindow(parent), performance(performance),
     ui(new Ui::result_window)
 {
@@ -19,14 +19,17 @@ result_window::result_window(Performance performance, QString map_path, QWidget 
 
     QFileInfo temp(map_path);
 
-    // append the result to result file ( file will be created if not existed)
-    QFile file(temp.dir().path() + "/result.txt");
-    if (file.open(QIODevice::WriteOnly | QIODevice::Append)) {
-        QTextStream out(&file);
-        out << performance.score.get_score();
-        out << " ";
-        QDateTime datetime;
-        out << datetime.currentDateTime().toString("dd.MM.yyyy-hh:mm:ss") + "\n";
+    // auto mode result should not be counted
+    if(!auto_mode){
+        // append the result to result file ( file will be created if not existed)
+        QFile file(temp.dir().path() + "/result.txt");
+        if (file.open(QIODevice::WriteOnly | QIODevice::Append)) {
+            QTextStream out(&file);
+            out << performance.score.get_score();
+            out << " ";
+            QDateTime datetime;
+            out << datetime.currentDateTime().toString("dd.MM.yyyy-hh:mm:ss") + "\n";
+        }
     }
 }
 
