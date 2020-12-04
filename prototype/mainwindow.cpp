@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     this->setFixedSize(this->width(),this->height()); // prevent resize
-    //    QSound::play(":/sound_effect/sound_effect/welcome.wav");  // play intro sound effect
+//    QSound::play(":/sound_effect/sound_effect/welcome.wav");  // play intro sound effect
 
     QSettings setting("HKUST" , "ORZ");
 
@@ -44,7 +44,8 @@ void MainWindow::showEvent(QShowEvent * event){
 
 void MainWindow::on_exit_btn_clicked()
 {
-    MainWindow::close();
+    QSound::play(":/sound_effect/sound_effect/ending.wav");  // play good bye sound effect
+    close();
 }
 
 void MainWindow::on_music_btn_clicked()
@@ -66,4 +67,9 @@ void MainWindow::on_btn_start_taiko_clicked()
     map_selection_window *w = new map_selection_window();
     w->show();
     close();
+}
+
+void MainWindow::closeEvent(QCloseEvent *)
+{
+
 }

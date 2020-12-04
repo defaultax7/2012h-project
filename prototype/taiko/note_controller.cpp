@@ -34,7 +34,9 @@ void Note_controller::start()
     // reset the last elasped time
     last_elasped_time = 0;
 
+    // index of the next note to be spawn
     current_index = 0;
+    // check note to be spawn for every 10 ms
     timer.start(10);
     count_time->start();
 

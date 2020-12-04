@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "option_menu_window.h"
+#include "taiko_key_binding.h"
 #include "ui_option_menu_window.h"
 
 #include <QMessageBox>
@@ -55,6 +56,8 @@ void option_menu_window::closeEvent(QCloseEvent *){
 
 void option_menu_window::on_pushButton_2_clicked()
 {
+    taiko_key_binding* w = new taiko_key_binding();
+    w->show();
 }
 
 void option_menu_window::on_music_vol_slider_valueChanged(int value)

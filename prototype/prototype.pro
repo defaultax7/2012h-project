@@ -24,7 +24,8 @@ SOURCES += \
     taiko/performance.cpp \
     taiko/result_window.cpp \
     taiko/taiko_performance_view.cpp \
-    taiko/taiko_window.cpp
+    taiko/taiko_window.cpp \
+    taiko_key_binding.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -40,7 +41,8 @@ HEADERS += \
     taiko/performance.h \
     taiko/result_window.h \
     taiko/taiko_performance_view.h \
-    taiko/taiko_window.h
+    taiko/taiko_window.h \
+    taiko_key_binding.h
 
 FORMS += \
     mainwindow.ui \
@@ -48,7 +50,8 @@ FORMS += \
     option_menu_window.ui \
     taiko/map_selection_window.ui \
     taiko/result_window.ui \
-    taiko/taiko_window.ui
+    taiko/taiko_window.ui \
+    taiko_key_binding.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
