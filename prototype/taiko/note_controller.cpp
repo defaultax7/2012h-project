@@ -208,10 +208,12 @@ void Note_controller::check_is_time_spawn_note()
     // when it is time to spawn a note, spawn it
     // need /10*10 because sometime it last digit is not zero even it is set to be start(10), so use the property of int to make it be 0 again
     if(count_time != nullptr){
-        int time = (count_time->elapsed() + last_elasped_time)/10*10;
-        if(time == notes_start_time[current_index]/10*10){
-            spawn_note();
-            ++current_index;
+        int time = (count_time->elapsed() + last_elasped_time);
+        if(time > notes_start_time[current_index]){
+            if(!notes.empty()){
+                spawn_note();
+                ++current_index;
+            }
         }
     }
 }

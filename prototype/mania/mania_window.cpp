@@ -698,6 +698,8 @@ void mania_window::label_set_adjust(QLabel *label, QString newtext){ //for auto 
 
 void mania_window::closeEvent(QCloseEvent *)
 {
+    delete music_player;
+    stop_progress();
     MainWindow* w = new MainWindow();
     w->show();
     close();
