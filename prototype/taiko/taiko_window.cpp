@@ -15,11 +15,16 @@
 #include <taiko/map/map_selection_window.h>
 
 taiko_window::taiko_window(QString map_path , QString song_path, int note_left , bool auto_mode, bool high_speed_mode, bool dark_mode, bool fade_out_mode, bool random_mode, QWidget *parent) : QMainWindow(parent), ui(new Ui::taiko_window),
-    auto_mode(auto_mode) , high_speed_mode(high_speed_mode) , dark_mode(dark_mode) , fade_out_mode(fade_out_mode) , random_mode(random_mode) , note_controller(map_path, random_mode , fade_out_mode , auto_mode) , map_path(map_path)
+    auto_mode(auto_mode) , high_speed_mode(high_speed_mode) , dark_mode(dark_mode) , fade_out_mode(fade_out_mode) , random_mode(random_mode) , note_controller(map_path, random_mode , fade_out_mode , auto_mode , high_speed_mode) , map_path(map_path)
 {
     ui->setupUi(this);
 
     music_player = new QMediaPlayer();
+
+    if(high_speed_mode){
+        // 1.3 times faster for high speed mode
+        music_player->setPlaybackRate(1.3);
+    }
 
     // setup the performance view
     p_view.set_note_left(note_left);

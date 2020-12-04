@@ -11,7 +11,7 @@
 #include <QList>
 #include <QSettings>
 
-Note_controller::Note_controller(QString beatmap_path, bool random_mode , bool fade_out_mode , bool auto_mode , QObject *parent) : beatmap_path(beatmap_path) , random_mode(random_mode) , fade_out_mode(fade_out_mode) , auto_mode(auto_mode) , QObject(parent)
+Note_controller::Note_controller(QString beatmap_path, bool random_mode , bool fade_out_mode , bool auto_mode , bool high_speed_mode ,  QObject *parent) : beatmap_path(beatmap_path) , random_mode(random_mode) , fade_out_mode(fade_out_mode) , auto_mode(auto_mode) , high_speed_mode(high_speed_mode) , QObject(parent)
 {
     connect(&timer , SIGNAL(timeout()) , this , SLOT(check_is_time_spawn_note()));
 }
@@ -36,8 +36,8 @@ void Note_controller::start()
 
     // index of the next note to be spawn
     current_index = 0;
-    // check note to be spawn for every 10 ms
-    timer.start(10);
+    // check note to be spawn for every 2 ms
+    timer.start(2);
     count_time->start();
 
     std::ifstream beatmap(beatmap_path.toStdString());
@@ -71,7 +71,11 @@ void Note_controller::start()
         if(random_mode){
             note_type = rand() % 2;
         }
-        note = new Normal_note(800, 150 , 130 , 0.5 , Normal_note::normal_note_type(note_type) , this);
+        if(high_speed_mode){
+            speed *= 1.3;
+            start_time /= 1.3;
+        }
+        note = new Normal_note(800, 150 , 130 , speed * 2 , Normal_note::normal_note_type(note_type) , this);
         if(fade_out_mode){
             note->set_fade_out(fade_out_mode);
         }
@@ -208,8 +212,8 @@ void Note_controller::check_is_time_spawn_note()
     // when it is time to spawn a note, spawn it
     // need /10*10 because sometime it last digit is not zero even it is set to be start(10), so use the property of int to make it be 0 again
     if(count_time != nullptr){
-        int time = (count_time->elapsed() + last_elasped_time);
-        if(time > notes_start_time[current_index]){
+        int time = (count_time->elapsed() + last_elasped_time)/10*10;
+        if(time - notes_start_time[current_index]/10*10 >= 0 && time - notes_start_time[current_index]/10*10 <= 20){
             if(!notes.empty()){
                 spawn_note();
                 ++current_index;

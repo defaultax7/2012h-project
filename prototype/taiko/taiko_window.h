@@ -24,7 +24,7 @@ class taiko_window : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit taiko_window(QString map_path , QString song_path , int note_left , bool auto_mode , bool high_speed_mode , bool dark_mode , bool fade_out_mode , bool random_mode , QWidget *parent = nullptr);
+    explicit taiko_window(QString map_path , QString song_path , int note_left , bool auto_mode , bool high_speed_mode , bool dark_mode , bool fade_out_mode , bool random_mode ,  QWidget *parent = nullptr);
     ~taiko_window();
 
     void keyPressEvent(QKeyEvent *event);
