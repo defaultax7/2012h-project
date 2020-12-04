@@ -7,6 +7,7 @@
 
 #include <music_player/music_player_window.h>
 
+#include <mania/mania_window.h>
 #include <taiko/map/map_selection_window.h>
 #include <taiko/taiko_window.h>
 
@@ -95,4 +96,11 @@ void MainWindow::on_btn_start_taiko_clicked()
 void MainWindow::closeEvent(QCloseEvent *)
 {
 
+}
+
+void MainWindow::on_btn_start_mania_clicked()
+{
+    mania_window* w = new mania_window();
+    w->show();
+    close();
 }

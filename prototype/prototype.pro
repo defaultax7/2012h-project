@@ -25,7 +25,13 @@ SOURCES += \
     taiko/result_window.cpp \
     taiko/taiko_performance_view.cpp \
     taiko/taiko_window.cpp \
-    taiko_key_binding.cpp
+    taiko_key_binding.cpp \
+    mania/mania_window.cpp \
+    mania/clickable_view.cpp \
+    mania/lane.cpp \
+    mania/longtile.cpp \
+    mania/newtile.cpp \
+    mania/normaltile.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -42,7 +48,13 @@ HEADERS += \
     taiko/result_window.h \
     taiko/taiko_performance_view.h \
     taiko/taiko_window.h \
-    taiko_key_binding.h
+    taiko_key_binding.h \
+    mania/mania_window.h \
+    mania/clickable_view.h \
+    mania/lane.h \
+    mania/longtile.h \
+    mania/newtile.h \
+    mania/normaltile.h
 
 FORMS += \
     mainwindow.ui \
@@ -51,7 +63,8 @@ FORMS += \
     taiko/map_selection_window.ui \
     taiko/result_window.ui \
     taiko/taiko_window.ui \
-    taiko_key_binding.ui
+    taiko_key_binding.ui \
+    mania_window.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

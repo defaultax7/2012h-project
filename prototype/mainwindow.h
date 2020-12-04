@@ -25,6 +25,8 @@ private slots:
 
     void on_btn_start_taiko_clicked();
 
+    void on_btn_start_mania_clicked();
+
 private:
     Ui::MainWindow *ui;
 
