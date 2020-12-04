@@ -204,36 +204,40 @@ void mania_window::on_pushButton_2_clicked()
     music_player->setMedia(QUrl(folder_for_all+"/bundles"+current_song_path));
     //music_player->setMedia(QUrl("qrc:/sound_effect/mania_test/music/super_mario_full.mp3"));
     music_player->play();
-    connect(music_player, &QMediaPlayer::stateChanged, this, &mania_window::stop_timer);
+    connect(music_player, &QMediaPlayer::stateChanged, this, &mania_window::stop_progress);
 
     //disable itself
     ui->pushButton_2->setEnabled(false);
 }
 void mania_window::on_pushButton_3_clicked()
 {
+    //remove text message
+    if (text_item != nullptr){
+        thescene.removeItem(text_item);
+        text_item = nullptr;
+    }
+
     game_mode = Creative;
     ui->pushButton->setEnabled(false);
     ui->pushButton_3->setEnabled(false);
     ui->pushButton_4->setEnabled(true);
 
-    //now open the output and start to write
-    if (output != nullptr) delete output;
-    output = new QFile("mario_tiles.txt");
-    if (!output->open(QIODevice::WriteOnly | QIODevice::Text)){
-        qDebug() << "stupid, can't read/write" << endl;
-        return;
+    num_lanes = 6;
+    for (int i=0; i<num_lanes; ++i){
+        if (thelanes[i] != nullptr) delete thelanes[i];
+        thelanes[i] = new lane(lane_keys[i], folder_for_all);
+        thelanes[i]->add_to_scene(i, num_lanes, &thescene, bound_rect);
+        tile_info_atlane.append(QList<Tile_Adding_Info>());;
     }
-    if (out_stream != nullptr) delete out_stream;
-    out_stream = new QTextStream(output); //it means that i need to *outstream.....
+    output_standard("/trial.txt");
     disable_tree();
+
+
 }
 void mania_window::on_pushButton_4_clicked()
 {
     //add a timer
-    if (global_timer != nullptr) delete global_timer;
-    global_timer = new QTimer();
-    connect(global_timer, &QTimer::timeout, this, &mania_window::update);
-    global_timer->start(refresh_rate);
+    start_timers();
 
     //load the music then play then creative
 
@@ -245,15 +249,13 @@ void mania_window::on_pushButton_4_clicked()
         qDebug() << "stupid, wrong game mode" << endl;
         return;
     }
+    game_status = Progressing;
+
     if (music_player != nullptr) delete music_player;
     music_player = new QMediaPlayer();
-    //music_player->setPlaylist(play_list);
-    music_player->setMedia(QUrl("qrc:/sound_effect/mania_test/music/super_mario.mp3"));
-    //music_player->setMedia(QUrl("qrc:/sound_effect/mania_test/music/super_mario_full.mp3"));
+    music_player->setMedia(QUrl(folder_for_all+"/bundles"+current_song_path));
     music_player->play();
-    connect(music_player, &QMediaPlayer::stateChanged, this, &mania_window::output_close);
-
-
+    connect(music_player, &QMediaPlayer::stateChanged, this, &mania_window::stop_progress);
 
     //disable itself then
     ui->pushButton_4->setEnabled(false);
@@ -275,22 +277,31 @@ void mania_window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column){
 void mania_window::keyPressEvent(QKeyEvent *event){
     //qDebug() << "keypressed" << endl;
     if (event->isAutoRepeat()) return;
-    if (game_mode == Play && game_status == Progressing){
-        if (!event->isAutoRepeat()){
-            for (int i=0; i<num_lanes; ++i){
-                if (event->key() == thelanes[i]->getkeynum() ){
-                        //qDebug() << "lane " << i << "is pressed." << endl;
-                        judge_response(thelanes[i]->on_key_pressed(&thescene, -1,-1)); //broken, use dummy instead
+    if (game_mode == Play){
+        if (game_status == Progressing){
+            if (!event->isAutoRepeat()){
+                for (int i=0; i<num_lanes; ++i){
+                    if (event->key() == thelanes[i]->getkeynum() ){
+                            judge_response(thelanes[i]->on_key_pressed(&thescene, -1,-1)); //broken, use dummy instead
+                    }
+                }
+                if (event->key() == Qt::Key_Escape){ //trying to pause the game
+                    pause();
                 }
             }
-            if (event->key() == Qt::Key_Escape){ //trying to pause the game
-                pause();
-            }
-        }
-    }else{
-        //resume
-        if (game_status == Paused && event->key() == Qt::Key_Escape){ //trying to pause the game
+        }else if (game_status == Paused && event->key() == Qt::Key_Escape){
             resume();
+        }
+    }else if (game_mode == Creative){
+        //slightly different
+        if (game_status == Progressing){
+            if (!event->isAutoRepeat()){
+                for (int i=0; i<num_lanes; ++i){
+                    if (event->key() == thelanes[i]->getkeynum() ){
+                        judge_response(thelanes[i]->on_key_pressed(&thescene, qtime_elapsed/1000, qtime_elapsed%1000)); //broken, use dummy instead
+                    }
+                }
+            }
         }
     }
 
@@ -298,33 +309,36 @@ void mania_window::keyPressEvent(QKeyEvent *event){
 void mania_window::keyReleaseEvent(QKeyEvent *event){
     if (game_mode == Play && game_status == Progressing){
         if (!event->isAutoRepeat()){
-            //debug
-            //qDebug() << "real time??? " <<real_time_elasped << endl;
-            //qDebug() << "qElasped time??? " << elapsed_timer->elapsed() << endl;
             for (int i=0; i<num_lanes; ++i){
                 if (event->key() == thelanes[i]->getkeynum() ){
-                    //qDebug() << "lane " << i << "is released." << endl;
-
-                    if (game_mode == mania_window::Creative){
-                        creative_addline(i);
-
-                    }
                     thelanes[i]->on_key_released(&thescene);
                     return;
                 }
             }
-
+        }
+    }else if (game_mode == Creative){
+        if (game_status == Progressing){
+            if (!event->isAutoRepeat()){
+                for (int i=0; i<num_lanes; ++i){
+                    if (event->key() == thelanes[i]->getkeynum() ){
+                        creative_addline(i);
+                        thelanes[i]->on_key_released(&thescene);
+                        return;
+                    }
+                }
+            }
         }
     }
 }
 void mania_window::creative_addline(int lane_num){
     int pressed_time = thelanes[lane_num]->getlongpress_time();
-    pressed_time -= pressed_time % 40;
+    pressed_time -= pressed_time % 20;
+
     int st_sec, st_ms;
     thelanes[lane_num]->getlastpress_tme(st_sec, st_ms);
     st_ms = st_ms-st_ms%50;
 
-    if (thelanes[lane_num]->getlongpress_time() >= 100){ //a real long_press
+    if (thelanes[lane_num]->getlongpress_time() >= 80){ //a real long_press
         //qDebug() << "lane " << lane_num << "is long pressed." << thelanes[i]->getlongpress_time() << endl;
         *out_stream << "[long_tile]" << "[lane_num][" << lane_num << "][st_sec][" << st_sec <<
                        "][st_ms][" << st_ms << "][num_upadtes][" << pressed_time << "]" << endl;
@@ -365,14 +379,6 @@ void mania_window::update(){
              }
         }
     }
-    //clock_t now =clock();
-    //double time_used = ((double)(now-previous_time)/ CLOCKS_PER_SEC)*1000;
-    //previous_time = now; //this is to ensure that the error won't add up...???
-
-    //std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
-    //std::chrono::duration<double> elapsed_seconds = now-previous_time;
-    //double time_used = elapsed_seconds.count()*1000;
-    //previous_time = now;
     qtime_now = elapsed_timer->elapsed()-qtime_paused;
     long time_used = qtime_now-qtime_previous;
     //qDebug() << time_used << endl;
@@ -440,12 +446,20 @@ void mania_window::start_timers(){
     elapsed_timer->start();
 
 }
-void mania_window::stop_timer(){
+void mania_window::stop_progress(){
     if (game_mode == Play && game_status == Progressing){
         if (global_timer != nullptr){
             global_timer->stop();
         }
         ui->pushButton_5->setEnabled(true);
+    }
+    if (game_mode == Creative && game_status == Progressing){
+        if (global_timer != nullptr){
+            global_timer->stop();
+        }
+        ui->pushButton_5->setEnabled(true);
+        output_close();
+        qDebug() << "creation done" << endl;
     }
 }
 
@@ -464,12 +478,29 @@ void mania_window::input_standard_end(){
     delete input;
     delete in_stream;
 }
+bool mania_window::output_standard(QString file_name){
+    if (output != nullptr) delete output;
+    output = new QFile(folder_for_all+"/outputs"+file_name);
+    if (!output->open(QIODevice::WriteOnly | QIODevice::Text)){
+        //qDebug() << "stupid, can't read/write" << endl;
+        return false;
+    }
+    if (out_stream != nullptr) delete out_stream;
+    out_stream = new QTextStream(output);
+
+    if (game_mode == Creative) *out_stream << num_lanes << endl;
+    return true;
+}
 void mania_window::output_close(){
     if (output != nullptr){
         output->close();
+        output = nullptr;
+    }
+    if (out_stream != nullptr){
+        delete  out_stream;
     }
     qDebug() << "output closed" << endl;
-    stop_timer();
+
 }
 
 void mania_window::parse_tiles(QString file_name){

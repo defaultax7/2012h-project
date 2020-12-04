@@ -48,7 +48,7 @@ private slots:
 
     void output_close();
     void start_timers();
-    void stop_timer();
+    void stop_progress();
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
 
     void debug_only();
@@ -73,6 +73,7 @@ private:
     void setup_info(QString);
     bool input_standard_begin(QString);
     void input_standard_end();
+    bool output_standard(QString);
     void disable_tree();
     void label_set_adjust(QLabel *label, QString newtext);
     //void update_events();
