@@ -79,30 +79,22 @@ taiko_window::~taiko_window()
 
 void taiko_window::keyPressEvent(QKeyEvent *event)
 {
-    // should be a set of key, but use j and f for now
+    // testing key, bind key later
     if(event->key() == Qt::Key_J){
 
-        note_controller.judge_note(Note_controller::hit_type::drum);
-        drum_sound_player.play();
-        play_drum_flash(":/image/image/drum_r.png" , 70 , 145);
+        hit_drum_r();
 
     }else if(event->key() == Qt::Key_F){
 
-        note_controller.judge_note(Note_controller::hit_type::drum);
-        drum_sound_player.play();
-        play_drum_flash(":/image/image/drum_l.png" , 30 , 145);
+        hit_drum_l();
 
     }else if(event->key() == Qt::Key_D){
 
-        note_controller.judge_note(Note_controller::hit_type::rim);
-        rim_sound_player.play();
-        play_drum_flash(":/image/image/rim_l.png" , 17 , 131);
+        hit_rim_l();
 
     }else if(event->key() == Qt::Key_K){
 
-        note_controller.judge_note(Note_controller::hit_type::rim);
-        rim_sound_player.play();
-        play_drum_flash(":/image/image/rim_r.png" , 70 , 131);
+        hit_rim_r();
 
     }else if(event->key() == Qt::Key_Space){
         start_game();
@@ -253,6 +245,42 @@ void taiko_window::on_btn_retry_clicked()
 void taiko_window::on_btn_exit_clicked()
 {
     close();
+}
+
+void taiko_window::hit_drum_l()
+{
+    if(!auto_mode){
+        note_controller.judge_note(Note_controller::hit_type::drum);
+        drum_sound_player.play();
+        play_drum_flash(":/image/image/drum_l.png" , 30 , 145);
+    }
+}
+
+void taiko_window::hit_drum_r()
+{
+    if(!auto_mode){
+        note_controller.judge_note(Note_controller::hit_type::drum);
+        drum_sound_player.play();
+        play_drum_flash(":/image/image/drum_r.png" , 70 , 145);
+    }
+}
+
+void taiko_window::hit_rim_l()
+{
+    if(!auto_mode){
+        note_controller.judge_note(Note_controller::hit_type::rim);
+        rim_sound_player.play();
+        play_drum_flash(":/image/image/rim_l.png" , 17 , 131);
+    }
+}
+
+void taiko_window::hit_rim_r()
+{
+    if(!auto_mode){
+        note_controller.judge_note(Note_controller::hit_type::rim);
+        rim_sound_player.play();
+        play_drum_flash(":/image/image/rim_r.png" , 70 , 131);
+    }
 }
 
 void taiko_window::handle_music_finish_signal(QMediaPlayer::State state)

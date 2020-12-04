@@ -75,6 +75,10 @@ private:
     void retry();
     void hide_pause_screen();
     void show_pause_screen();
+    void hit_drum_l();
+    void hit_drum_r();
+    void hit_rim_l();
+    void hit_rim_r();
 
 
 };
