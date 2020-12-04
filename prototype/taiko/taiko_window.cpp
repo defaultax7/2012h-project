@@ -258,7 +258,8 @@ void taiko_window::hit_drum_l()
 {
     if(!auto_mode){
         note_controller.judge_note(Note_controller::hit_type::drum);
-        drum_sound_player.play();
+//        drum_sound_player.play();
+        QSound::play(":/sound_effect/sound_effect/drum_sound.wav");
         play_drum_flash(":/image/image/drum_l.png" , 30 , 145);
     }
 }
@@ -267,7 +268,8 @@ void taiko_window::hit_drum_r()
 {
     if(!auto_mode){
         note_controller.judge_note(Note_controller::hit_type::drum);
-        drum_sound_player.play();
+//        drum_sound_player.play();
+        QSound::play(":/sound_effect/sound_effect/drum_sound.wav");
         play_drum_flash(":/image/image/drum_r.png" , 70 , 145);
     }
 }
@@ -276,7 +278,8 @@ void taiko_window::hit_rim_l()
 {
     if(!auto_mode){
         note_controller.judge_note(Note_controller::hit_type::rim);
-        rim_sound_player.play();
+//        rim_sound_player.play();
+        QSound::play(":/sound_effect/sound_effect/rim_sound.wav");
         play_drum_flash(":/image/image/rim_l.png" , 17 , 131);
     }
 }
@@ -285,7 +288,8 @@ void taiko_window::hit_rim_r()
 {
     if(!auto_mode){
         note_controller.judge_note(Note_controller::hit_type::rim);
-        rim_sound_player.play();
+//        rim_sound_player.play();
+        QSound::play(":/sound_effect/sound_effect/rim_sound.wav");
         play_drum_flash(":/image/image/rim_r.png" , 70 , 131);
     }
 }
