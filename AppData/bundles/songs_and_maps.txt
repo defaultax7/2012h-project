@@ -1,4 +1,4 @@
-4
+7
 Mario
 /Mario/mario_tiles.txt
 /Mario/super_mario.mp3
@@ -15,3 +15,15 @@ hk_anthem
 /hk_anthem/mario_tiles_modified.txt
 /hk_anthem/_Glory to Hong Kong Instrument.mp3
 1
+long_soft
+/osu_test/test.osu
+/osu_test/soft.mp3
+0
+short_soft
+/osu_test_2_30sec/test_2.osu
+/osu_test_2_30sec/30sec.mp3
+0
+another soft
+/composer_30sec/trial.txt
+/composer_30sec/30sec.mp3
+0
