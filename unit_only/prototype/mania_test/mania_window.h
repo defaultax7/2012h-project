@@ -53,7 +53,10 @@ private slots:
 
     void debug_only();
 
+    void on_pushButton_5_clicked();
+
 private:
+    void set_initial_conditions();
     void judge_response(lane::Judge_result);
 
     void pause(); //not implemented now...
@@ -84,9 +87,11 @@ private:
     //local images, debug only
     QGraphicsPixmapItem *localitems[100]; //pointers to temp local items
     QString images[100]; //useless
+    //local texts for guiding the user
+    QGraphicsSimpleTextItem* simple_text_item{nullptr};
 
     //the timer
-    QTimer *global_timer, *global_timer2;
+    QTimer *global_timer{nullptr}, *global_timer2{nullptr};
     int refresh_rate{1};
     //double timeelasped_ms{0}, timeelaseped_sec{0}, real_time_elasped{0}; //dont use int and use ctime afu..
     //clock_t original_time,previous_time;
@@ -98,10 +103,10 @@ private:
     int combo{0} ,score{0};
 
     //now media_player and read/write files
-    QMediaPlayer *music_player;
-    QMediaPlaylist *play_list;
-    QFile *input, *output; //now i try to abandon *input...
-    QTextStream *in_stream, *out_stream;
+    QMediaPlayer *music_player{nullptr};
+    QMediaPlaylist *play_list{nullptr};
+    QFile *input{nullptr}, *output{nullptr}; //now i try to abandon *input...
+    QTextStream *in_stream{nullptr}, *out_stream{nullptr};
 
     //the lanes
     int num_lanes{4};

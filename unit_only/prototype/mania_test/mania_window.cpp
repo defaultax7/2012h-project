@@ -40,20 +40,15 @@ mania_window::mania_window(QWidget *parent) :
     //connect clickable view to some function, however clickableview is for debug only.....
     connect(ui->gview, &clickable_view::mouseClicked, this, &mania_window::ui_view_clicked);
 
-    //disable second button
-    ui->pushButton_2->setEnabled(false);
-    ui->pushButton_4->setEnabled(false);
-
-    //now setup the info of song+beatmap bundles, and setup the tree for display
-    connect(ui->treeWidget, &QTreeWidget::itemPressed, this, &mania_window::on_treeWidget_itemClicked);
-    setup_info(folder_for_all + info_file_name);
-
-    //setup keys for the lanes
-    setup_lanekeys(folder_for_all+"/data/lanes.txt");
-
     //about labels
     //ui->label_4->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+    ui->label_piconly->setPixmap(QPixmap(folder_for_all+"/images/orz_mania.png"));
 
+    //adhoc
+    for (int i=0; i<100; ++i) thelanes[i] = nullptr;
+
+    set_initial_conditions();
+    /*
     //QDir dir( QGuiApplication::applicationDirPath() );
             //dir.cd( "C:/DotaClient" );
             //QDir::setSearchPaths( "qml", QStringList( dir.absolutePath() ) );
@@ -61,7 +56,7 @@ mania_window::mania_window(QWidget *parent) :
     //qDebug() << seq.count(); // 1
     //if (seq[0] == Qt::Key_D) qDebug() << "it is d."; // ok, worked
 
-    /*
+
     QFileDialog dialog;
     dialog.setViewMode(QFileDialog::Detail);
     dialog.setFileMode(QFileDialog::ExistingFile);
@@ -75,6 +70,39 @@ mania_window::mania_window(QWidget *parent) :
     */
 }
 
+void mania_window::set_initial_conditions(){
+    //gamemode
+    game_mode = Undefined;
+    game_status = Waiting;
+    //simple_text_item = thescene.addSimpleText("Please choose a beatmap to play", QFont("Times", 1000, QFont::Bold));
+    //simple_text_item->setPos(100,100);
+
+    //buttons
+    ui->pushButton->setEnabled(true);
+    ui->pushButton_3->setEnabled(true);
+    ui->pushButton_2->setEnabled(false);
+    ui->pushButton_4->setEnabled(false);
+    ui->pushButton_5->setEnabled(false);
+
+    //time
+    qtime_previous = qtime_now= qtime_elapsed= qtime_paused = 0;
+    //combo score
+    combo = score = 0;
+    //related labels
+    ui->lcd_combo->display(combo);
+    ui->lcd_score->display(score);
+    ui->lcd_time->display(0);
+
+    //tree clear
+    ui->treeWidget->clear();
+    tree_items.clear();
+    //now setup the info of song+beatmap bundles, and setup the tree for display
+    connect(ui->treeWidget, &QTreeWidget::itemPressed, this, &mania_window::on_treeWidget_itemClicked);
+    setup_info(folder_for_all + info_file_name);
+
+    //setup keys for the lanes
+    setup_lanekeys(folder_for_all+"/data/lanes.txt");
+}
 mania_window::~mania_window()
 {
     delete ui;
@@ -118,6 +146,7 @@ void mania_window::on_pushButton_2_clicked()
     start_timers();
 
     //lets play the music and see coherence...
+    if (music_player != nullptr) delete music_player;
     music_player = new QMediaPlayer();
     //music_player->setPlaylist(play_list);
     music_player->setMedia(QUrl(folder_for_all+"/bundles"+current_song_path));
@@ -136,17 +165,20 @@ void mania_window::on_pushButton_3_clicked()
     ui->pushButton_4->setEnabled(true);
 
     //now open the output and start to write
+    if (output != nullptr) delete output;
     output = new QFile("mario_tiles.txt");
     if (!output->open(QIODevice::WriteOnly | QIODevice::Text)){
         qDebug() << "stupid, can't read/write" << endl;
         return;
     }
+    if (out_stream != nullptr) delete out_stream;
     out_stream = new QTextStream(output); //it means that i need to *outstream.....
     disable_tree();
 }
 void mania_window::on_pushButton_4_clicked()
 {
     //add a timer
+    if (global_timer != nullptr) delete global_timer;
     global_timer = new QTimer();
     connect(global_timer, &QTimer::timeout, this, &mania_window::update);
     global_timer->start(refresh_rate);
@@ -161,6 +193,7 @@ void mania_window::on_pushButton_4_clicked()
         qDebug() << "stupid, wrong game mode" << endl;
         return;
     }
+    if (music_player != nullptr) delete music_player;
     music_player = new QMediaPlayer();
     //music_player->setPlaylist(play_list);
     music_player->setMedia(QUrl("qrc:/sound_effect/mania_test/music/super_mario.mp3"));
@@ -295,7 +328,7 @@ void mania_window::update(){
     //previous_time = now;
     qtime_now = elapsed_timer->elapsed()-qtime_paused;
     long time_used = qtime_now-qtime_previous;
-    qDebug() << time_used << endl;
+    //qDebug() << time_used << endl;
     qtime_previous = qtime_now;
 
     for (int i=0; i<num_lanes; ++i){ //judge can be used for both creation and playing
@@ -346,6 +379,7 @@ void mania_window::missed_tile_response(){
 }
 void mania_window::start_timers(){
     //cycle timer
+    if (global_timer != nullptr) delete global_timer;
     global_timer = new QTimer;
     connect(global_timer, &QTimer::timeout, this, &mania_window::update);
     global_timer->start(refresh_rate);
@@ -354,6 +388,7 @@ void mania_window::start_timers(){
     qtime_previous = qtime_now = qtime_elapsed = 0;
 
     //elapsed timer
+    if (elapsed_timer != nullptr) delete elapsed_timer;
     elapsed_timer = new QElapsedTimer;
     elapsed_timer->start();
 
@@ -363,6 +398,7 @@ void mania_window::stop_timer(){
         if (global_timer != nullptr){
             global_timer->stop();
         }
+        ui->pushButton_5->setEnabled(true);
     }
 }
 
@@ -398,6 +434,7 @@ void mania_window::parse_tiles(QString file_name){
         in_stream->readLineInto(&line);
         num_lanes = line.toInt();
         for (int i=0; i<num_lanes; ++i){
+            if (thelanes[i] != nullptr) delete thelanes[i];
             thelanes[i] = new lane(lane_keys[i], folder_for_all);
             thelanes[i]->add_to_scene(i, num_lanes, &thescene, bound_rect);
             tile_info_atlane.append(QList<Tile_Adding_Info>());
@@ -488,6 +525,7 @@ void mania_window::parse_tiles(QString file_name){
         //now we put all the lanes into the game since lane_num is determined now
         num_lanes = cor_list.size();
         for (int i=0; i<num_lanes; ++i){
+            if (thelanes[i] != nullptr) delete  thelanes[i];
             thelanes[i] = new lane(lane_keys[i], folder_for_all);
             thelanes[i]->add_to_scene(i, num_lanes, &thescene, bound_rect);
             tile_info_atlane.append(QList<Tile_Adding_Info>());
@@ -633,4 +671,9 @@ void mania_window::resume(){
 
 void mania_window::debug_only(){
     qDebug() << "i have a bug" << endl;
+}
+
+void mania_window::on_pushButton_5_clicked()
+{
+    set_initial_conditions();
 }

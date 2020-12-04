@@ -84,7 +84,7 @@
     <property name="geometry">
      <rect>
       <x>700</x>
-      <y>20</y>
+      <y>10</y>
       <width>80</width>
       <height>21</height>
      </rect>
@@ -97,7 +97,7 @@
     <property name="geometry">
      <rect>
       <x>700</x>
-      <y>50</y>
+      <y>40</y>
       <width>80</width>
       <height>21</height>
      </rect>
@@ -175,7 +175,7 @@
     <property name="geometry">
      <rect>
       <x>700</x>
-      <y>80</y>
+      <y>100</y>
       <width>80</width>
       <height>21</height>
      </rect>
@@ -188,7 +188,7 @@
     <property name="geometry">
      <rect>
       <x>700</x>
-      <y>110</y>
+      <y>130</y>
       <width>80</width>
       <height>21</height>
      </rect>
@@ -250,7 +250,7 @@
      <number>80</number>
     </attribute>
     <attribute name="headerDefaultSectionSize">
-     <number>50</number>
+     <number>80</number>
     </attribute>
     <column>
      <property name="text">
@@ -309,6 +309,54 @@
     </property>
     <property name="text">
      <string>Now playing:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_piconly">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>201</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>orz_mania.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_5">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>160</y>
+      <width>80</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Reset</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>70</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Record?</string>
+    </property>
+    <property name="tristate">
+     <bool>false</bool>
     </property>
    </widget>
   </widget>
