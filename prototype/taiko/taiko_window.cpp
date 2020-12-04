@@ -257,8 +257,8 @@ void taiko_window::on_btn_exit_clicked()
 
 void taiko_window::handle_music_finish_signal(QMediaPlayer::State state)
 {
-    showing_result = true;
     if(state == QMediaPlayer::State::StoppedState && music_player->duration() > 0 && music_player->position() == music_player->duration()){
         timer->start(2000);
+        showing_result = true;
     }
 }

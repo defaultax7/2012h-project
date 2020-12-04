@@ -20,7 +20,7 @@ result_window::result_window(Performance performance, QString map_path, QWidget 
     QFileInfo temp(map_path);
 
     // append the result to result file ( file will be created if not existed)
-    QFile file(temp.dir().path() + "/testing.txt");
+    QFile file(temp.dir().path() + "/result.txt");
     if (file.open(QIODevice::WriteOnly | QIODevice::Append)) {
         QTextStream out(&file);
         out << performance.score.get_score();

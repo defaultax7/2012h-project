@@ -24,7 +24,10 @@ map_selection_window::map_selection_window(QWidget *parent) :
 
     music_player = new QMediaPlayer();
 
-    this->setFixedSize(this->size());
+    this->setFixedSize(this->size());  // prevent resizing
+
+    // score dont need to take up so much space
+    ui->score_tree->setColumnWidth(0 , 75);
 
     // enable sorting for both tree view
     QHeaderView* map_tree_header = ui->map_tree->header();
@@ -252,10 +255,10 @@ void map_selection_window::on_map_tree_itemDoubleClicked(QTreeWidgetItem *item, 
             while (!temp.atEnd())
             {
                 result_row.append(temp.readLine().split(" "));
+                QTreeWidgetItem* infos = new QTreeWidgetItem(result_row);
+                ui->score_tree->addTopLevelItem(infos);
             }
             result_file.close();
-            QTreeWidgetItem* infos = new QTreeWidgetItem(result_row);
-            ui->score_tree->addTopLevelItem(infos);
         }
     }
 }
