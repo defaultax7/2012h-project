@@ -26,6 +26,7 @@ mania_window::mania_window(QWidget *parent) :
     //ui->gview->fitInView(bound_rect, Qt::KeepAspectRatio); //dont use it...
     ui->gview->setAlignment(Qt::AlignTop|Qt::AlignLeft);
     ui->actionaction_2->setVisible(false); //this is new toolbar version
+    ui->actionaction_editor1->setVisible(false); //give up on toolbar
 
     //set images, an obsolete part......
     //images[1] = ":/image/mania_test/images/minions.jpg";
@@ -44,10 +45,26 @@ mania_window::mania_window(QWidget *parent) :
     //ui->label_4->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
     ui->label_piconly->setPixmap(QPixmap(folder_for_all+"/images/orz_mania.png"));
 
+    //setup keys for the lanes
+    setup_lanekeys(folder_for_all+"/data/lanes.txt");
+
     //adhoc
     for (int i=0; i<100; ++i) thelanes[i] = nullptr;
 
     set_initial_conditions();
+    ui->spinBox->setMaximum(9); //em it is 0 to 9
+    for (int i=0; i<26; ++i){
+        char ch = 'A'+i;
+        ui->comboBox->addItem(QString(ch));
+    }
+    /*
+    int idx = ui->comboBox->findText(QString(lane_keys[0]), Qt::MatchExactly );
+
+    qDebug() << idx << "noob" << endl;
+    qDebug() << QKeySequence(lane_keys[0]).toString() << endl;
+    if (idx != -1)
+    */
+    ui->comboBox->setCurrentIndex(3); //i have no time, so...
     /*
     //QDir dir( QGuiApplication::applicationDirPath() );
             //dir.cd( "C:/DotaClient" );
@@ -76,6 +93,9 @@ void mania_window::set_initial_conditions(){
     game_status = Waiting;
     //simple_text_item = thescene.addSimpleText("Please choose a beatmap to play", QFont("Times", 1000, QFont::Bold));
     //simple_text_item->setPos(100,100);
+    text_item = (thescene.addText(tr("Please do the key binding and select a song."), QFont("Times", 50, QFont::Bold)));
+    text_item->setDefaultTextColor(Qt::blue);
+    text_item->setPos(40,40);
 
     //buttons
     ui->pushButton->setEnabled(true);
@@ -100,8 +120,10 @@ void mania_window::set_initial_conditions(){
     connect(ui->treeWidget, &QTreeWidget::itemPressed, this, &mania_window::on_treeWidget_itemClicked);
     setup_info(folder_for_all + info_file_name);
 
-    //setup keys for the lanes
-    setup_lanekeys(folder_for_all+"/data/lanes.txt");
+    //spin combo boxes
+    ui->comboBox->setEnabled(true);
+    ui->spinBox->setEnabled(true);
+
 }
 mania_window::~mania_window()
 {
@@ -118,10 +140,34 @@ void mania_window::ui_view_clicked(int xpos, int ypos){
 void mania_window::on_pushButton_clicked()
 {
     //stupid cases:)
+    //fist ready to reset the error message
+    if (warning_item != nullptr){
+        thescene.removeItem(warning_item);
+        warning_item = nullptr;
+    }
+    //then the cases
     if (ui->label_4->text() == "Nothing") {
-        qDebug() << "stupid, choose sth" << endl;
+        warning_item = thescene.addText(tr("Choose a map!"), QFont("Times", 50, QFont::Bold));
+        warning_item->setDefaultTextColor(Qt::red);
+        warning_item->setPos(40,140);
         return;
     }
+    for (int i=0; i<num_lanes; ++i){
+        for (int j=i+1; j<num_lanes; ++j){
+            if (lane_keys[i] == lane_keys[j]){
+                warning_item = thescene.addText(tr("Repeated keys for using lanes detected!"), QFont("Times", 50, QFont::Bold));
+                warning_item->setDefaultTextColor(Qt::red);
+                warning_item->setPos(40,140);
+                return;
+            }
+        }
+    }
+    //remove text message
+    if (text_item != nullptr){
+        thescene.removeItem(text_item);
+        text_item = nullptr;
+    }
+
     //set the buttons
     ui->pushButton->setEnabled(false);
     ui->pushButton_2->setEnabled(true);
@@ -135,11 +181,17 @@ void mania_window::on_pushButton_clicked()
     parse_tiles(folder_for_all+"/bundles"+current_beatmap_path);
     //now disable the treewidget
     disable_tree();
+    //and the combo spin boxes
+    ui->comboBox->setEnabled(false);
+    ui->spinBox->setEnabled(false);
 }
 void mania_window::on_pushButton_2_clicked()
 {
     qDebug() << current_beatmap_path << " is beatmap" << endl;
     qDebug() << current_song_path << " is song" << endl;
+
+
+
     //now change to game_status
     game_status = Progressing;
     //now add add timers
@@ -229,11 +281,6 @@ void mania_window::keyPressEvent(QKeyEvent *event){
                 if (event->key() == thelanes[i]->getkeynum() ){
                         //qDebug() << "lane " << i << "is pressed." << endl;
                         judge_response(thelanes[i]->on_key_pressed(&thescene, -1,-1)); //broken, use dummy instead
-
-                    if (game_mode == mania_window::Creative){
-                        //nothing else i think
-                    }
-                    return;
                 }
             }
             if (event->key() == Qt::Key_Escape){ //trying to pause the game
@@ -558,7 +605,7 @@ void mania_window::parse_tiles(QString file_name){
             }else if (remaining.size() == 4){ //osu norm, 0:0:0:0
                 this_info.catagory = lane::Add_Catagory::Normal;
             }
-            tile_info_atlane[lane_num].append(this_info);
+            if (reduced_time >=0) tile_info_atlane[lane_num].append(this_info); //i give up on too early tiles
         }
     }
 
@@ -647,6 +694,9 @@ void mania_window::pause(){
         for (int i=0; i<num_lanes; ++i){
             if (thelanes[i]->getlongpress_time()>0)thelanes[i]->on_key_released(&thescene);
         }
+        text_item = (thescene.addText(tr("Paused. You can drink water or go to toliet:)"), QFont("Times", 50, QFont::Bold)));
+        text_item->setDefaultTextColor(Qt::yellow);
+        text_item->setPos(40,40);
     }
 }
 
@@ -666,6 +716,9 @@ void mania_window::resume(){
         global_timer->start(refresh_rate);
 
         qtime_paused += pause_timer->elapsed();
+
+        thescene.removeItem(text_item);
+        text_item = nullptr;
     }
 }
 
@@ -676,4 +729,26 @@ void mania_window::debug_only(){
 void mania_window::on_pushButton_5_clicked()
 {
     set_initial_conditions();
+}
+
+void mania_window::on_spinBox_valueChanged(int arg1)
+{
+    qDebug() << "i have a number: " << arg1 << endl;
+    ui->comboBox->setCurrentIndex(ui->comboBox->findText(QKeySequence(lane_keys[arg1]).toString() ));
+}
+
+void mania_window::on_comboBox_currentIndexChanged(int index)
+{
+    //int lane_num = ui->comboBox->currentIndex();
+    //QKeySequence seq = QKeySequence(ui->comboBox->itemText(index));
+    //lane_keys[lane_num] = seq[0];
+}
+
+void mania_window::on_comboBox_currentTextChanged(const QString &arg1)
+{
+
+    int lane_num = ui->spinBox->value();
+    qDebug() << "i have another number: " << lane_num << endl;
+    QKeySequence seq = QKeySequence(arg1);
+    lane_keys[lane_num] = seq[0];
 }

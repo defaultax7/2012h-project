@@ -55,6 +55,12 @@ private slots:
 
     void on_pushButton_5_clicked();
 
+    void on_spinBox_valueChanged(int arg1);
+
+    void on_comboBox_currentIndexChanged(int index);
+
+    void on_comboBox_currentTextChanged(const QString &arg1);
+
 private:
     void set_initial_conditions();
     void judge_response(lane::Judge_result);
@@ -88,7 +94,7 @@ private:
     QGraphicsPixmapItem *localitems[100]; //pointers to temp local items
     QString images[100]; //useless
     //local texts for guiding the user
-    QGraphicsSimpleTextItem* simple_text_item{nullptr};
+    QGraphicsTextItem *text_item{nullptr}, *warning_item{nullptr};
 
     //the timer
     QTimer *global_timer{nullptr}, *global_timer2{nullptr};
